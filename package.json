@@ -1,0 +1,24 @@
+{
+  "name": "sparkdown",
+  "version": "1.0.0",
+  "description": "Very fast and compact Markdown parser",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "node ./lib/test/exprtests.js && node ./lib/test/jsontests.js",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test",
+    "postversion": "git push && git push --tags",
+    "lits": "lits --deployMode prod",
+    "lits-serve": "lits --serve --outDir testOut"
+  },
+  "keywords": [
+    "markdown",
+    "asciimath"
+  ],
+  "author": "Tommi Johtela",
+  "license": "MIT",
+  "devDependencies": {
+    "litscript": "^2.2.1"
+  }
+}
