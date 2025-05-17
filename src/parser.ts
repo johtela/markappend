@@ -4,15 +4,12 @@ interface ParserState {
     result: string[]
 }
 
-type Runner = (state: ParserState, match: RegExpExecArray) => number | void
+type Runner = (state: ParserState, match: RegExpExecArray) => void
 
 interface Parser {
     regexp: string
     run: Runner
 }
-
-const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
-const emOrStrong = /(__?|\*\*?)/.source
 
 function parser(regexp: string, run: Runner): Parser {
     return { regexp, run }
@@ -48,21 +45,29 @@ function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState):
         let parser = parsers.find((_, i) => match.groups![`g${i}`])
         if (parser) {
             flush(state, match.index)
-            let next = parser.run(state, match)
-            if (next) {
-                state.nextIndex = next
-                return true
-            }
+            parser.run(state, match)
+            state.nextIndex = match.index + match[0].length
+            return true
         }
     }
     flush(state)
     return false
 }
 /**
+ * Some reusabe regexp snippets.
+ */
+const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
+const emOrStrong = /(__?|\*\*?)/.source
+/**
  * Define inline parsers in priority order. 
  */
 const inlineParsers = [
-    parser(/(`+)(?<code> .+ |[^`]+)\1/.source, 
+    parser(/\\(?<esc>.)/.source,
+        (state, match) => {
+            let { esc } = match.groups!
+            state.result.push(esc == "\n" ? "<br/>" : esc)
+        }),
+    parser(/(?<codedelim>`+)(?<code> .+ |[^`]+)\k<codedelim>/.source, 
         (state, match) => {
             let { code } = match.groups!
             let cnt = code.length
@@ -70,9 +75,26 @@ const inlineParsers = [
                 code = code.substring(1, cnt - 1)
             state.result.push(/*html*/`<code>${
                 code.replaceAll("\n", " ")}</code>`)
-            return match.index + match[0].length
         }),
-    // (?<emdelim>(__?|\*\*?)(?![\s\p{P}\p{S}])|(?<=[\s\p{P}\p{S}]|^)(__?|\*\*?))(?<em>.*)((?<![\s\p{P}\p{S}])\k<emopen>|\k<emopen>(?=[\s\p{P}\p{S}]|$))
+    parser(/\[(?<link>(?:\\\[|\\\]|[^\[\]])+)\]\((?<linkdest>(?:\\\(|\\\)|[^\s()])+)\)/.source,
+        (state, match) => {
+            let { link, linkdest } = match.groups!
+            linkdest = linkdest.replaceAll(/\\\(|\\\)/, str => str[1])
+            state.result.push(/*html*/`<a href="${linkdest}">`)
+            inlines(stateFrom(state, link))
+            state.result.push("</a>")
+        }),
+    parser(/!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<img>(?:\\\(|\\\)|[^\s()])+)\)/.source,
+        (state, match) => {
+            let { imgalt, img } = match.groups!
+            imgalt = img.replaceAll(/\\\[|\\\]/, str => str[1])
+            img = img.replaceAll(/\\\(|\\\)/, str => str[1])
+            state.result.push(/*html*/`<img href="${img}" alt="${imgalt}">`)
+        }),
+    parser(/<.+>/.source,
+        (state, match) => {
+            state.result.push(match[0])
+        }),
     parser(`(?<emdelim>${emOrStrong}(?!${wsOrPunct})|(?<=${wsOrPunct}|^)${
         emOrStrong})(?<em>.*)((?<!${wsOrPunct})\k<emdelim>|\k<emdelim>(?=${
         wsOrPunct}|$))`, 
@@ -81,8 +103,7 @@ const inlineParsers = [
             state.result.push(emdelim.length == 1 ? "<em>" : "<strong>")
             inlines(stateFrom(state, em))
             state.result.push(emdelim.length == 1 ? "</em>" : "</strong>")
-            return match.index + match[0].length
-        })
+        }),
 ]
 const inlineRegexp = regexpFor(inlineParsers)
 
