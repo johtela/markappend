@@ -2,6 +2,7 @@ interface ParserState {
     input: string
     nextIndex: number
     result: string[]
+    blocks: string[]
 }
 
 type Runner = (state: ParserState, match: RegExpExecArray) => void
@@ -9,15 +10,16 @@ type Runner = (state: ParserState, match: RegExpExecArray) => void
 interface Parser {
     regexp: string
     run: Runner
+    cont?: RegExp
 }
 
-function parser(regexp: string, run: Runner): Parser {
-    return { regexp, run }
+function parser(regexp: string, run: Runner, cont?: RegExp): Parser {
+    return { regexp, run, cont }
 }
 
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
     ParserState {
-    return { input, nextIndex, result: state.result }
+    return { input, nextIndex, result: state.result, blocks: state.blocks }
 }
 /**
  * Get regular expression for a list of parsers.
@@ -103,7 +105,7 @@ const inlineParsers = [
             state.result.push(emdelim.length == 1 ? "<em>" : "<strong>")
             inlines(stateFrom(state, em))
             state.result.push(emdelim.length == 1 ? "</em>" : "</strong>")
-        }),
+        })
 ]
 const inlineRegexp = regexpFor(inlineParsers)
 
@@ -111,12 +113,23 @@ function inlines(state: ParserState) {
     while (selectNext(inlineRegexp, inlineParsers, state)) ;
 }
 
+const blockParsers = [
+    parser(/^ {0,3}(?<brkchar>[*\-_])(?:[ \t]*\k<brkchar>){2,}[ \t]*$/.source,
+        (state,) => {
+            state.result.push("\n<hr/>")
+        })
+
+]
+
 export function markdownToHtml(input: string): string {
     let state: ParserState = {
         input,
         nextIndex: 0,
-        result: []
+        result: [],
+        blocks: []
     }
+    let lines = input.split("\n")
+
     inlines(state)
     return state.result.join("")
 }
