@@ -5,7 +5,7 @@ interface ParserState {
     blocks: string[]
 }
 
-type Runner = (state: ParserState, match: RegExpExecArray) => void
+type Runner = (state: ParserState, match: RegExpExecArray) => void | string
 
 interface Parser {
     regexp: string
