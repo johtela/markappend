@@ -2,10 +2,10 @@ interface ParserState {
     input: string
     nextIndex: number
     result: string[]
-    blocks: string[]
+    blocks: RegExp[]
 }
 
-type Runner = (state: ParserState, match: RegExpExecArray) => void | string
+type Runner = (state: ParserState, match: RegExpExecArray) => void | RegExp
 
 interface Parser {
     regexp: string
@@ -117,8 +117,15 @@ const blockParsers = [
     parser(/^ {0,3}(?<brkchar>[*\-_])(?:[ \t]*\k<brkchar>){2,}[ \t]*$/.source,
         (state,) => {
             state.result.push("\n<hr/>")
-        })
-
+        }),
+    parser(/^ {0,3}(?<atxlevel>#{1,6})[ \t]+(?<atxheader>.+?)[ \t]*$/.source,
+        (state, match) => {
+            let { atxlevel, atxheader } = match.groups!
+            let level = atxlevel.length
+            state.result.push(`<h${level}>`)
+            inlines(stateFrom(state, atxheader))
+            state.result.push(`</h${level}>`)
+        }),
 ]
 
 export function markdownToHtml(input: string): string {
