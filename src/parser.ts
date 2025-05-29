@@ -1,25 +1,55 @@
-interface ParserState {
-    input: string
-    nextIndex: number
-    result: string[]
-    blocks: RegExp[]
-}
-
-type Runner = (state: ParserState, match: RegExpExecArray) => void | RegExp
+type Opener = (state: ParserState, match: RegExpExecArray) => void
+type Closer = (state: ParserState) => void
 
 interface Parser {
     regexp: string
-    run: Runner
-    cont?: RegExp
+    open: Opener
 }
 
-function parser(regexp: string, run: Runner, cont?: RegExp): Parser {
-    return { regexp, run, cont }
+interface DocumentBlock {
+    element: HTMLElement
+    cont?: RegExp
+    close?: Closer
+}
+
+interface ParserState {
+    input: string
+    nextIndex: number
+    blocks: DocumentBlock[]
+}
+
+function parser(regexp: string, run: Opener, cont?: RegExp): Parser {
+    return { regexp, open: run }
+}
+
+function elem<K extends keyof HTMLElementTagNameMap>(tag: K, 
+    ...children: Node[]): HTMLElementTagNameMap[K] {
+    let res = document.createElement(tag)
+    if (children.length > 0)
+        res.append(...children)
+    return res
+}
+
+function text(data: string): Text {
+    return document.createTextNode(data)
+}
+
+function openBlock(state: ParserState, element: HTMLElement, cont?: RegExp, 
+    close?: Closer) {
+    state.blocks.push({ element, cont, close })
+}
+
+function closeBlock(state: ParserState) {
+    state.blocks.pop()
 }
 
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
     ParserState {
-    return { input, nextIndex, result: state.result, blocks: state.blocks }
+    return { input, nextIndex, blocks: state.blocks }
+}
+
+function append(state: ParserState, ...nodes: Node[]) {
+    state.blocks[state.blocks.length - 1].element.append(...nodes)
 }
 /**
  * Get regular expression for a list of parsers.
@@ -34,12 +64,12 @@ function regexpFor(parsers: Parser[]): RegExp {
  */
 function flush(state: ParserState, index?: number) {
     if (!index || index > state.nextIndex)
-        state.result.push(state.input.substring(state.nextIndex, index))
+        append(state, text(state.input.substring(state.nextIndex, index)))
 }
 /**
  * Select parser that matches the current state and run it.
  */
-function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState): 
+function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState):
     boolean {
     regexp.lastIndex = state.nextIndex
     let match = regexp.exec(state.input)
@@ -47,7 +77,7 @@ function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState):
         let parser = parsers.find((_, i) => match.groups![`g${i}`])
         if (parser) {
             flush(state, match.index)
-            parser.run(state, match)
+            parser.open(state, match)
             state.nextIndex = match.index + match[0].length
             return true
         }
@@ -67,7 +97,7 @@ const inlineParsers = [
     parser(/\\(?<esc>.)/.source,
         (state, match) => {
             let { esc } = match.groups!
-            state.result.push(esc == "\n" ? "<br/>" : esc)
+            append(state, esc == "\n" ? elem('br') : text(esc))
         }),
     parser(/(?<codedelim>`+)(?<code> .+ |[^`]+)\k<codedelim>/.source, 
         (state, match) => {
@@ -75,36 +105,40 @@ const inlineParsers = [
             let cnt = code.length
             if (cnt > 2 && code[0] == " " && code[cnt - 1] == " ")
                 code = code.substring(1, cnt - 1)
-            state.result.push(/*html*/`<code>${
-                code.replaceAll("\n", " ")}</code>`)
+            append(state, elem('code', text(code.replaceAll("\n", " "))))
         }),
     parser(/\[(?<link>(?:\\\[|\\\]|[^\[\]])+)\]\((?<linkdest>(?:\\\(|\\\)|[^\s()])+)\)/.source,
         (state, match) => {
             let { link, linkdest } = match.groups!
             linkdest = linkdest.replaceAll(/\\\(|\\\)/, str => str[1])
-            state.result.push(/*html*/`<a href="${linkdest}">`)
+            let aelem = elem('a')
+            aelem.href = linkdest
+            openBlock(state, aelem)
             inlines(stateFrom(state, link))
-            state.result.push("</a>")
+            closeBlock(state)
         }),
-    parser(/!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<img>(?:\\\(|\\\)|[^\s()])+)\)/.source,
+    parser(/!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<imgsrc>(?:\\\(|\\\)|[^\s()])+)\)/.source,
         (state, match) => {
-            let { imgalt, img } = match.groups!
-            imgalt = img.replaceAll(/\\\[|\\\]/, str => str[1])
-            img = img.replaceAll(/\\\(|\\\)/, str => str[1])
-            state.result.push(/*html*/`<img href="${img}" alt="${imgalt}">`)
-        }),
-    parser(/<.+>/.source,
-        (state, match) => {
-            state.result.push(match[0])
+            let { imgalt, imgsrc } = match.groups!
+            imgalt = imgsrc.replaceAll(/\\\[|\\\]/, str => str[1])
+            imgsrc = imgsrc.replaceAll(/\\\(|\\\)/, str => str[1])
+            let img = elem('img')
+            img.src = imgsrc
+            img.alt = imgalt
+            append(state, img)
         }),
     parser(`(?<emdelim>${emOrStrong}(?!${wsOrPunct})|(?<=${wsOrPunct}|^)${
         emOrStrong})(?<em>.*)((?<!${wsOrPunct})\k<emdelim>|\k<emdelim>(?=${
         wsOrPunct}|$))`, 
         (state, match) => {
             let { emdelim, em } = match.groups!
-            state.result.push(emdelim.length == 1 ? "<em>" : "<strong>")
+            openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'))
             inlines(stateFrom(state, em))
-            state.result.push(emdelim.length == 1 ? "</em>" : "</strong>")
+            closeBlock(state)
+        }),
+    parser(/<.+>/.source,
+        (state, match) => {
+            append(state, text(match[0]))
         })
 ]
 const inlineRegexp = regexpFor(inlineParsers)
@@ -116,27 +150,26 @@ function inlines(state: ParserState) {
 const blockParsers = [
     parser(/^ {0,3}(?<brkchar>[*\-_])(?:[ \t]*\k<brkchar>){2,}[ \t]*$/.source,
         (state,) => {
-            state.result.push("\n<hr/>")
+            append(state, elem('hr'))
         }),
     parser(/^ {0,3}(?<atxlevel>#{1,6})[ \t]+(?<atxheader>.+?)[ \t]*$/.source,
         (state, match) => {
             let { atxlevel, atxheader } = match.groups!
             let level = atxlevel.length
-            state.result.push(`<h${level}>`)
+            openBlock(state, elem(<keyof HTMLElementTagNameMap>`h${level}`))
             inlines(stateFrom(state, atxheader))
-            state.result.push(`</h${level}>`)
+            closeBlock(state)
         }),
 ]
 
-export function markdownToHtml(input: string): string {
+export function markdownToHtml(input: string): DocumentFragment {
     let state: ParserState = {
         input,
         nextIndex: 0,
-        result: [],
         blocks: []
     }
     let lines = input.split("\n")
 
     inlines(state)
-    return state.result.join("")
+    return document.createDocumentFragment()
 }
