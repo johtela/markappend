@@ -5,14 +5,14 @@ export interface Parser {
     matched: Matcher
 }
 
-interface DocumentBlock {
+export interface DocumentBlock {
     element: Element
     inline: boolean
     text: string
     cont?: RegExp
 }
 
-interface ParserState {
+export interface ParserState {
     input: string
     nextIndex: number
     blocks: DocumentBlock[]
