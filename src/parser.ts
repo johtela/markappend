@@ -7,7 +7,8 @@ interface Parser {
 }
 
 interface DocumentBlock {
-    element: HTMLElement
+    element: Element | DocumentFragment
+    text: string
     cont?: RegExp
     close?: Closer
 }
@@ -34,9 +35,9 @@ function text(data: string): Text {
     return document.createTextNode(data)
 }
 
-function openBlock(state: ParserState, element: HTMLElement, cont?: RegExp, 
-    close?: Closer) {
-    state.blocks.push({ element, cont, close })
+function openBlock(state: ParserState, element: Element | DocumentFragment, 
+    cont?: RegExp, close?: Closer) {
+    state.blocks.push({ element, text: "", cont, close })
 }
 
 function closeBlock(state: ParserState) {
@@ -48,8 +49,12 @@ function stateFrom(state: ParserState, input: string, nextIndex = 0):
     return { input, nextIndex, blocks: state.blocks }
 }
 
+function lastBlock(state: ParserState): DocumentBlock {
+    return state.blocks[state.blocks.length - 1]
+}
+
 function append(state: ParserState, ...nodes: Node[]) {
-    state.blocks[state.blocks.length - 1].element.append(...nodes)
+    lastBlock(state).element.append(...nodes)
 }
 /**
  * Get regular expression for a list of parsers.
@@ -69,20 +74,21 @@ function flush(state: ParserState, index?: number) {
 /**
  * Select parser that matches the current state and run it.
  */
-function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState):
-    boolean {
+function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState, 
+    fromStart = false): boolean {
     regexp.lastIndex = state.nextIndex
     let match = regexp.exec(state.input)
-    if (match && match.groups) {
+    if (match && match.groups && 
+        (!fromStart || match.index == state.nextIndex)) {
         let parser = parsers.find((_, i) => match.groups![`g${i}`])
         if (parser) {
-            flush(state, match.index)
+            if (!fromStart)
+                flush(state, match.index)
             parser.open(state, match)
             state.nextIndex = match.index + match[0].length
             return true
         }
     }
-    flush(state)
     return false
 }
 /**
@@ -90,6 +96,7 @@ function selectNext(regexp: RegExp, parsers: Parser[], state: ParserState):
  */
 const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
 const emOrStrong = /(__?|\*\*?)/.source
+const indentedCode = / {4}/yu
 /**
  * Define inline parsers in priority order. 
  */
@@ -144,15 +151,16 @@ const inlineParsers = [
 const inlineRegexp = regexpFor(inlineParsers)
 
 function inlines(state: ParserState) {
-    while (selectNext(inlineRegexp, inlineParsers, state)) ;
+    while (selectNext(inlineRegexp, inlineParsers, state));
+    flush(state)
 }
 
 const blockParsers = [
-    parser(/^ {0,3}(?<brkchar>[*\-_])(?:[ \t]*\k<brkchar>){2,}[ \t]*$/.source,
+    parser(/ {0,3}(?<brkchar>[*\-_])(?:[ \t]*\k<brkchar>){2,}[ \t]*$/.source,
         (state,) => {
             append(state, elem('hr'))
         }),
-    parser(/^ {0,3}(?<atxlevel>#{1,6})[ \t]+(?<atxheader>.+?)[ \t]*$/.source,
+    parser(/ {0,3}(?<atxlevel>#{1,6})[ \t]+(?<atxheader>.+?)[ \t]*$/.source,
         (state, match) => {
             let { atxlevel, atxheader } = match.groups!
             let level = atxlevel.length
@@ -160,7 +168,33 @@ const blockParsers = [
             inlines(stateFrom(state, atxheader))
             closeBlock(state)
         }),
+    parser(indentedCode.source,
+        (state,) => {
+            let pre = elem('pre', elem('code'))
+            openBlock(state, pre, indentedCode, st => 
+                append(st, text(lastBlock(st).text)))
+        })
 ]
+
+const blockRegexp = regexpFor(blockParsers)
+
+function closeBlocksToIndex(state: ParserState, index: number) {
+    while (state.blocks.length > index)
+        state.blocks.pop()!.close?.(state)
+}
+
+function closeDiscontinuedBlocks(state: ParserState) {
+    for (let i = 0; i < state.blocks.length; ++i) {
+        let block = state.blocks[i]
+        if (block.cont) {
+            block.cont.lastIndex = state.nextIndex
+            let match = block.cont.exec(state.input)
+            if (!match || match.index != 0)
+                return closeBlocksToIndex(state, i)
+            state.nextIndex = block.cont.lastIndex
+        }
+    }
+}
 
 export function markdownToHtml(input: string): DocumentFragment {
     let state: ParserState = {
@@ -168,8 +202,17 @@ export function markdownToHtml(input: string): DocumentFragment {
         nextIndex: 0,
         blocks: []
     }
+    let res = document.createDocumentFragment()
+    openBlock(state, res)
+    
     let lines = input.split("\n")
-
-    inlines(state)
-    return document.createDocumentFragment()
+    for (let i = 0; i < lines.length; ++i) {
+        let line = lines[i]
+        let st = stateFrom(state, line, 0)
+        closeDiscontinuedBlocks(st)
+        while (selectNext(blockRegexp, blockParsers, st, true));
+        if (st.nextIndex < line.length)
+            lastBlock(st).text += line.substring(st.nextIndex)
+    }
+    return res
 }
