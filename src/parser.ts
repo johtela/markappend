@@ -1,12 +1,12 @@
-type Matcher = (state: ParserState, match: RegExpExecArray) => void
+export type Matcher = (state: ParserState, match: RegExpExecArray) => void
 
-interface Parser {
+export interface Parser {
     regexp: string
     matched: Matcher
 }
 
 interface DocumentBlock {
-    element: Element | DocumentFragment
+    element: Element
     inline: boolean
     text: string
     cont?: RegExp
@@ -18,11 +18,11 @@ interface ParserState {
     blocks: DocumentBlock[]
 }
 
-function parser(regexp: string, matched: Matcher): Parser {
+export function parser(regexp: string, matched: Matcher): Parser {
     return { regexp, matched }
 }
 
-function elem<K extends keyof HTMLElementTagNameMap>(tag: K, 
+export function elem<K extends keyof HTMLElementTagNameMap>(tag: K, 
     ...children: Node[]): HTMLElementTagNameMap[K] {
     let res = document.createElement(tag)
     if (children.length > 0)
@@ -30,12 +30,12 @@ function elem<K extends keyof HTMLElementTagNameMap>(tag: K,
     return res
 }
 
-function text(data: string): Text {
+export function text(data: string): Text {
     return document.createTextNode(data)
 }
 
-function openBlock(state: ParserState, element: Element | DocumentFragment, 
-    inline: boolean, cont?: RegExp) {
+function openBlock(state: ParserState, element: Element, inline: boolean, 
+    cont?: RegExp) {
     state.blocks.push({ element, inline, text: "", cont })
 }
 
@@ -149,10 +149,13 @@ const inlineParsers = [
             append(state, text(match[0]))
         })
 ]
-const inlineRegexp = regexpFor(inlineParsers)
+let inlineRegexp: RegExp 
+function getInlineRegexp(): RegExp {
+    return inlineRegexp || (inlineRegexp = regexpFor(inlineParsers))
+}
 
 function inlines(state: ParserState) {
-    while (parseNext(inlineRegexp, inlineParsers, state, true));
+    while (parseNext(getInlineRegexp(), inlineParsers, state, true));
     flushInline(state)
 }
 
@@ -172,7 +175,6 @@ const blockParsers = [
         (state,) => 
             openBlock(state, elem('pre', elem('code')), false, indentedCode))
 ]
-
 const blockRegexp = regexpFor(blockParsers)
 
 function flushLastBlock(state: ParserState) {
@@ -206,15 +208,13 @@ function closeDiscontinuedBlocks(state: ParserState) {
     }
 }
 
-export function markdownToHtml(input: string): DocumentFragment {
+export function markdownToHtml(input: string, doc: Element) {
     let state: ParserState = {
         input,
         nextIndex: 0,
         blocks: []
     }
-    let doc = document.createDocumentFragment()
     openBlock(state, doc, true)
-    
     let lines = input.split("\n")
     for (let i = 0; i < lines.length; ++i) {
         let line = lines[i]
@@ -225,5 +225,4 @@ export function markdownToHtml(input: string): DocumentFragment {
             lastBlock(st).text += line.substring(st.nextIndex)
     }
     flushLastBlock(state)
-    return doc
 }
