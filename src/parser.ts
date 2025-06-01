@@ -8,6 +8,7 @@ export interface Parser {
 export interface DocumentBlock {
     element: Element
     inline: boolean
+    leaf: boolean
     text: string
     cont?: RegExp
 }
@@ -35,8 +36,8 @@ export function text(data: string): Text {
 }
 
 function openBlock(state: ParserState, element: Element, inline: boolean, 
-    cont?: RegExp) {
-    state.blocks.push({ element, inline, text: "", cont })
+    leaf = true, cont?: RegExp) {
+    state.blocks.push({ element, inline, leaf, text: "", cont })
 }
 
 function closeLastBlock(state: ParserState) {
@@ -173,7 +174,8 @@ const blockParsers = [
         }),
     parser(indentedCode.source,
         (state,) => 
-            openBlock(state, elem('pre', elem('code')), false, indentedCode))
+            openBlock(state, elem('pre', elem('code')), false, true,
+                indentedCode))
 ]
 const blockRegexp = regexpFor(blockParsers)
 
@@ -214,13 +216,14 @@ export function markdownToHtml(input: string, doc: Element) {
         nextIndex: 0,
         blocks: []
     }
-    openBlock(state, doc, true)
+    openBlock(state, doc, true, false)
     let lines = input.split("\n")
     for (let i = 0; i < lines.length; ++i) {
         let line = lines[i]
         let st = stateFrom(state, line, 0)
         closeDiscontinuedBlocks(st)
-        while (parseNext(blockRegexp, blockParsers, st, false));
+        while (!lastBlock(st).leaf && 
+            parseNext(blockRegexp, blockParsers, st, false));
         if (st.nextIndex < line.length)
             lastBlock(st).text += line.substring(st.nextIndex)
     }
