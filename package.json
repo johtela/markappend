@@ -19,6 +19,7 @@
   "author": "Tommi Johtela",
   "license": "MIT",
   "devDependencies": {
+    "lits-extras": "^2.0.0",
     "litscript": "^2.2.1"
   }
 }
