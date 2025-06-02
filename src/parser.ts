@@ -7,9 +7,10 @@ export interface Parser {
 
 export interface DocumentBlock {
     element: Element
+    parent: Element
     inline: boolean
     leaf: boolean
-    text: string
+    lines: string[]
     cont?: RegExp
 }
 
@@ -36,12 +37,13 @@ export function text(data: string): Text {
 }
 
 function openBlock(state: ParserState, element: Element, inline: boolean, 
-    leaf = true, cont?: RegExp) {
-    state.blocks.push({ element, inline, leaf, text: "", cont })
+    leaf = true, parent = element, cont?: RegExp) {
+    state.blocks.push({ element, parent, inline, leaf, lines: [], cont })
 }
 
 function closeLastBlock(state: ParserState) {
-    state.blocks.pop()
+    let block = state.blocks.pop()
+    lastBlock(state)?.parent!.append(block!.element)
 }
 
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
@@ -54,7 +56,7 @@ function lastBlock(state: ParserState): DocumentBlock {
 }
 
 function append(state: ParserState, ...nodes: Node[]) {
-    lastBlock(state).element.append(...nodes)
+    lastBlock(state).parent.append(...nodes)
 }
 /**
  * Get regular expression for a list of parsers.
@@ -98,7 +100,7 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
  */
 const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
 const emOrStrong = /(__?|\*\*?)/.source
-const indentedCode = / {4}/yu
+const indentedCode = / {4}| {0,3}\t/yu
 /**
  * Define inline parsers in priority order. 
  */
@@ -173,21 +175,24 @@ const blockParsers = [
             closeLastBlock(state)
         }),
     parser(indentedCode.source,
-        (state,) => 
-            openBlock(state, elem('pre', elem('code')), false, true,
-                indentedCode))
+        (state,) => {
+            let code = elem('code')
+            openBlock(state, elem('pre', code), false, true, code,
+                indentedCode)
+            })
 ]
 const blockRegexp = regexpFor(blockParsers)
 
 function flushLastBlock(state: ParserState) {
     let block = lastBlock(state)
-    if (block.text.length > 0) {
+    if (block.lines.length > 0) {
+        let lines = block.lines.join("\n")
         if (block.inline)
-            inlines(stateFrom(state, block.text))
+            inlines(stateFrom(state, lines))
         else
-            append(state, text(block.text))
+            append(state, text(lines))
+        block.lines = []
     }
-    block.text = ""
 }
 
 function closeBlocksToIndex(state: ParserState, index: number) {
@@ -224,8 +229,9 @@ export function markdownToHtml(input: string, doc: Element) {
         closeDiscontinuedBlocks(st)
         while (!lastBlock(st).leaf && 
             parseNext(blockRegexp, blockParsers, st, false));
-        if (st.nextIndex < line.length)
-            lastBlock(st).text += line.substring(st.nextIndex)
+        if (st.nextIndex < line.length) 
+            lastBlock(st).lines.push(line.substring(st.nextIndex))
     }
     flushLastBlock(state)
+    closeLastBlock(state)
 }
