@@ -373,7 +373,7 @@ const inlineParsers = [
             let { html } = match.groups!
             lastBlock(state).parent.insertAdjacentHTML('beforeend', html)
         },
-        /(?<html><(?<tag>[A-Za-z]\w*)(\s+[A-Za-z]\w*\s*(=\s*".*")?)*\s*(>.*<\/\k<tag>\s*>|\/>))/.source)
+        /(?<html><(?<tag>[A-Za-z]\w*)([\s\n]+[A-Za-z]\w*\s*(=\s*".*")?)*[\s\n]*(>.*<\/\k<tag>[\s\n]*>|\/>))/.source)
 ]
 /**
  * Construct the combined regexp.
