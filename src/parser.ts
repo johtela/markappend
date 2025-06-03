@@ -1,26 +1,28 @@
 /**
  * # Markdown Parser
- * 
- * The parser code lives in this single module. Notice we don't import anything, 
- * so there are no dependencies to other libraries. The parsing process matches 
- * pretty  closely the strategy outlined in the [CommonMark specification][]. 
- * However, the parser is not fully CommonMark compliant. The most obscure 
- * rules have been omitted in purpose to keep the code simple.
+ *
+ * This module implements a self-contained Markdown parser. It does not import 
+ * or depend on any external libraries. The parsing process closely follows the 
+ * strategy outlined in the [CommonMark specification][].
+ *
+ * Note: The parser is not fully CommonMark compliant. Some of the more obscure 
+ * rules have been intentionally omitted to keep the code simple.
  *
  * ## Matchers and Parsers
- * 
+ *
  * We start by defining a _matcher_, a function that is called when a regular 
- * expression matches a pattern that represents some markdown element. It gets 
- * the current parser state and the match(es) as arguments. We need to provide 
- * a matcher for all markdown [blocks and inlines][].
- * 
+ * expression matches a pattern representing a Markdown element. It receives the 
+ * current parser state and the match(es) as arguments. A matcher must be 
+ * provided for all Markdown [blocks and inlines][].
+ *
  * [CommonMark specification]: https://spec.commonmark.org/0.31.2/#appendix-a-parsing-strategy
  * [blocks and inlines]: https://spec.commonmark.org/0.31.2/#blocks-and-inlines
  */
 export type Matcher = (state: ParserState, match: RegExpExecArray) => void
 /**
- * A matcher is wrapped to a _parser_ interface which couples the regular
- * expression and matcher together.
+ * A matcher is combined with its corresponding regular expression in the
+ * `Parser` interface. This interface associates a regular expression pattern
+ * with the function that handles matches for that pattern.
  */
 export interface Parser {
     regexp: string
@@ -29,11 +31,11 @@ export interface Parser {
 /**
  * ## Blocks
  * 
- * A markdown document is split into _blocks_. A block corresponds to a HTML
- * a element whose `display` attribute is `block`. For example, headers, lists, 
- * paragraphs are blocks. Blocks in turn contain _inline_ elements. For example, 
- * links, emphasized or preformatted text. We store information about open 
- * blocks in the DocumentBlock interface.
+ * A Markdown document is divided into _blocks_. Each block corresponds to an 
+ * HTML element with a `display` style of `block`, such as headers, lists, or 
+ * paragraphs. Blocks can contain _inline_ elements, including links, emphasized 
+ * text, or code spans. Information about open blocks is stored in the 
+ * `DocumentBlock` interface.
  */
 export interface DocumentBlock {
     /**
@@ -41,39 +43,53 @@ export interface DocumentBlock {
      */
     element: Element
     /**
-     * Sometimes the child elements should go under a different parent element.
-     * For those cases, you can set `parent` different for `element`.
+     * In some cases, child nodes should be appended to a different parent 
+     * element than the block's main element. The `parent` property allows 
+     * specifying an alternative parent element for such scenarios.
      */
     parent: Element
     /**
-     * This flag tells whether the block contains inline elements or just
-     * verbatim text. This information is needed when the block is flushed.
+     * Indicates whether the block contains inline elements (such as links or 
+     * emphasis) or only plain verbatim text. This flag determines how the 
+     * block's content should be processed and rendered when the block is 
+     * flushed.
      */
     inline: boolean
     /**
-     * Another flag that tells whether this is a leaf block or container block.
-     * A leaf block cannot contain child blocks, but a container block can.
+     * Indicates whether this block is a leaf block (cannot contain child 
+     * blocks) or a container block (can contain child blocks). Leaf blocks 
+     * contain only text or inline elements, while container blocks may nest
+     * other blocks (e.g. lists or blockquotes).
      */
     leaf: boolean
     /**
-     * The parsed markdown lines that belong to this block.
+     * Each entry in this array represents a line of markdown text that is part 
+     * of the content for this block. These lines are accumulated as the parser 
+     * processes the input, and are later used to generate the final HTML 
+     * content for the block.
      */
     lines: string[]
     /**
-     * Optional regular expression that that must match the start of 
-     * subsequent markdown lines in  this block.
+     * Optional regular expression that must match the beginning of subsequent 
+     * Markdown lines for this block to continue. If provided, lines that do not 
+     * match will cause the block to be closed.
      */
     cont?: RegExp
 }
 /**
  * ## Parser State
- * 
- * The parser state is passed along to the parsers when they are called. The
- * state contains:
- * 
- *  -   the input string, 
- *  -   the next index to be parsed in the input, and 
- *  -   stack of open blocks.
+ *
+ * The parser state encapsulates the current position and context of the parsing 
+ * process. It includes:
+ *
+ *  - `input`: The full Markdown source string being parsed.
+ *  - `nextIndex`: The current position in the input string from which parsing 
+ *    should continue.
+ *  - `blocks`: A stack of open `DocumentBlock` objects representing the current 
+ *    block structure.
+ *
+ * This state object is passed to matcher functions and updated as the parser 
+ * advances through the input.
  */
 export interface ParserState {
     input: string
@@ -83,23 +99,24 @@ export interface ParserState {
 /**
  * ## Constructors
  * 
- * Here are helper functions to create parsers and elements.
+ * Helper functions for creating parsers and DOM elements.
  */
 export function parser(matched: Matcher, regexp: string): Parser {
     return { matched, regexp }
 }
 /**
- * Create a new parser state by extending the given state. We will reuse
- * the blocks, but specify new input string, and optionally, starting position
- * for the parsers.
+ * Creates a new parser state based on the given state, but with a new input 
+ * string and optionally a new starting index. The `blocks` stack is shared with 
+ * the original state.
  */
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
     ParserState {
     return { input, nextIndex, blocks: state.blocks }
 }
 /**
- * The `elem` function creates an element with specified `tag`. You can
- * optionally add some `children` nodes to the result.
+ * The `elem` function creates an HTML element of the specified `tag` type.
+ * Optionally, any number of child nodes can be appended to the created element.
+ * This provides a convenient way to construct DOM trees.
  */
 export function elem<K extends keyof HTMLElementTagNameMap>(tag: K, 
     ...children: Node[]): HTMLElementTagNameMap[K] {
@@ -109,43 +126,47 @@ export function elem<K extends keyof HTMLElementTagNameMap>(tag: K,
     return res
 }
 /**
- * The `text` function creates a text node with given `data` as content.
+ * Creates a text node containing the specified string data.
  */
 export function text(data: string): Text {
     return document.createTextNode(data)
 }
 /**
  * ## Opening and Closing Blocks
- * 
- * When opening a new block, we must specify all the fields of the 
- * DocumentBlock interface. Some of them have default values, but you need to
- * specify at least the parser state, the element, and whether to open an
- * inline block. By default, we open a leaf block with same parent as the 
- * element, and with no continuation regexp. The lines of the block will
- * always be initialized to empty.
+ *
+ * Functions for managing the stack of open blocks during parsing.
+ *
+ * - `openBlock` pushes a new block onto the stack. You must specify the parser 
+ *   state, the element to associate with the block, and whether the block is 
+ *   inline. By default, the block is a leaf, the parent is the element itself, 
+ *   and it has no continuation regexp. The block's lines array is always 
+ *   initialized as empty.
+ *
+ * - `closeLastBlock` pops the most recently opened block from the stack and 
+ *   appends its element to its parent element in the previous block.
  */
 function openBlock(state: ParserState, element: Element, inline: boolean, 
     leaf = true, parent = element, cont?: RegExp) {
     state.blocks.push({ element, parent, inline, leaf, lines: [], cont })
 }
 /**
- * Close the last opened block. The list of blocks in the parser state is a
- * stack structure. You can only modify the topmost block of the stack. When 
- * a block is closed, it's element is appended under the parent block's 
- * element.
+ * Pops the last block from the stack and appends its element to the parent
+ * element of the previous block in the stack.
  */
 function closeLastBlock(state: ParserState) {
     let block = state.blocks.pop()
     lastBlock(state)?.parent!.append(block!.element)
 }
 /**
- * A helper function that returns the last (open) block of the parser state.
+ * Returns the topmost (most recently opened) block from the parser state's 
+ * stack.
  */
 function lastBlock(state: ParserState): DocumentBlock {
     return state.blocks[state.blocks.length - 1]
 }
 /**
- * Another helper that appends nodes under the topmost open block.
+ * Appends one or more nodes to the parent element of the current (topmost) 
+ * block.
  */
 function append(state: ParserState, ...nodes: Node[]) {
     lastBlock(state).parent.append(...nodes)
@@ -153,26 +174,28 @@ function append(state: ParserState, ...nodes: Node[]) {
 /**
  * ## Constructing Parsers
  * 
- * The parsers are triggered by regular expressions. This function combines 
- * the regexps for a list of parsers and returns a new regexp that matches any 
- * of them. A parser with index _i_ in the list ill correspond to a named match 
- * group `g`_i_. Resulted regexp is"sticky" meaning that it will update 
- * `nextIndex` property when match is found.
+ * This function combines the regular expressions from a list of parsers into a 
+ * single "sticky" RegExp. Each parser's pattern is wrapped in a named capturing 
+ * group (`g0`, `g1`, ...), allowing us to identify which parser matched. The 
+ * resulting RegExp is used to efficiently dispatch to the correct matcher 
+ * during parsing.
  */
 function regexpFor(parsers: Parser[]): RegExp {
     let re = parsers.map((p, i) => `(?<g${i}>${p.regexp})`).join("|")
     return new RegExp(re, "yu")
 }
 /**
- * Once the combined regexp is created we can use it to return the next token 
- * from an input string. The `parseNext` function takes this regexp, a list of 
- * parsers specified for the previous function, a parser state, and a flag that 
- * indiciates whether we are parsing blocks or inline content. It returns `true`
- * if any of the parsers matched. In that case the function will:
+ * The `parseNext` function attempts to match the next token in the input using 
+ * the combined regular expression and the list of parsers. It takes the regexp, 
+ * the parser array, the current parser state, and a flag indicating whether we 
+ * are parsing inline content. If a match is found:
  * 
- *  1. flush the text preceding the match, 
- *  2. trigger the matcher function of the activated parser, and 
- *  3. advance the `nextIndex` position.
+ *  1. It flushes any unprocessed text before the match (for inlines) or the 
+ *     last block (for blocks).
+ *  2. It invokes the matcher function for the matched parser.
+ *  3. It advances the `nextIndex` to continue parsing after the match.
+ * 
+ * Returns `true` if a parser matched, otherwise `false`.
  */
 function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState, 
     inline: boolean): boolean {
@@ -194,44 +217,57 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
     return false
 }
 /**
- * ## Reusable RegExps
- * 
- * We define some reusabe regexp snippets used in the parsers.
+ * ## Reusable Regular Expressions
  *
- * The first will match whitespace or unicode punctuation characters. 
+ * Define recurring RegExp snippets used in parsers.
+ *
+ * - `wsOrPunct`: Matches whitespace or any Unicode punctuation or symbol 
+ *   character.
+ * - `emOrStrong`: Matches one or two consecutive `_` or `*` characters (for 
+ *   emphasis and strong).
+ * - `indentedCode`: Matches lines starting with at least 4 spaces or a tab 
+ *   (for indented code blocks).
  */
 const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
-/**
- * This one matches one or two consequtive `_` or `*` characters. These
- * delimit `em` and `bold` inlines.
- */
 const emOrStrong = /(__?|\*\*?)/.source
-/**
- * Indented code blocks start with at least 4 spaces or one tab character.
- */
 const indentedCode = / {4}| {0,3}\t/yu
 /**
  * ## Inline Parsers
- * 
- * Flushing inlines appends the unprocessed input to current block verbatim 
- * from current index until the specified position or end of input, if the 
- * position omitted.
+ *
+ * Inline parser handle Markdown elements that can appear within block-level
+ * content, such as emphasis, links, code spans, and images. The `flushInline`
+ * function appends any unprocessed input as a text node to the current block,
+ * from the parser state's current index up to the specified position (or to 
+ * the end of input if no position is given).
  */
 function flushInline(state: ParserState, index?: number) {
     if (!index || index > state.nextIndex)
         append(state, text(state.input.substring(state.nextIndex, index)))
 }
 /**
- * Now we can define all inline parsers in priority order. 
+ * An array of inline Markdown parsers, each responsible for handling a specific
+ * inline syntax element. Each paser is defined with a matching regular 
+ * expression and a matcher function that processes the matched content and 
+ * updates the parser state accordingly.
+ *
+ * The supported inline elements include:
+ * - Escapes: Handles backslash-escaped characters and line breaks.
+ * - Code Spans: Handles inline code delimited by backticks.
+ * - Links: Parses standard Markdown links of the form `[text](url)`.
+ * - Images: Parses image syntax `![alt](src)`.
+ * - Emphasis & Strong: Handles emphasis (`*` or `_`) and strong emphasis 
+ *   (`**` or `__`).
+ * - Raw HTML: Passes through raw HTML tags.
  */
 const inlineParsers = [
     parser(
         /**
          * ### Escapes
-         * 
-         * You can escape all special characters by prepending them with a 
-         * backslash. However if the backslash is at the end of a line, it
-         * produces a `<br>` element.
+         *
+         * Handles Markdown escape sequences. A backslash before a special 
+         * character escapes it, rendering the character literally. If the 
+         * backslash is at the end of a line, it produces a `<br>` element 
+         * instead.
          */
         (state, match) => {
             let { esc } = match.groups!
@@ -241,10 +277,17 @@ const inlineParsers = [
     parser(
         /**
          * ### Code Spans
+         *
+         * Handles inline code spans delimited by backticks, following the main
+         * rules from [section 6.1](https://spec.commonmark.org/0.31.2/#code-spans)
+         * of the CommonMark specification:
          * 
-         * Code spans are delimited with backticks. There are some rules about
-         * how backticks are escaped in [section 6.1](https://spec.commonmark.org/0.31.2/#code-spans)
-         * of CommonMark specification. We implement them mostly.
+         * - The opening and closing backtick sequences must match in length.
+         * - Leading and trailing spaces inside the code span are trimmed to a 
+         *   single space.
+         * - Newlines inside code spans are replaced with spaces.
+         * - Backticks inside code spans are allowed if multiple backticks open
+         *   it.
          */
         (state, match) => {
             let { code } = match.groups!
@@ -257,9 +300,12 @@ const inlineParsers = [
     parser(
         /**
          * ### Links
-         * 
-         * We support only the simple link format and omit most of the obscure
-         * rules in [section 6.3](https://spec.commonmark.org/0.31.2/#links).
+         *
+         * Handles Markdown links in the format `[text](url)`. This 
+         * implementation focuses on the most common use case and does not
+         * support reference-style or nested links, in line with the goal of 
+         * simplicity. Escaped brackets and parentheses are unescaped in both 
+         * the link text and destination.
          */
         (state, match) => {
             let { link, linkdest } = match.groups!
@@ -272,6 +318,14 @@ const inlineParsers = [
         },
         /\[(?<link>(?:\\\[|\\\]|[^\[\]])+)\]\((?<linkdest>(?:\\\(|\\\)|[^\s()])+)\)/.source),
     parser(
+        /**
+         * ### Images
+         *
+         * Handles Markdown image syntax of the form `![alt](src)`. This parser 
+         * extracts the alt text and image source, unescapes any escaped 
+         * brackets or parentheses, and creates an `<img>` element with the 
+         * appropriate `alt` and `src` attributes.
+         */
         (state, match) => {
             let { imgalt, imgsrc } = match.groups!
             imgalt = imgsrc.replaceAll(/\\\[|\\\]/, str => str[1])
@@ -282,7 +336,20 @@ const inlineParsers = [
             append(state, img)
         },
         /!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<imgsrc>(?:\\\(|\\\)|[^\s()])+)\)/.source),
-    parser( 
+    parser(
+        /**
+         * ### Emphasis and Strong
+         *
+         * Handles Markdown emphasis (`*` or `_`) and strong emphasis (`**` or 
+         * `__`). This parser matches one or two consecutive asterisks or 
+         * underscores, ensuring correct boundaries according to the CommonMark 
+         * rules:
+         * 
+         * - Single delimiter for `<em>`, double for `<strong>`.
+         * - Delimiters must not be surrounded by whitespace or punctuation.
+         * - The content between delimiters is parsed recursively for inline 
+         *   elements.
+         */
         (state, match) => {
             let { emdelim, em } = match.groups!
             openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'), true)
@@ -293,21 +360,42 @@ const inlineParsers = [
         emOrStrong})(?<em>.*)((?<!${wsOrPunct})\k<emdelim>|\k<emdelim>(?=${
         wsOrPunct}|$))`),
     parser(
+        /**
+         * ### Raw HTML
+         *
+         * Passes through raw HTML tags as actual HTML elements. The parser 
+         * matches any sequence that looks like an HTML tag with content (e.g., 
+         * `<b>text</b>`, `<span class="x">foo</span>`, or self-closing tags 
+         * like `<br/>`). The matched HTML is parsed and inserted as a DOM node, 
+         * so the HTML is rendered in the output.
+         */
         (state, match) => {
-            append(state, text(match[0]))
+            let { html } = match.groups!
+            lastBlock(state).parent.insertAdjacentHTML('beforeend', html)
         },
-        /<.+>/.source)
+        /(?<html><(?<tag>[A-Za-z]\w*)(\s+[A-Za-z]\w*\s*(=\s*".*")?)*\s*(>.*<\/\k<tag>\s*>|\/>))/.source)
 ]
+/**
+ * Construct the combined regexp.
+ */
 let inlineRegexp: RegExp 
 function getInlineRegexp(): RegExp {
     return inlineRegexp || (inlineRegexp = regexpFor(inlineParsers))
 }
-
+/**
+ * This function repeatedly applies inline parsers using a regular expression
+ * matcher until no more matches are found. After all inline elements have been
+ * parsed, it flushes any remaining inline content in the parser state.
+ */
 function inlines(state: ParserState) {
     while (parseNext(getInlineRegexp(), inlineParsers, state, true));
     flushInline(state)
 }
-
+/**
+ * ## Blocks
+ * 
+ * 
+ */
 const blockParsers = [
     parser(
         (state,) => append(state, elem('hr')),
