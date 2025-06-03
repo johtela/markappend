@@ -9,6 +9,8 @@
  * 
  * This module contains tests from [CommonMark][] test suite to verify that
  * the parser is working correctly.
+ * 
+ * [CommonMark]: https://spec.commonmark.org/0.31.2/
  */
 import { test } from "lits-extras/lib/tester"
 import 'lits-extras/lib/test-runner'
