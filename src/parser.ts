@@ -203,7 +203,7 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
     let match = regexp.exec(state.input)
     if (match && match.groups && 
         (inline || match.index == state.nextIndex)) {
-        let parser = parsers.find((_, i) => match.groups![`g${i}`])
+        let parser = parsers.find((_, i) => match.groups![`g${i}`] != undefined)
         if (parser) {
             if (inline)
                 flushInline(state, match.index)
@@ -231,6 +231,7 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
 const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
 const emOrStrong = /(__?|\*\*?)/.source
 const indentedCode = / {4}| {0,3}\t/yu
+const nonBlank = /(?=.*\S)/yu
 /**
  * ## Inline Parsers
  *
@@ -264,16 +265,16 @@ const inlineParsers = [
         /**
          * ### Escapes
          *
-         * Handles Markdown escape sequences. A backslash before a special 
-         * character escapes it, rendering the character literally. If the 
-         * backslash is at the end of a line, it produces a `<br>` element 
+         * Handles Markdown escape sequences. A backslash before a punctuation 
+         * or symbol character escapes it, rendering the character literally. If 
+         * the backslash is at the end of a line, it produces a `<br>` element 
          * instead.
          */
         (state, match) => {
             let { esc } = match.groups!
             append(state, esc == "\n" ? elem('br') : text(esc))
         },
-        /\\(?<esc>.)/.source),
+        /\\(?<esc>[\p{P}\p{S}\n])/u.source),
     parser(
         /**
          * ### Code Spans
@@ -444,7 +445,17 @@ const blockParsers = [
             openBlock(state, elem('pre', code), false, true, code,
                 indentedCode)
         },
-        indentedCode.source)
+        indentedCode.source),
+    parser(
+        /**
+         * ### Paragraphs
+         * 
+         * A sequence of non-blank lines that cannot be interpreted as other 
+         * kinds of blocks forms a paragraph.
+         */
+        (state,) => 
+            openBlock(state, elem('p'), true, true, undefined, nonBlank),
+        nonBlank.source)
 ]
 /**
  * The combined regexp for all block parsers.
@@ -512,18 +523,23 @@ function closeDiscontinuedBlocks(state: ParserState) {
  * to the given DOM element.
  *
  * The implementation works as follows:
- * - Initializes the parser state with the input string and an empty block 
- *   stack.
- * - Opens a root block associated with the provided DOM element.
- * - Splits the input into lines and processes each line:
- *   - For each line, creates a temporary parser state for that line.
- *   - Closes any blocks that are no longer continued by the current line.
- *   - If the topmost block is not a leaf block, attempts to match block-level 
- *     elements using the registered block parsers.
- *   - If any unprocessed content remains, it is added to the current block's 
- *     lines.
- * - After all lines are processed, flushes and closes the topmost blocks, 
- *   ensuring that the resulting HTML structure is complete and well-formed.
+ * 
+ *  1.  Initializes the parser state with the input string and an empty block 
+ *      stack.
+ * 
+ *  2.  Opens a root block associated with the provided DOM element.
+ * 
+ *  3.  Splits the input into lines and processes each line:
+ * 
+ *      1.  For each line, creates a temporary parser state for that line.
+ *      2.  Closes any blocks that are no longer continued by the current line.
+ *      3.  If the topmost block is not a leaf block, attempts to match 
+ *          block-level elements using the registered block parsers.
+ *      4.  If any unprocessed content remains, it is added to the current 
+ *          block's lines.
+ * 
+ *  4.  After all lines are processed, flushes and closes all blocks, ensuring 
+ *      that the resulting HTML structure is complete.
  */
 export function markdownToHtml(input: string, doc: Element) {
     let state: ParserState = {
@@ -542,6 +558,5 @@ export function markdownToHtml(input: string, doc: Element) {
         if (st.nextIndex < line.length) 
             lastBlock(st).lines.push(line.substring(st.nextIndex))
     }
-    flushLastBlock(state)
-    closeLastBlock(state)
+    closeBlocksToIndex(state, 0)
 }

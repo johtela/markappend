@@ -56,16 +56,55 @@ function ws(value: string): string {
  * tabs, not expanded to spaces.)
  */
 mdTest("Example1: Tabs are treated as 4 spaces", 
-    "\tfoo\tbaz\t\tbim",
-    "<pre><code>foo\tbaz\t\tbim</code></pre>")
+"\tfoo\tbaz\t\tbim",
+"<pre><code>foo\tbaz\t\tbim</code></pre>")
     
 mdTest("Example2: Tabs are treated as 4 spaces", 
-    "  \tfoo\tbaz\t\tbim",
-    "<pre><code>foo\tbaz\t\tbim</code></pre>")
+"  \tfoo\tbaz\t\tbim",
+"<pre><code>foo\tbaz\t\tbim</code></pre>")
     
 mdTest("Example3: Tabs are treated as 4 spaces", 
-    "    a\ta\n    ὐ\ta",
-    "<pre><code>a\ta\nὐ\ta</code></pre>")
+"    a\ta\n    ὐ\ta",
+"<pre><code>a\ta\nὐ\ta</code></pre>")
+/**
+ * ## Backslash Escapes
+ * 
+ * Any ASCII punctuation character may be backslash-escaped.
+ */
+mdTest("Example 12: Any ASCII punctuation character may be backslash-escaped",
+"\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~",
+"<p>!\"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~</p>")
+/**
+ * Backslashes before other characters are treated as literal backslashes.
+ */
+mdTest(`Example 13: Backslashes before other characters are treated as literal
+backslashes`,
+"\\	\\A\\a\\ \\3\\φ\\«",
+"<p>\\	\\A\\a\\ \\3\\φ\\«</p>")
+/**
+ * Escaped characters are treated as regular characters and do not have their 
+ * usual Markdown meanings.
+ */
+mdTest(`Example 14: Escaped characters are treated as regular characters and
+do not have their usual Markdown meanings`,
+`\\*not emphasized*
+\\<br/> not a tag
+\\[not a link](/foo)
+\\\`not code\`
+1\\. not a list
+\\* not a list
+\\# not a heading
+\\[foo]: /url "not a reference"
+\\&ouml; not a character entity`,
+`<p>*not emphasized*
+&lt;br/&gt; not a tag
+[not a link](/foo)
+\`not code\`
+1. not a list
+* not a list
+# not a heading
+[foo]: /url "not a reference"
+&amp;ouml; not a character entity</p>`)
 /**
  * ## Results
  * 
