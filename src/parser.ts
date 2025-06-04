@@ -376,7 +376,9 @@ const inlineParsers = [
         /(?<html><(?<tag>[A-Za-z]\w*)([\s\n]+[A-Za-z]\w*\s*(=\s*".*")?)*[\s\n]*(>.*<\/\k<tag>[\s\n]*>|\/>))/.source)
 ]
 /**
- * Construct the combined regexp.
+ * We initialize the combined regexp when it is first used. Thus we can register 
+ * new inline parsers before calling the parser. After that the list of parsers
+ * is locked down.
  */
 let inlineRegexp: RegExp 
 function getInlineRegexp(): RegExp {
@@ -392,25 +394,51 @@ function inlines(state: ParserState) {
     flushInline(state)
 }
 /**
- * ## Blocks
+ * ## Block Parsers
  * 
- * 
+ * Block parsers are defined similarly to inline parsers, each with a regular 
+ * expression and a mtcher function. Block-level elements are parsed 
+ * line-by-line, as blocks have a nested, hierarchical structure. The combined 
+ * regular expression matches block prefixes that indicate different block 
+ * types.
  */
 const blockParsers = [
     parser(
+        /**
+         * ### Thematic Breaks
+         *
+         * Matches a horizontal rule (thematic break) as defined by CommonMark:
+         * a line containing at least three consecutive `*`, `-`, or `_` 
+         * characters, possibly separated by spaces or tabs, and nothing else.
+         * Produces an `<hr>` element.
+         */
         (state,) => append(state, elem('hr')),
-        / {0,3}(?<brkchar>[*\-_])(?:[ \t]*\k<brkchar>){2,}[ \t]*$/.source),
+        / {0,3}(?<brkchar>[*\-_])(?:\s*\k<brkchar>){2,}\s*$/.source),
     parser(
+        /**
+         * ### ATX Headers
+         *
+         * Matches ATX-style headers (lines starting with 1-6 `#` characters).
+         * The number of `#` characters determines the header level (`<h1>` to 
+         * `<h6>`). The header text is parsed for inline elements.
+         */
         (state, match) => {
             let { atxlevel, atxheader } = match.groups!
             let level = atxlevel.length
             openBlock(state, elem(<keyof HTMLElementTagNameMap>`h${level}`), 
-                true)
+            true)
             inlines(stateFrom(state, atxheader))
             closeLastBlock(state)
         },
-        / {0,3}(?<atxlevel>#{1,6})[ \t]+(?<atxheader>.+?)[ \t]*$/.source),
+        / {0,3}(?<atxlevel>#{1,6})\s+(?<atxheader>.+?)\s*$/.source),
     parser(
+        /**
+         * ### Indented Code Blocks
+         *
+         * Matches code blocks that are indented by at least 4 spaces or a tab.
+         * The content is collected as-is and rendered inside a `<pre><code>` 
+         * block.
+         */
         (state,) => {
             let code = elem('code')
             openBlock(state, elem('pre', code), false, true, code,
@@ -418,8 +446,20 @@ const blockParsers = [
         },
         indentedCode.source)
 ]
+/**
+ * The combined regexp for all block parsers.
+ */
 const blockRegexp = regexpFor(blockParsers)
-
+/**
+ * Flushes the lines collected in the last block of the parser state.
+ * 
+ * If the block contains any lines, they are joined into a single string.
+ * Depending on whether the block is marked as inline, the function either:
+ * - Processes the lines as inline content using the `inlines` function, or
+ * - Appends the lines as a text block using the `append` function.
+ * 
+ * After flushing, the block's `lines` array is cleared.
+ */
 function flushLastBlock(state: ParserState) {
     let block = lastBlock(state)
     if (block.lines.length > 0) {
@@ -431,14 +471,28 @@ function flushLastBlock(state: ParserState) {
         block.lines = []
     }
 }
-
+/**
+ * Closes and flushes all open blocks in the parser state upto the specified 
+ * index. This is used to unwind the block stack to a certain depth.
+ */
 function closeBlocksToIndex(state: ParserState, index: number) {
     while (state.blocks.length > index) {
         flushLastBlock(state)
         closeLastBlock(state)
     }
 }
-
+/**
+ * Iterates through the current parser state's block stack and closes any blocks
+ * that are no longer continued by the input at the current parsing position.
+ *
+ * For each block, if it has a continuation regular expression (`cont`), we
+ * attempt to match it against the input at the current position. If the match 
+ * fails or does not start at the current position, all blocks from the current 
+ * index onward are closed by calling `closeBlocksToIndex`.
+ *
+ * Updates the parser state's `nextIndex` to reflect the position after a 
+ * successful match.
+ */
 function closeDiscontinuedBlocks(state: ParserState) {
     for (let i = 0; i < state.blocks.length; ++i) {
         let block = state.blocks[i]
@@ -451,7 +505,26 @@ function closeDiscontinuedBlocks(state: ParserState) {
         }
     }
 }
-
+/**
+ * ## Main Parsing Function
+ * 
+ * `markdownToHtml` converts a Markdown string to HTML and appends the result 
+ * to the given DOM element.
+ *
+ * The implementation works as follows:
+ * - Initializes the parser state with the input string and an empty block 
+ *   stack.
+ * - Opens a root block associated with the provided DOM element.
+ * - Splits the input into lines and processes each line:
+ *   - For each line, creates a temporary parser state for that line.
+ *   - Closes any blocks that are no longer continued by the current line.
+ *   - If the topmost block is not a leaf block, attempts to match block-level 
+ *     elements using the registered block parsers.
+ *   - If any unprocessed content remains, it is added to the current block's 
+ *     lines.
+ * - After all lines are processed, flushes and closes the topmost blocks, 
+ *   ensuring that the resulting HTML structure is complete and well-formed.
+ */
 export function markdownToHtml(input: string, doc: Element) {
     let state: ParserState = {
         input,
