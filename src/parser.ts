@@ -172,17 +172,23 @@ function append(state: ParserState, ...nodes: Node[]) {
     lastBlock(state).parent.append(...nodes)
 }
 /**
- * ## Constructing Parsers
- * 
- * This function combines the regular expressions from a list of parsers into a 
- * single "sticky" RegExp. Each parser's pattern is wrapped in a named capturing 
- * group (`g0`, `g1`, ...), allowing us to identify which parser matched. The 
- * resulting RegExp is used to efficiently dispatch to the correct matcher 
- * during parsing.
+ * Append verbatitm HTML to the parent of the current block.
  */
-function regexpFor(parsers: Parser[]): RegExp {
+function appendHtml(state: ParserState, html: string) {
+    lastBlock(state).parent.insertAdjacentHTML('beforeend', html)
+}
+/**
+ * ## Constructing Combined Regular Expressions
+ * 
+ * This function takes a list of parsers and combines their regular expressions
+ * into a single RegExp. Each parser's pattern is wrapped in a named capturing
+ * group (`g0`, `g1`, ...), so we can later determine which parser matched.
+ * The `sticky` parameter controls whether the resulting RegExp uses the "y"
+ * (sticky) flag, which is needed for block parsing.
+ */
+function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
     let re = parsers.map((p, i) => `(?<g${i}>${p.regexp})`).join("|")
-    return new RegExp(re, "yu")
+    return new RegExp(re, sticky ? "yu" : "gu")
 }
 /**
  * The `parseNext` function attempts to match the next token in the input using 
@@ -199,10 +205,11 @@ function regexpFor(parsers: Parser[]): RegExp {
  */
 function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState, 
     inline: boolean): boolean {
+    if (state.nextIndex >= state.input.length)
+        return false
     regexp.lastIndex = state.nextIndex
     let match = regexp.exec(state.input)
-    if (match && match.groups && 
-        (inline || match.index == state.nextIndex)) {
+    if (match && match.groups) {
         let parser = parsers.find((_, i) => match.groups![`g${i}`] != undefined)
         if (parser) {
             if (inline)
@@ -219,16 +226,18 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
 /**
  * ## Reusable Regular Expressions
  *
- * Define recurring RegExp snippets used in parsers.
+ * Common RegExp fragments used throughout the parser:
  *
- * - `wsOrPunct`: Matches whitespace or any Unicode punctuation or symbol 
+ * - `wsOrPunct`: Matches whitespace, punctuation, or symbol characters 
+ *   (Unicode-aware).
+ * - `emOrStrong`: Matches one or two consecutive `_` or `*` characters, for 
+ *   emphasis and strong emphasis.
+ * - `indentedCode`: Matches lines that begin with at least four spaces and/or
+ *   a tab, used for indented code blocks.
+ * - `nonBlank`: Matches any line containing at least one non-whitespace 
  *   character.
- * - `emOrStrong`: Matches one or two consecutive `_` or `*` characters (for 
- *   emphasis and strong).
- * - `indentedCode`: Matches lines starting with at least 4 spaces or a tab 
- *   (for indented code blocks).
  */
-const wsOrPunct = (/[\s\p{P}\p{S}]/u).source
+const wsOrPunct = /[\s\p{P}\p{S}]/u.source
 const emOrStrong = /(__?|\*\*?)/.source
 const indentedCode = / {4}| {0,3}\t/yu
 const nonBlank = /(?=.*\S)/yu
@@ -242,7 +251,7 @@ const nonBlank = /(?=.*\S)/yu
  * the end of input if no position is given).
  */
 function flushInline(state: ParserState, index?: number) {
-    if (!index || index > state.nextIndex)
+    if (index == undefined || index > state.nextIndex)
         append(state, text(state.input.substring(state.nextIndex, index)))
 }
 /**
@@ -272,9 +281,24 @@ const inlineParsers = [
          */
         (state, match) => {
             let { esc } = match.groups!
-            append(state, esc == "\n" ? elem('br') : text(esc))
+            if (esc == "\n")
+                append(state, elem('br'))
+            append(state, text(esc))
         },
         /\\(?<esc>[\p{P}\p{S}\n])/u.source),
+    parser(
+        /**
+         * ### Entity and Numeric Character References
+         *
+         * Handles HTML entities and numeric character references such as
+         * `&amp;`, `&#123;`, and `&#x1F600;`. These are inserted as text nodes
+         * so that the browser will decode them when rendering.
+         */
+        (state, match) => {
+            let { entity } = match.groups!
+            appendHtml(state, entity)
+        },
+        /(?<entity>&(?:[A-Za-z]\w*|#\d{1,7}|#[Xx][\dA-Fa-f]{1,6});)/.source),
     parser(
         /**
          * ### Code Spans
@@ -358,7 +382,7 @@ const inlineParsers = [
             closeLastBlock(state)
         },
         `(?<emdelim>${emOrStrong}(?!${wsOrPunct})|(?<=${wsOrPunct}|^)${
-        emOrStrong})(?<em>.*)((?<!${wsOrPunct})\k<emdelim>|\k<emdelim>(?=${
+        emOrStrong})(?<em>.*)((?<!${wsOrPunct})\\k<emdelim>|\\k<emdelim>(?=${
         wsOrPunct}|$))`),
     parser(
         /**
@@ -372,7 +396,7 @@ const inlineParsers = [
          */
         (state, match) => {
             let { html } = match.groups!
-            lastBlock(state).parent.insertAdjacentHTML('beforeend', html)
+            appendHtml(state, html)
         },
         /(?<html><(?<tag>[A-Za-z]\w*)([\s\n]+[A-Za-z]\w*\s*(=\s*".*")?)*[\s\n]*(>.*<\/\k<tag>[\s\n]*>|\/>))/.source)
 ]
@@ -382,16 +406,14 @@ const inlineParsers = [
  * is locked down.
  */
 let inlineRegexp: RegExp 
-function getInlineRegexp(): RegExp {
-    return inlineRegexp || (inlineRegexp = regexpFor(inlineParsers))
-}
 /**
  * This function repeatedly applies inline parsers using a regular expression
  * matcher until no more matches are found. After all inline elements have been
  * parsed, it flushes any remaining inline content in the parser state.
  */
 function inlines(state: ParserState) {
-    while (parseNext(getInlineRegexp(), inlineParsers, state, true));
+    inlineRegexp = inlineRegexp || regexpFor(inlineParsers, false)
+    while (parseNext(inlineRegexp, inlineParsers, state, true));
     flushInline(state)
 }
 /**
@@ -460,7 +482,7 @@ const blockParsers = [
 /**
  * The combined regexp for all block parsers.
  */
-const blockRegexp = regexpFor(blockParsers)
+const blockRegexp = regexpFor(blockParsers, true)
 /**
  * Flushes the lines collected in the last block of the parser state.
  * 
@@ -556,7 +578,7 @@ export function markdownToHtml(input: string, doc: Element) {
         while (!lastBlock(st).leaf && 
             parseNext(blockRegexp, blockParsers, st, false));
         if (st.nextIndex < line.length) 
-            lastBlock(st).lines.push(line.substring(st.nextIndex))
+            lastBlock(st).lines.push(line.slice(st.nextIndex))
     }
     closeBlocksToIndex(state, 0)
 }

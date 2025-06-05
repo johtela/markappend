@@ -17,10 +17,10 @@ import 'lits-extras/lib/test-runner'
 import * as sd from './parser'
 /**
  * ## Testing Helper
- * 
- * The only function we need for the tests is below. It takes a description of
- * the test casse, an input markdown string, and the expected HTML output as
- * arguments and verifies that the input converts to correct output.
+ *
+ * We need a helper function for running markdown-to-HTML conversion tests.
+ * It takes a test description, input markdown, and expected HTML output,
+ * then asserts that the conversion result matches the expectation.
  */
 function mdTest(description: string, input: string, 
     output: string) {
@@ -32,7 +32,14 @@ function mdTest(description: string, input: string,
             ws(html)}"`))
 }
 /**
- * Convert whitespace to visible characters.
+ * This function replaces all whitespace characters in the given string
+ * with visible Unicode symbols for easier debugging of test output.
+ * 
+ * - Tabs ("\t") are replaced with "⇥"
+ * - Newlines ("\n") are replaced with "↩"
+ * - Spaces (" ") are replaced with "␣"
+ * 
+ * Other whitespace characters are left unchanged.
  */
 function ws(value: string): string {
     return value.replaceAll(/\s/g, ch => {
@@ -55,23 +62,23 @@ function ws(value: string): string {
  * code block. (Note, however, that internal tabs are passed through as literal 
  * tabs, not expanded to spaces.)
  */
-mdTest("Example1: Tabs are treated as 4 spaces", 
-"\tfoo\tbaz\t\tbim",
-"<pre><code>foo\tbaz\t\tbim</code></pre>")
+mdTest(`Example1: Tabs are treated as 4 spaces`, 
+`\tfoo\tbaz\t\tbim`,
+`<pre><code>foo\tbaz\t\tbim</code></pre>`)
     
-mdTest("Example2: Tabs are treated as 4 spaces", 
-"  \tfoo\tbaz\t\tbim",
-"<pre><code>foo\tbaz\t\tbim</code></pre>")
+mdTest(`Example2`, 
+`  \tfoo\tbaz\t\tbim`,
+`<pre><code>foo\tbaz\t\tbim</code></pre>`)
     
-mdTest("Example3: Tabs are treated as 4 spaces", 
-"    a\ta\n    ὐ\ta",
-"<pre><code>a\ta\nὐ\ta</code></pre>")
+mdTest(`Example3`, 
+`    a\ta\n    ὐ\ta`,
+`<pre><code>a\ta\nὐ\ta</code></pre>`)
 /**
  * ## Backslash Escapes
  * 
  * Any ASCII punctuation character may be backslash-escaped.
  */
-mdTest("Example 12: Any ASCII punctuation character may be backslash-escaped",
+mdTest(`Example 12: Any ASCII punctuation character may be backslash-escaped`,
 "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~",
 "<p>!\"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~</p>")
 /**
@@ -79,14 +86,15 @@ mdTest("Example 12: Any ASCII punctuation character may be backslash-escaped",
  */
 mdTest(`Example 13: Backslashes before other characters are treated as literal
 backslashes`,
-"\\	\\A\\a\\ \\3\\φ\\«",
-"<p>\\	\\A\\a\\ \\3\\φ\\«</p>")
+`\\\t\\A\\a\\ \\3\\φ`,
+`<p>\\\t\\A\\a\\ \\3\\φ</p>`)
 /**
  * Escaped characters are treated as regular characters and do not have their 
  * usual Markdown meanings.
  */
 mdTest(`Example 14: Escaped characters are treated as regular characters and
 do not have their usual Markdown meanings`,
+
 `\\*not emphasized*
 \\<br/> not a tag
 \\[not a link](/foo)
@@ -96,6 +104,7 @@ do not have their usual Markdown meanings`,
 \\# not a heading
 \\[foo]: /url "not a reference"
 \\&ouml; not a character entity`,
+
 `<p>*not emphasized*
 &lt;br/&gt; not a tag
 [not a link](/foo)
@@ -105,6 +114,88 @@ do not have their usual Markdown meanings`,
 # not a heading
 [foo]: /url "not a reference"
 &amp;ouml; not a character entity</p>`)
+/**
+ * If a backslash is itself escaped, the following character is not.
+ */
+mdTest(`Example 15: If a backslash is itself escaped, the following character 
+is not`,
+`\\\\*emphasis*`,
+`<p>\\<em>emphasis</em></p>`)
+/**
+ * A backslash at the end of the line is a hard line break.
+ */
+mdTest(`Example 16: A backslash at the end of the line is a hard line break`,
+`foo\\
+bar`,
+`<p>foo<br>
+bar</p>`)
+/**
+ * Backslash escapes do not work in code blocks, code spans, autolinks, or 
+ * raw HTML.
+ */
+mdTest(`Example 17: Backslash escapes do not work in code blocks, code spans, 
+autolinks, or raw HTML`,
+"`` \\[\\` ``",
+"<p><code>\\[\\`</code></p>")
+
+mdTest("Example 18",
+"    \\[\\]",
+"<pre><code>\\[\\]</code></pre>")
+/**
+ * ## Entity and Numeric Character References
+ * 
+ * Valid HTML entity references and numeric character references can be used 
+ * in place of the corresponding Unicode character, with the following 
+ * exceptions:
+ * 
+ *  -   Entity and character references are not recognized in code blocks and 
+ *      code spans.
+ * 
+ *  -   Entity and character references cannot stand in place of special 
+ *      characters that define structural elements in CommonMark. For example, 
+ *      although `&#42`; can be used in place of a literal * character, `&#42;`
+ *      cannot replace * in emphasis delimiters, bullet list markers, or 
+ *      thematic breaks.
+ */
+mdTest(`Example 25: HTML entities`,
+`&nbsp; &amp; &copy; &AElig; &Dcaron;
+&frac34; &HilbertSpace; &DifferentialD;
+&ClockwiseContourIntegral; &ngE;`,
+`<p>&nbsp; &amp; © Æ Ď
+¾ ℋ ⅆ
+∲ ≧̸</p>`)
+
+mdTest(`Example 26: Decimal numeric character references`,
+`&#35; &#1234; &#992; &#0;`,
+`<p># Ӓ Ϡ �</p>`)
+
+mdTest(`Example 27: Hexadecimal numeric character references`,
+`&#X22; &#XD06; &#xcab;`,
+`<p>" ആ ಫ</p>`)
+
+mdTest(`Example 28: Nonentities`,
+`&nbsp &x; &#; &#x;
+&#87654321;
+&#abcdef0;
+&ThisIsNotDefined; &hi?;`,
+`<p>&amp;nbsp &amp;x; &amp;#; &amp;#x;
+&amp;#87654321;
+&amp;#abcdef0;
+&amp;ThisIsNotDefined; &amp;hi?;</p>`)
+
+mdTest(`Example 29: Trailing semicolon missing`,
+`&copy`,
+`<p>&amp;copy</p>`)
+
+mdTest(`Example 30: Made up entity`,
+`&MadeUpEntity;`,
+`<p>&amp;MadeUpEntity;</p>`)
+
+mdTest(`Example 31: Entity and numeric character references are recognized in 
+any context`,
+`<a href="&ouml;&ouml;.html">`,
+`<a href="&ouml;&ouml;.html">`)
+
 /**
  * ## Results
  * 
