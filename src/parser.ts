@@ -37,6 +37,8 @@ export interface Parser {
  * text, or code spans. Information about open blocks is stored in the 
  * `DocumentBlock` interface.
  */
+enum BlockType { Text, Inline, Html }
+
 export interface DocumentBlock {
     /**
      * The element that corresponds to the block.
@@ -54,7 +56,7 @@ export interface DocumentBlock {
      * block's content should be processed and rendered when the block is 
      * flushed.
      */
-    inline: boolean
+    type: BlockType
     /**
      * Indicates whether this block is a leaf block (cannot contain child 
      * blocks) or a container block (can contain child blocks). Leaf blocks 
@@ -75,6 +77,10 @@ export interface DocumentBlock {
      * match will cause the block to be closed.
      */
     cont?: RegExp
+    /**
+     * If set, the line that terminates the block will be included in it.
+     */
+    includeTerm: boolean
 }
 /**
  * ## Parser State
@@ -145,9 +151,10 @@ export function text(data: string): Text {
  * - `closeLastBlock` pops the most recently opened block from the stack and 
  *   appends its element to its parent element in the previous block.
  */
-function openBlock(state: ParserState, element: Element, inline: boolean, 
-    leaf = true, parent = element, cont?: RegExp) {
-    state.blocks.push({ element, parent, inline, leaf, lines: [], cont })
+function openBlock(state: ParserState, element: Element, type: BlockType, 
+    leaf = true, parent = element, cont?: RegExp, includeTerm = false) {
+    state.blocks.push(
+        { element, parent, type, leaf, lines: [], cont, includeTerm })
 }
 /**
  * Pops the last block from the stack and appends its element to the parent
@@ -155,7 +162,10 @@ function openBlock(state: ParserState, element: Element, inline: boolean,
  */
 function closeLastBlock(state: ParserState) {
     let block = state.blocks.pop()
-    lastBlock(state)?.parent!.append(block!.element)
+    let element = block!.element
+    let parent = lastBlock(state)?.parent
+    if (parent && parent != element)
+        parent.append(element)
 }
 /**
  * Returns the topmost (most recently opened) block from the parser state's 
@@ -188,7 +198,7 @@ function appendHtml(state: ParserState, html: string) {
  */
 function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
     let re = parsers.map((p, i) => `(?<g${i}>${p.regexp})`).join("|")
-    return new RegExp(re, sticky ? "yu" : "gu")
+    return new RegExp(re, sticky ? "yui" : "gui")
 }
 /**
  * The `parseNext` function attempts to match the next token in the input using 
@@ -298,7 +308,7 @@ const inlineParsers = [
             let { entity } = match.groups!
             appendHtml(state, entity)
         },
-        /(?<entity>&(?:[A-Za-z]\w*|#\d{1,7}|#[Xx][\dA-Fa-f]{1,6});)/.source),
+        /(?<entity>&(?:[a-z]\w*|#\d{1,7}|#[Xx][\da-f]{1,6});)/.source),
     parser(
         /**
          * ### Code Spans
@@ -337,7 +347,7 @@ const inlineParsers = [
             linkdest = linkdest.replaceAll(/\\\(|\\\)/, str => str[1])
             let aelem = elem('a')
             aelem.href = linkdest
-            openBlock(state, aelem, true)
+            openBlock(state, aelem, BlockType.Inline)
             inlines(stateFrom(state, link))
             closeLastBlock(state)
         },
@@ -377,7 +387,8 @@ const inlineParsers = [
          */
         (state, match) => {
             let { emdelim, em } = match.groups!
-            openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'), true)
+            openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'), 
+                BlockType.Inline)
             inlines(stateFrom(state, em))
             closeLastBlock(state)
         },
@@ -398,7 +409,7 @@ const inlineParsers = [
             let { html } = match.groups!
             appendHtml(state, html)
         },
-        /(?<html><(?<tag>[A-Za-z]\w*)([\s\n]+[A-Za-z]\w*\s*(=\s*".*")?)*[\s\n]*(>.*<\/\k<tag>[\s\n]*>|\/>))/.source)
+        /(?<html><(?<tag>[a-z]\w*)([\s\n]+[a-z]\w*\s*(=\s*".*")?)*[\s\n]*(>.*<\/\k<tag>[\s\n]*>|\/>))/.source)
 ]
 /**
  * We initialize the combined regexp when it is first used. Thus we can register 
@@ -449,7 +460,7 @@ const blockParsers = [
             let { atxlevel, atxheader } = match.groups!
             let level = atxlevel.length
             openBlock(state, elem(<keyof HTMLElementTagNameMap>`h${level}`), 
-            true)
+                BlockType.Inline)
             inlines(stateFrom(state, atxheader))
             closeLastBlock(state)
         },
@@ -464,10 +475,20 @@ const blockParsers = [
          */
         (state,) => {
             let code = elem('code')
-            openBlock(state, elem('pre', code), false, true, code,
+            openBlock(state, elem('pre', code), BlockType.Text, true, code,
                 indentedCode)
         },
         indentedCode.source),
+    parser(
+        /**
+         * ### HTML Blocks
+         * 
+         */
+        (state,) => {
+            openBlock(state, lastBlock(state).parent, BlockType.Html, true,
+                undefined, /(?!.*<\/(?:pre|script|style|textarea)>)/yui, true)
+        },
+        /(?=<(?:pre|script|style|textarea))/.source),
     parser(
         /**
          * ### Paragraphs
@@ -476,7 +497,8 @@ const blockParsers = [
          * kinds of blocks forms a paragraph.
          */
         (state,) => 
-            openBlock(state, elem('p'), true, true, undefined, nonBlank),
+            openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
+                nonBlank),  
         nonBlank.source)
 ]
 /**
@@ -497,10 +519,17 @@ function flushLastBlock(state: ParserState) {
     let block = lastBlock(state)
     if (block.lines.length > 0) {
         let lines = block.lines.join("\n")
-        if (block.inline)
-            inlines(stateFrom(state, lines))
-        else
-            append(state, text(lines))
+        switch (block.type) {
+            case BlockType.Inline:
+                inlines(stateFrom(state, lines))
+                break
+            case BlockType.Text:
+                append(state, text(lines))
+                break
+            case BlockType.Html:
+                appendHtml(state, lines + "\n")
+                break
+        }
         block.lines = []
     }
 }
@@ -532,8 +561,13 @@ function closeDiscontinuedBlocks(state: ParserState) {
         if (block.cont) {
             block.cont.lastIndex = state.nextIndex
             let match = block.cont.exec(state.input)
-            if (!match || match.index != 0)
+            if (!match || match.index != 0) {
+                if (block.includeTerm) {
+                    block.lines.push(state.input.slice(state.nextIndex))
+                    state.nextIndex = state.input.length
+                }
                 return closeBlocksToIndex(state, i)
+            }
             state.nextIndex = block.cont.lastIndex
         }
     }
@@ -569,7 +603,7 @@ export function markdownToHtml(input: string, doc: Element) {
         nextIndex: 0,
         blocks: []
     }
-    openBlock(state, doc, true, false)
+    openBlock(state, doc, BlockType.Inline, false)
     let lines = input.split("\n")
     for (let i = 0; i < lines.length; ++i) {
         let line = lines[i]
@@ -577,8 +611,7 @@ export function markdownToHtml(input: string, doc: Element) {
         closeDiscontinuedBlocks(st)
         while (!lastBlock(st).leaf && 
             parseNext(blockRegexp, blockParsers, st, false));
-        if (st.nextIndex < line.length) 
-            lastBlock(st).lines.push(line.slice(st.nextIndex))
+        lastBlock(st).lines.push(line.slice(st.nextIndex))
     }
     closeBlocksToIndex(state, 0)
 }

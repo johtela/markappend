@@ -195,7 +195,30 @@ mdTest(`Example 31: Entity and numeric character references are recognized in
 any context`,
 `<a href="&ouml;&ouml;.html">`,
 `<a href="&ouml;&ouml;.html">`)
+/**
+ * ## HTML Blocks
+ * 
+ * HTML tags designed to contain literal content (pre, script, style, textarea), 
+ * comments, processing instructions, and declarations are treated somewhat 
+ * differently. Instead of ending at the first blank line, these blocks end at 
+ * the first line containing a corresponding end tag. As a result, these blocks 
+ * can contain blank lines.
+ */
+mdTest(`Example 169: A pre tag (type 1)`,
+`<pre language="haskell"><code>
+import Text.HTML.TagSoup
 
+main :: IO ()
+main = print $ parseTags tags
+</code></pre>
+okay`,
+`<pre language="haskell"><code>
+import Text.HTML.TagSoup
+
+main :: IO ()
+main = print $ parseTags tags
+</code></pre>
+<p>okay</p>`)
 /**
  * ## Results
  * 
