@@ -435,7 +435,38 @@ function inlines(state: ParserState) {
  * line-by-line, as blocks have a nested, hierarchical structure. The combined 
  * regular expression matches block prefixes that indicate different block 
  * types.
+ * 
+ * ### HTML Blocks
+ *
+ * This parser specifically matches HTML blocks starting with specified pattern, 
+ * which can contain blank lines and are terminated only by their corresponding 
+ * end pattern. The parser continues the block until the closing tag is found, 
+ * including all lines in between as raw HTML.
+ * 
+ * Normally the parser opens a block to collect the lines in an HTML block. But 
+ * if the end tag is at the same line, we just append the line as HTML into the 
+ * parent block.
+ * 
+ * Also the last line, which doesn't match the continuation regexp, is included 
+ * in the block. We use positive an negative lookahead in the regexps to keep 
+ * the match position at the beginning of the line.
  */
+function htmlBlock(start: string, end: string): Parser {
+    return parser(
+        (state,) => {
+            let cont = new RegExp(`(?!.*(?:${end}))`, "yui")
+            let line = state.input
+            cont.lastIndex = state.nextIndex
+             if (cont.test(line))
+                openBlock(state, lastBlock(state).parent, BlockType.Html, 
+                    true, undefined, cont, true)
+            else {
+                appendHtml(state, line.slice(state.nextIndex) + "\n")
+                state.nextIndex = line.length
+            }
+       }, `(?=${start})`)
+}
+
 const blockParsers = [
     parser(
         /**
@@ -479,24 +510,19 @@ const blockParsers = [
                 indentedCode)
         },
         indentedCode.source),
-    parser(
+    htmlBlock("<pre|<script|<style|<textarea",
+        "<\\/pre>|<\\/script>|<\\/style>|<\\/textarea>"),
+    htmlBlock("<!--", "-->"),
+    htmlBlock("<\\?", "\\?>"),
+    htmlBlock("<![a-z]", ">"),
+    htmlBlock("<!\\[CDATA\\[", "\\]\\]>"),
+    // parser(
         /**
-         * ### HTML Blocks
          * 
          */
-        (state,) => {
-            let cont = /(?!.*<\/(?:pre|script|style|textarea)>)/yui
-            let line = state.input
-            cont.lastIndex = state.nextIndex
-             if (cont.test(line))
-                openBlock(state, lastBlock(state).parent, BlockType.Html, 
-                    true, undefined, cont, true)
-            else {
-                appendHtml(state, line.slice(state.nextIndex) + "\n")
-                state.nextIndex = line.length
-            }
-       },
-        /(?=<(?:pre|script|style|textarea))/.source),
+        // (state,) => {
+        // },
+        // /a/.source),
     parser(
         /**
          * ### Paragraphs
