@@ -226,8 +226,8 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
                 flushInline(state, match.index)
             else
                 flushLastBlock(state)
-            parser.matched(state, match)
             state.nextIndex = match.index + match[0].length
+            parser.matched(state, match)
             return true
         }
     }
@@ -485,9 +485,17 @@ const blockParsers = [
          * 
          */
         (state,) => {
-            openBlock(state, lastBlock(state).parent, BlockType.Html, true,
-                undefined, /(?!.*<\/(?:pre|script|style|textarea)>)/yui, true)
-        },
+            let cont = /(?!.*<\/(?:pre|script|style|textarea)>)/yui
+            let line = state.input
+            cont.lastIndex = state.nextIndex
+             if (cont.test(line))
+                openBlock(state, lastBlock(state).parent, BlockType.Html, 
+                    true, undefined, cont, true)
+            else {
+                appendHtml(state, line.slice(state.nextIndex) + "\n")
+                state.nextIndex = line.length
+            }
+       },
         /(?=<(?:pre|script|style|textarea))/.source),
     parser(
         /**

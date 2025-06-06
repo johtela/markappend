@@ -22,14 +22,15 @@ import * as sd from './parser'
  * It takes a test description, input markdown, and expected HTML output,
  * then asserts that the conversion result matches the expectation.
  */
-function mdTest(description: string, input: string, 
-    output: string) {
-    let doc = document.createElement('div')
-    sd.markdownToHtml(input, doc)
-    let html = doc.innerHTML
-    test(description, t => t.equals(html, output, 
-        `Convert: "${ws(input)}"\nExpected: "${ws(output)}"\nActual: "${
-            ws(html)}"`))
+function mdTest(description: string, input: string, output: string) {
+    test(description, t => {
+        let doc = document.createElement('div')
+        sd.markdownToHtml(input, doc)
+        let html = doc.innerHTML
+            t.equals(html, output, 
+            `Convert: "${ws(input)}"\nExpected: "${ws(output)}"\nActual: "${
+                ws(html)}"`)
+    })
 }
 /**
  * This function replaces all whitespace characters in the given string
@@ -203,6 +204,12 @@ any context`,
  * differently. Instead of ending at the first blank line, these blocks end at 
  * the first line containing a corresponding end tag. As a result, these blocks 
  * can contain blank lines.
+ * 
+ * HTML tags designed to contain literal content (pre, script, style, textarea), 
+ * comments, processing instructions, and declarations are treated somewhat 
+ * differently. Instead of ending at the first blank line, these blocks end at 
+ * the first line containing a corresponding end tag. As a result, these blocks 
+ * can contain blank lines:
  */
 mdTest(`Example 169: A pre tag (type 1)`,
 `<pre language="haskell"><code>
@@ -219,6 +226,81 @@ main :: IO ()
 main = print $ parseTags tags
 </code></pre>
 <p>okay</p>`)
+
+mdTest(`Example 170: A script tag (type 1)`,
+`<script type="text/javascript">
+// JavaScript example
+
+document.getElementById("demo").innerHTML = "Hello JavaScript!";
+</script>
+okay`,
+`<script type="text/javascript">
+// JavaScript example
+
+document.getElementById("demo").innerHTML = "Hello JavaScript!";
+</script>
+<p>okay</p>`)
+
+mdTest(`Example 171: A textarea tag (type 1)`,
+`<textarea>
+
+*foo*
+
+_bar_
+
+</textarea>`,
+`<textarea>
+*foo*
+
+_bar_
+
+</textarea>
+`)
+
+mdTest(`Example 172: A style tag (type 1)`,
+`<style
+  type="text/css">
+h1 {color:red;}
+
+p {color:blue;}
+</style>
+okay`,
+`<style type="text/css">
+h1 {color:red;}
+
+p {color:blue;}
+</style>
+<p>okay</p>`)
+/**
+ * If there is no matching end tag, the block will end at the end of the 
+ * document (or the enclosing block quote or list item).
+ */
+mdTest(`Example 173: No matching end tag`,
+`<style
+  type="text/css">
+
+foo`,
+`<style type="text/css">
+
+foo
+</style>`)
+
+mdTest(`Example 176: the end tag can occur on the same line as the start tag`,
+`<style>p{color:red;}</style>
+*foo*`,
+`<style>p{color:red;}</style>
+<p><em>foo</em></p>`)
+
+mdTest(`Example 178: Anything on the last line after the end tag will be 
+included`,
+`<script>
+foo
+</script>1. *bar*`,
+`<script>
+foo
+</script>1. *bar*
+`)
+
 /**
  * ## Results
  * 
