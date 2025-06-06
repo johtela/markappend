@@ -609,7 +609,7 @@ function closeDiscontinuedBlocks(state: ParserState) {
 /**
  * ## Main Parsing Function
  * 
- * `markdownToHtml` converts a Markdown string to HTML and appends the result 
+ * `appendMarkdown` converts a Markdown string to HTML and appends the result 
  * to the given DOM element.
  *
  * The implementation works as follows:
@@ -631,7 +631,7 @@ function closeDiscontinuedBlocks(state: ParserState) {
  *  4.  After all lines are processed, flushes and closes all blocks, ensuring 
  *      that the resulting HTML structure is complete.
  */
-export function markdownToHtml(input: string, doc: Element) {
+export function appendMarkdown(input: string, doc: Element) {
     let state: ParserState = {
         input,
         nextIndex: 0,

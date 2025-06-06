@@ -25,7 +25,7 @@ import * as sd from './parser'
 function mdTest(description: string, input: string, output: string) {
     test(description, t => {
         let doc = document.createElement('div')
-        sd.markdownToHtml(input, doc)
+        sd.appendMarkdown(input, doc)
         let html = doc.innerHTML
             t.equals(html, output, 
             `Convert: "${ws(input)}"\nExpected: "${ws(output)}"\nActual: "${
