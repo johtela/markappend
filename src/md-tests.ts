@@ -197,6 +197,96 @@ any context`,
 `<a href="&ouml;&ouml;.html">`,
 `<a href="öö.html">
 </a>`)
+
+mdTest(`Example 35: Entity and numeric character references are treated as 
+ literal text in code spans and code blocks`,
+"`f&ouml;&ouml;`",
+`<p><code>f&amp;ouml;&amp;ouml;</code></p>`)
+
+mdTest(`Example 36`,
+`    f&ouml;f&ouml;`,
+`<pre><code>f&amp;ouml;f&amp;ouml;</code></pre>`)
+/**
+ * Entity and numeric character references cannot be used in place of symbols 
+ * indicating structure in CommonMark documents.
+ */
+mdTest(`Example 37: Entity and numeric character references cannot be used in 
+place of symbols indicating structure in CommonMark documents.`,
+`&#42;foo&#42;
+*foo*`,
+`<p>*foo*
+<em>foo</em></p>`)
+
+mdTest(`Example 38`,
+`&#42; foo
+
+* foo`,
+`<p>* foo</p>
+<ul>
+<li>foo</li>
+</ul>`)
+
+mdTest(`Example 39`,
+`foo&#10;&#10;bar`,
+`<p>foo
+
+bar</p>`)
+
+mdTest(`Example 40`,
+`&#9;foo`,
+`<p>	foo</p>`)
+
+mdTest(`Example 41`,
+`[a](url &quot;tit&quot;)`,
+`<p>[a](url "tit")</p>`)
+/**
+ * ## Thematic Breaks
+ * 
+ * A line consisting of optionally up to three spaces of indentation, followed 
+ * by a sequence of three or more matching -, _, or * characters, each followed 
+ * optionally by any number of spaces or tabs, forms a thematic break.
+ */
+mdTest(`Example 43: Basic thematic breaks`,
+`***
+---
+___`,
+`<hr><hr><hr>`)
+
+mdTest(`Example 44: Wrong characters`,
+`+++`,
+`<p>+++</p>`)
+
+mdTest(`Example 45`,
+`===`,
+`<p>===</p>`)
+
+mdTest(`Example 46: Not enough characters`,
+`--
+**
+__`,
+`<p>--
+**
+__</p>`)
+
+mdTest(`Example 47: Up to three spaces of indentation are allowed`,
+` ***
+  ***
+   ***`,
+`<hr><hr><hr>`)
+
+mdTest(`Example 48: Four spaces of indentation is too many`,
+`Foo
+    ***`,
+`<p>Foo
+***</p>`)
+
+mdTest(`Example `,
+``,
+``)
+
+mdTest(`Example `,
+``,
+``)
 /**
  * ## HTML Blocks
  * 
@@ -253,19 +343,16 @@ mdTest(`Example 151`,
 </div>`)
 
 mdTest(`Example 153: Partial first line`,
-`<div id="foo"
-  class="bar">
+`<div id="foo" class="bar">
 </div>`,
 `<div id="foo" class="bar">
 </div>
 `)
 
 mdTest(`Example 154`,
-`<div id="foo" class="bar
-  baz">
+`<div id="foo" class="bar baz">
 </div>`,
-`<div id="foo" class="bar
-  baz">
+`<div id="foo" class="bar baz">
 </div>
 `)
 
@@ -278,35 +365,6 @@ mdTest(`Example 155: An open tag need not be closed`,
 *foo*
 </div><p><em>bar</em></p>`)
 
-mdTest(`Example 159: In type 6 blocks, the initial tag need not be on a line by itself`,
-`<div><a href="bar">*foo*</a></div>`,
-`<div><a href="bar">*foo*</a></div>
-`)
-
-mdTest(`Example 160`,
-`<table><tr><td>
-foo
-</td></tr></table>`,
-`<table><tbody><tr><td>
-foo
-</td></tr></tbody></table>
-`)
-/**
- * Everything until the next blank line or end of document gets included in the 
- * HTML block. So, in the following example, what looks like a Markdown code 
- * block is actually part of the HTML block, which continues until a blank line 
- * or the end of the document is reached.
- */
-mdTest(`Example 161: Block continues after end tag`,
-`<div></div>
-\`\`\` c
-int x = 33;
-\`\`\``,
-`<div></div>
-\`\`\` c
-int x = 33;
-\`\`\`
-`)
 /**
  * To start an HTML block with a tag that is not in the list of block-level 
  * tags in (6), you must put the tag by itself on the first line (and it must 
@@ -353,10 +411,6 @@ mdTest(`Example 166`,
 mdTest(`Example 168`,
 `<del>*foo*</del>`,
 `<p><del><em>foo</em></del></p>`)
-
-mdTest(`Example `,
-``,
-``)
 
 mdTest(`Example 169: A pre tag (type 1)`,
 `<pre language="haskell"><code>
@@ -438,12 +492,6 @@ mdTest(`Example 176: the end tag can occur on the same line as the start tag`,
 `<style>p{color:red;}</style>
 <p><em>foo</em></p>`)
 
-mdTest(`Examplel 177`,
-`<!-- foo -->*bar*
-*baz*`,
-`<!-- foo -->*bar*
-<p><em>baz</em></p>`)
-
 mdTest(`Example 178: Anything on the last line after the end tag will be 
 included`,
 `<script>
@@ -454,17 +502,32 @@ foo
 </script>1. *bar*
 `)
 
-mdTest(`Example 179: A comment (type 2)`,
-`<!-- Foo
+/**
+ * The opening tag can be preceded by up to three spaces of indentation, but not 
+ * four.
+ */
+mdTest(`Example 184: Up to three spaces of indentation, but not four`,
+`  <div>
 
-bar
-   baz -->
-okay`,
-`<!-- Foo
+    <div>`,
+`  <div>
+</div><pre><code>&lt;div&gt;</code></pre>`)
 
-bar
-   baz -->
-<p>okay</p>`)
+mdTest(`Example `,
+``,
+``)
+
+mdTest(`Example `,
+``,
+``)
+
+mdTest(`Example `,
+``,
+``)
+
+mdTest(`Example `,
+``,
+``)
 
 /**
  * ## Results

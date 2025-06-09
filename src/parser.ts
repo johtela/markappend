@@ -198,7 +198,7 @@ function appendHtml(state: ParserState, html: string) {
  */
 function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
     let re = parsers.map((p, i) => `(?<g${i}>${p.regexp})`).join("|")
-    return new RegExp(re, sticky ? "yui" : "gui")
+    return new RegExp(re, sticky ? "yuis" : "guis")
 }
 /**
  * The `parseNext` function attempts to match the next token in the input using 
@@ -251,12 +251,6 @@ const wsOrPunct = /[\s\p{P}\p{S}]/u.source
 const emOrStrong = /(__?|\*\*?)/.source
 const indentedCode = / {4}| {0,3}\t/yu
 const nonBlank = /(?=.*\S)/yu
-const tags = "address|article|aside|base|basefont|blockquote|body|caption|" +
-    "center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|" +
-    "figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|" + 
-    "iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|" +
-    "p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|" +
-    "track|ul"
 /**
  * ## Inline Parsers
  *
@@ -399,23 +393,29 @@ const inlineParsers = [
             closeLastBlock(state)
         },
         `(?<emdelim>${emOrStrong}(?!${wsOrPunct})|(?<=${wsOrPunct}|^)${
-        emOrStrong})(?<em>.*)((?<!${wsOrPunct})\\k<emdelim>|\\k<emdelim>(?=${
-        wsOrPunct}|$))`),
+        emOrStrong})(?<em>[^_*]+)((?<!${wsOrPunct
+        })\\k<emdelim>|\\k<emdelim>(?=${wsOrPunct}|$))`),
     parser(
         /**
          * ### Raw HTML
          *
-         * Passes through raw HTML tags as actual HTML elements. The parser 
-         * matches any sequence that looks like an HTML tag with content (e.g., 
-         * `<b>text</b>`, `<span class="x">foo</span>`, or self-closing tags 
-         * like `<br/>`). The matched HTML is parsed and inserted as a DOM node, 
-         * so the HTML is rendered in the output.
+         * Passes through raw HTML tags and their content. This parser matches
+         * HTML tags (including self-closing tags) and, if the tag contains 
+         * inner content and a matching closing tag, parses the inner content as 
+         * inline Markdown. Otherwise, the tag is inserted as raw HTML into the 
+         * output.
          */
         (state, match) => {
-            let { html } = match.groups!
-            appendHtml(state, html)
+            let { tagstart, tagend, innerhtml } = match.groups!
+            appendHtml(state, tagstart + tagend)
+            if (tagend == ">" && innerhtml) {
+                openBlock(state, lastBlock(state).parent.lastElementChild!,
+                    BlockType.Inline)
+                inlines(stateFrom(state, innerhtml))
+                closeLastBlock(state)
+            }
         },
-        /(?<html><(?<tag>[a-z]\w*)([\s\n]+[a-z]\w*\s*(=\s*".*")?)*[\s\n]*(>.*<\/\k<tag>[\s\n]*>|\/>))/.source)
+        /(?<tagstart><(?<tag>[a-z][a-z0-9\-]*)(?:\s+[a-z:_][\w.:-]*\s*(?:=\s*"[^"]*"|\s*='[^']*'|=[^\s"'=<>`]+)?)*\s*)(?<tagend>\/?>)(?:(?<innerhtml>.*)<\/\k<tag>\s*>)?/.source)
 ]
 /**
  * We initialize the combined regexp when it is first used. Thus we can register 
@@ -441,38 +441,7 @@ function inlines(state: ParserState) {
  * line-by-line, as blocks have a nested, hierarchical structure. The combined 
  * regular expression matches block prefixes that indicate different block 
  * types.
- * 
- * ### HTML Blocks
- *
- * This parser specifically matches HTML blocks starting with specified pattern, 
- * which can contain blank lines and are terminated only by their corresponding 
- * end pattern. The parser continues the block until the closing tag is found, 
- * including all lines in between as raw HTML.
- * 
- * Normally the parser opens a block to collect the lines in an HTML block. But 
- * if the end tag is at the same line, we just append the line as HTML into the 
- * parent block.
- * 
- * Also the last line, which doesn't match the continuation regexp, is included 
- * in the block. We use positive an negative lookahead in the regexps to keep 
- * the match position at the beginning of the line.
  */
-function htmlBlock(start: string, end: string): Parser {
-    return parser(
-        (state,) => {
-            let cont = new RegExp(`(?!.*(?:${end}))`, "yui")
-            let line = state.input
-            cont.lastIndex = state.nextIndex
-             if (cont.test(line))
-                openBlock(state, lastBlock(state).parent, BlockType.Html, 
-                    true, undefined, cont, true)
-            else {
-                appendHtml(state, line.slice(state.nextIndex) + "\n")
-                state.nextIndex = line.length
-            }
-       }, `(?= {0,3}${start})`)
-}
-
 const blockParsers = [
     parser(
         /**
@@ -516,26 +485,44 @@ const blockParsers = [
                 indentedCode)
         },
         indentedCode.source),
-    htmlBlock("<pre|<script|<style|<textarea",
-        "<\\/pre>|<\\/script>|<\\/style>|<\\/textarea>"),
-    htmlBlock("<!--", "-->"),
     parser(
         /**
-         * ### HTML Blocks
-         * 
-         * Conditions 6 and 7 of CommonMark spefication are defined below. In
-         * condition 6 HTML block starts with predefined opening/closing tag. 
-         * The complete tag has not to be on the same line. I.e. you can have 
-         * a line break before tag is closed. The block is terminated by a 
-         * blank line.
-         * 
-         * Condition 7 allows any tag name but the complete opening or closing
-         * tag has to be on the same line. The rest of the line must be blank.
+         * ### HTML Blocks (Type 1)
+         *
+         * Only conditions 1 and 7 of CommonMark spefication are supported.
+         * This parser matches HTML blocks that start with certain tags
+         * (`<pre>`, `<script>`, `<style>`, or `<textarea>`) and continues
+         * until the corresponding closing tag is found. The block includes
+         * all lines as raw HTML, including blank lines, and the terminating
+         * line is also included in the block.
+         *
+         * If the closing tag appears on the same line as the opening tag,
+         * the entire line is appended as raw HTML without opening a new block.
+         */
+        (state,) => {
+            let cont = /(?!.*(?:<\/pre>|<\/script>|<\/style>|<\/textarea>))/yui
+            let line = state.input
+            cont.lastIndex = state.nextIndex
+             if (cont.test(line))
+                openBlock(state, lastBlock(state).parent, BlockType.Html, 
+                    true, undefined, cont, true)
+            else {
+                appendHtml(state, line.slice(state.nextIndex) + "\n")
+                state.nextIndex = line.length
+            }
+        }, 
+        /(?= {0,3}<pre|<script|<style|<textarea)/.source),
+    parser(
+        /**
+         * ### HTML Blocks (Type 7)
+         *
+         * Conditions 1 of CommonMark spefication are defined below. It allows 
+         * any tag name but the complete opening tag has to be the only tag on
+         * the first line. The rest of the line must be blank.
          */
         (state,) => openBlock(state, lastBlock(state).parent, BlockType.Html, 
             true, undefined, nonBlank),
-        `(?= {0,3}<\\/?(?:${tags})(?: |\\t|$|\\/?>))|` + 
-        `(?= {0,3}(?:<[a-z]\\w*(?:\\s+[a-z]\\w*\\s*(?:=\\s*".*")?)*\\s*>|<\\/[a-z]\\w*\\s*>)\\s*$)`),
+        /(?= {0,3}<[a-z][a-z0-9\-]*(?:\s+[a-z:_][\w.:-]*\s*(?:=\s*"[^"]*"|\s*='[^']*'|=[^\s"'=<>`]+)?)*\s*>\s*$)/.source),
     parser(
         /**
          * ### Paragraphs
@@ -565,16 +552,18 @@ const blockRegexp = regexpFor(blockParsers, true)
 function flushLastBlock(state: ParserState) {
     let block = lastBlock(state)
     if (block.lines.length > 0) {
-        let lines = block.lines.join("\n")
         switch (block.type) {
             case BlockType.Inline:
-                inlines(stateFrom(state, lines))
+                inlines(stateFrom(state, block.lines
+                    .map(l => l.trimStart())
+                    .join("\n")))
                 break
             case BlockType.Text:
-                append(state, text(lines))
+                append(state, text(block.lines.join("\n")))
                 break
             case BlockType.Html:
-                appendHtml(state, lines + "\n")
+                block.lines.push("")
+                appendHtml(state, block.lines.join("\n"))
                 break
         }
         block.lines = []
