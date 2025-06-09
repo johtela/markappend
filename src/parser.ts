@@ -251,6 +251,12 @@ const wsOrPunct = /[\s\p{P}\p{S}]/u.source
 const emOrStrong = /(__?|\*\*?)/.source
 const indentedCode = / {4}| {0,3}\t/yu
 const nonBlank = /(?=.*\S)/yu
+const tags = "address|article|aside|base|basefont|blockquote|body|caption|" +
+    "center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|" +
+    "figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|" + 
+    "iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|" +
+    "p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|" +
+    "track|ul"
 /**
  * ## Inline Parsers
  *
@@ -464,7 +470,7 @@ function htmlBlock(start: string, end: string): Parser {
                 appendHtml(state, line.slice(state.nextIndex) + "\n")
                 state.nextIndex = line.length
             }
-       }, `(?=${start})`)
+       }, `(?= {0,3}${start})`)
 }
 
 const blockParsers = [
@@ -513,16 +519,23 @@ const blockParsers = [
     htmlBlock("<pre|<script|<style|<textarea",
         "<\\/pre>|<\\/script>|<\\/style>|<\\/textarea>"),
     htmlBlock("<!--", "-->"),
-    htmlBlock("<\\?", "\\?>"),
-    htmlBlock("<![a-z]", ">"),
-    htmlBlock("<!\\[CDATA\\[", "\\]\\]>"),
-    // parser(
+    parser(
         /**
+         * ### HTML Blocks
          * 
+         * Conditions 6 and 7 of CommonMark spefication are defined below. In
+         * condition 6 HTML block starts with predefined opening/closing tag. 
+         * The complete tag has not to be on the same line. I.e. you can have 
+         * a line break before tag is closed. The block is terminated by a 
+         * blank line.
+         * 
+         * Condition 7 allows any tag name but the complete opening or closing
+         * tag has to be on the same line. The rest of the line must be blank.
          */
-        // (state,) => {
-        // },
-        // /a/.source),
+        (state,) => openBlock(state, lastBlock(state).parent, BlockType.Html, 
+            true, undefined, nonBlank),
+        `(?= {0,3}<\\/?(?:${tags})(?: |\\t|$|\\/?>))|` + 
+        `(?= {0,3}(?:<[a-z]\\w*(?:\\s+[a-z]\\w*\\s*(?:=\\s*".*")?)*\\s*>|<\\/[a-z]\\w*\\s*>)\\s*$)`),
     parser(
         /**
          * ### Paragraphs

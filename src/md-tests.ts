@@ -195,7 +195,8 @@ mdTest(`Example 30: Made up entity`,
 mdTest(`Example 31: Entity and numeric character references are recognized in 
 any context`,
 `<a href="&ouml;&ouml;.html">`,
-`<a href="&ouml;&ouml;.html">`)
+`<a href="öö.html">
+</a>`)
 /**
  * ## HTML Blocks
  * 
@@ -211,6 +212,152 @@ any context`,
  * the first line containing a corresponding end tag. As a result, these blocks 
  * can contain blank lines:
  */
+
+mdTest(`Example149: Basic HTML blocks of type 6`,
+`<table>
+  <tbody>
+    <tr>
+        <td>
+            hi
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+okay.`,
+`<table>
+  <tbody>
+    <tr>
+        <td>
+            hi
+        </td>
+    </tr>
+  </tbody>
+</table>
+<p>okay.</p>`)
+
+mdTest(`Example 150`,
+` <div>
+  *hello*
+         <foo><a>`,
+` <div>
+  *hello*
+         <foo><a>
+</a></foo></div>`)
+
+mdTest(`Example 151`,
+`<div>
+*foo*`,
+`<div>
+*foo*
+</div>`)
+
+mdTest(`Example 153: Partial first line`,
+`<div id="foo"
+  class="bar">
+</div>`,
+`<div id="foo" class="bar">
+</div>
+`)
+
+mdTest(`Example 154`,
+`<div id="foo" class="bar
+  baz">
+</div>`,
+`<div id="foo" class="bar
+  baz">
+</div>
+`)
+
+mdTest(`Example 155: An open tag need not be closed`,
+`<div>
+*foo*
+
+*bar*`,
+`<div>
+*foo*
+</div><p><em>bar</em></p>`)
+
+mdTest(`Example 159: In type 6 blocks, the initial tag need not be on a line by itself`,
+`<div><a href="bar">*foo*</a></div>`,
+`<div><a href="bar">*foo*</a></div>
+`)
+
+mdTest(`Example 160`,
+`<table><tr><td>
+foo
+</td></tr></table>`,
+`<table><tbody><tr><td>
+foo
+</td></tr></tbody></table>
+`)
+/**
+ * Everything until the next blank line or end of document gets included in the 
+ * HTML block. So, in the following example, what looks like a Markdown code 
+ * block is actually part of the HTML block, which continues until a blank line 
+ * or the end of the document is reached.
+ */
+mdTest(`Example 161: Block continues after end tag`,
+`<div></div>
+\`\`\` c
+int x = 33;
+\`\`\``,
+`<div></div>
+\`\`\` c
+int x = 33;
+\`\`\`
+`)
+/**
+ * To start an HTML block with a tag that is not in the list of block-level 
+ * tags in (6), you must put the tag by itself on the first line (and it must 
+ * be complete)
+ */
+mdTest(`Example 162`,
+`<a href="foo">
+*bar*
+</a>`,
+`<a href="foo">
+*bar*
+</a>
+`)
+/**
+ * In type 7 blocks, the tag name can be anything.
+ */
+mdTest(`Example 163: Tag name can be anything`,
+`<Warning>
+*bar*
+</Warning>`,
+`<warning>
+*bar*
+</warning>
+`)
+
+mdTest(`Example 164`,
+`<i class="foo">
+*bar*
+</i>`,
+`<i class="foo">
+*bar*
+</i>
+`)
+
+mdTest(`Example 166`,
+`<del>
+*foo*
+</del>`,
+`<del>
+*foo*
+</del>
+`)
+
+mdTest(`Example 168`,
+`<del>*foo*</del>`,
+`<p><del><em>foo</em></del></p>`)
+
+mdTest(`Example `,
+``,
+``)
+
 mdTest(`Example 169: A pre tag (type 1)`,
 `<pre language="haskell"><code>
 import Text.HTML.TagSoup
@@ -291,6 +438,12 @@ mdTest(`Example 176: the end tag can occur on the same line as the start tag`,
 `<style>p{color:red;}</style>
 <p><em>foo</em></p>`)
 
+mdTest(`Examplel 177`,
+`<!-- foo -->*bar*
+*baz*`,
+`<!-- foo -->*bar*
+<p><em>baz</em></p>`)
+
 mdTest(`Example 178: Anything on the last line after the end tag will be 
 included`,
 `<script>
@@ -300,6 +453,18 @@ foo
 foo
 </script>1. *bar*
 `)
+
+mdTest(`Example 179: A comment (type 2)`,
+`<!-- Foo
+
+bar
+   baz -->
+okay`,
+`<!-- Foo
+
+bar
+   baz -->
+<p>okay</p>`)
 
 /**
  * ## Results
