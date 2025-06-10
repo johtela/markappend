@@ -250,8 +250,8 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
 const indentedCode = / {4}| {0,3}\t/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const paragraph = /\s*(?=\S)/yuis
-const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}]|$))|(?:(?<=[\s\p{P}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}]|$))/u.source
-const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}]|$))|(?:(?<=[\s\p{P}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}]|$))/u.source
+const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
+const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 /**
  * ## Inline Parsers
  *
