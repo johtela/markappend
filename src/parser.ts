@@ -247,10 +247,11 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
  * - `nonBlank`: Matches any line containing at least one non-whitespace 
  *   character.
  */
-const wsOrPunct = /[\s\p{P}\p{S}]/u.source
-const emOrStrong = /(__?|\*\*?)/.source
-const indentedCode = / {4}| {0,3}\t/yu
-const nonBlank = /(?=.*\S)/yu
+const indentedCode = / {4}| {0,3}\t/yuis
+const nonBlank = /(?=\s*\S)/yuis
+const paragraph = /\s*(?=\S)/yuis
+const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}]|$))|(?:(?<=[\s\p{P}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}]|$))/u.source
+const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}]|$))|(?:(?<=[\s\p{P}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}]|$))/u.source
 /**
  * ## Inline Parsers
  *
@@ -263,6 +264,25 @@ const nonBlank = /(?=.*\S)/yu
 function flushInline(state: ParserState, index?: number) {
     if (index == undefined || index > state.nextIndex)
         append(state, text(state.input.substring(state.nextIndex, index)))
+}
+/**
+ * ### Emphasis and Strong
+ *
+ * Helper for creating emphasis (`<em>`) and strong (`<strong>`) inline parsers.
+ * This function takes a regular expression for emphasis delimiters (`*` or `_`)
+ * and returns a parser that wraps the matched content in the appropriate tag.
+ * The content between delimiters is parsed recursively for inline elements.
+ */
+function emOrStrong(regexp: string) {
+    return parser(
+        (state, match) => {
+            let { emdelim, em } = match.groups!
+            openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'), 
+                BlockType.Inline)
+            inlines(stateFrom(state, em))
+            closeLastBlock(state)
+        },
+        regexp)
 }
 /**
  * An array of inline Markdown parsers, each responsible for handling a specific
@@ -371,30 +391,8 @@ const inlineParsers = [
             append(state, img)
         },
         /!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<imgsrc>(?:\\\(|\\\)|[^\s()])+)\)/.source),
-    parser(
-        /**
-         * ### Emphasis and Strong
-         *
-         * Handles Markdown emphasis (`*` or `_`) and strong emphasis (`**` or 
-         * `__`). This parser matches one or two consecutive asterisks or 
-         * underscores, ensuring correct boundaries according to the CommonMark 
-         * rules:
-         * 
-         * - Single delimiter for `<em>`, double for `<strong>`.
-         * - Delimiters must not be surrounded by whitespace or punctuation.
-         * - The content between delimiters is parsed recursively for inline 
-         *   elements.
-         */
-        (state, match) => {
-            let { emdelim, em } = match.groups!
-            openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'), 
-                BlockType.Inline)
-            inlines(stateFrom(state, em))
-            closeLastBlock(state)
-        },
-        `(?<emdelim>${emOrStrong}(?!${wsOrPunct})|(?<=${wsOrPunct}|^)${
-        emOrStrong})(?<em>[^_*]+)((?<!${wsOrPunct
-        })\\k<emdelim>|\\k<emdelim>(?=${wsOrPunct}|$))`),
+    emOrStrong(emAsterisk),
+    emOrStrong(emUnderscore),
     parser(
         /**
          * ### Raw HTML
@@ -532,8 +530,8 @@ const blockParsers = [
          */
         (state,) => 
             openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
-                nonBlank),  
-        nonBlank.source)
+                paragraph),  
+        paragraph.source)
 ]
 /**
  * The combined regexp for all block parsers.
@@ -552,18 +550,18 @@ const blockRegexp = regexpFor(blockParsers, true)
 function flushLastBlock(state: ParserState) {
     let block = lastBlock(state)
     if (block.lines.length > 0) {
+        if (block.type == BlockType.Html)
+            block.lines.push("")
+        let lines = block.lines.join("\n")
         switch (block.type) {
             case BlockType.Inline:
-                inlines(stateFrom(state, block.lines
-                    .map(l => l.trimStart())
-                    .join("\n")))
+                inlines(stateFrom(state, lines))
                 break
             case BlockType.Text:
-                append(state, text(block.lines.join("\n")))
+                append(state, text(lines))
                 break
             case BlockType.Html:
-                block.lines.push("")
-                appendHtml(state, block.lines.join("\n"))
+                appendHtml(state, lines)
                 break
         }
         block.lines = []

@@ -275,14 +275,47 @@ mdTest(`Example 47: Up to three spaces of indentation are allowed`,
 `<hr><hr><hr>`)
 
 mdTest(`Example 48: Four spaces of indentation is too many`,
+`    ***`,
+`<pre><code>***</code></pre>`)
+
+mdTest(`Example 49`,
 `Foo
     ***`,
 `<p>Foo
 ***</p>`)
 
-mdTest(`Example `,
-``,
-``)
+mdTest(`Example 50: More than three characters may be used`,
+`_____________________________________`,
+`<hr>`)
+
+mdTest(`Example 51: Spaces and tabs are allowed between the characters`,
+` - - -`,
+`<hr>`)
+
+mdTest(`Example 52`,
+` **  * ** * ** * **`,
+`<hr>`)
+
+mdTest(`Example 53`,
+`-     -      -      -`,
+`<hr>`)
+
+mdTest(`Example 54: Spaces and tabs are allowed at the end`,
+`- - - -    `,
+`<hr>`)
+
+mdTest(`Example 55: However, no other characters may occur in the line`,
+`_ _ _ _ a
+
+a------
+
+---a---`,
+`<p>_ _ _ _ a</p><p>a------</p><p>---a---</p>`)
+
+mdTest(`Example 56: It is required that all of the characters other than spaces 
+or tabs be the same. So, this is not a thematic break`,
+` *-*`,
+`<p><em>-</em></p>`)
 
 mdTest(`Example `,
 ``,
