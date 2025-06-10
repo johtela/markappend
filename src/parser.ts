@@ -175,6 +175,12 @@ function lastBlock(state: ParserState): DocumentBlock {
     return state.blocks[state.blocks.length - 1]
 }
 /**
+ * Check whether the last block is a paragraph.
+ */
+function lastBlockIsParagraph(state: ParserState): boolean {
+    return lastBlock(state).element.tagName == "P"
+}
+/**
  * Appends one or more nodes to the parent element of the current (topmost) 
  * block.
  */
@@ -224,8 +230,6 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
         if (parser) {
             if (inline)
                 flushInline(state, match.index)
-            else
-                flushLastBlock(state)
             state.nextIndex = match.index + match[0].length
             parser.matched(state, match)
             return true
@@ -249,9 +253,8 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
  */
 const indentedCode = / {4}| {0,3}\t/yuis
 const nonBlank = /(?=\s*\S)/yuis
-const paragraph = /\s*(?=\S)/yuis
-const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
-const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
+const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
+const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 /**
  * ## Inline Parsers
  *
@@ -443,6 +446,30 @@ function inlines(state: ParserState) {
 const blockParsers = [
     parser(
         /**
+         * ### Setext Headings
+         */
+        (state, match) => {
+            let { setext } = match.groups!
+            let block = lastBlock(state)
+            if (block.element.tagName == "P") {
+                block.element = elem(setext == "=" ? 'h1' : 'h2')
+                block.parent = block.element
+                flushLastBlock(state)
+                closeLastBlock(state)
+            }
+            else if (setext == "-") {
+                flushLastBlock(state)
+                append(state, elem('hr'))
+            }
+            else {
+                openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
+                    nonBlank)
+                append(state, text(match[0]))
+            }
+        },
+        / {0,3}(?<setext>-|=)\k<setext>{2,}\s*$/.source),
+    parser(
+        /**
          * ### Thematic Breaks
          *
          * Matches a horizontal rule (thematic break) as defined by CommonMark:
@@ -450,7 +477,12 @@ const blockParsers = [
          * characters, possibly separated by spaces or tabs, and nothing else.
          * Produces an `<hr>` element.
          */
-        (state,) => append(state, elem('hr')),
+        (state,) => {
+            flushLastBlock(state)
+            if (lastBlockIsParagraph(state))
+                closeLastBlock(state)
+            append(state, elem('hr'))
+        },
         / {0,3}(?<brkchar>[*\-_])(?:\s*\k<brkchar>){2,}\s*$/.source),
     parser(
         /**
@@ -461,6 +493,9 @@ const blockParsers = [
          * `<h6>`). The header text is parsed for inline elements.
          */
         (state, match) => {
+            flushLastBlock(state)
+            if (lastBlockIsParagraph(state))
+                closeLastBlock(state)
             let { atxlevel, atxheader } = match.groups!
             let level = atxlevel.length
             openBlock(state, elem(<keyof HTMLElementTagNameMap>`h${level}`), 
@@ -468,7 +503,7 @@ const blockParsers = [
             inlines(stateFrom(state, atxheader))
             closeLastBlock(state)
         },
-        / {0,3}(?<atxlevel>#{1,6})\s+(?<atxheader>.+?)\s*$/.source),
+        / {0,3}(?<atxlevel>#{1,6})\s+(?<atxheader>.*?)\s*$/.source),
     parser(
         /**
          * ### Indented Code Blocks
@@ -476,11 +511,16 @@ const blockParsers = [
          * Matches code blocks that are indented by at least 4 spaces or a tab.
          * The content is collected as-is and rendered inside a `<pre><code>` 
          * block.
+         * 
+         * Indented code blocks cannot interrupt paragraphs.
          */
         (state,) => {
-            let code = elem('code')
-            openBlock(state, elem('pre', code), BlockType.Text, true, code,
-                indentedCode)
+            if (!lastBlockIsParagraph(state)) {
+                flushLastBlock(state)
+                let code = elem('code')
+                openBlock(state, elem('pre', code), BlockType.Text, true, code,
+                    indentedCode)
+            }
         },
         indentedCode.source),
     parser(
@@ -498,6 +538,7 @@ const blockParsers = [
          * the entire line is appended as raw HTML without opening a new block.
          */
         (state,) => {
+            flushLastBlock(state)
             let cont = /(?!.*(?:<\/pre>|<\/script>|<\/style>|<\/textarea>))/yui
             let line = state.input
             cont.lastIndex = state.nextIndex
@@ -518,8 +559,11 @@ const blockParsers = [
          * any tag name but the complete opening tag has to be the only tag on
          * the first line. The rest of the line must be blank.
          */
-        (state,) => openBlock(state, lastBlock(state).parent, BlockType.Html, 
-            true, undefined, nonBlank),
+        (state,) => {
+            flushLastBlock(state)
+            openBlock(state, lastBlock(state).parent, BlockType.Html, true, 
+                undefined, nonBlank)
+        },
         /(?= {0,3}<[a-z][a-z0-9\-]*(?:\s+[a-z:_][\w.:-]*\s*(?:=\s*"[^"]*"|\s*='[^']*'|=[^\s"'=<>`]+)?)*\s*>\s*$)/.source),
     parser(
         /**
@@ -528,10 +572,14 @@ const blockParsers = [
          * A sequence of non-blank lines that cannot be interpreted as other 
          * kinds of blocks forms a paragraph.
          */
-        (state,) => 
-            openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
-                paragraph),  
-        paragraph.source)
+        (state,) => {
+            if (!lastBlockIsParagraph(state)) {
+                flushLastBlock(state)
+                openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
+                    nonBlank)
+            }
+        },  
+        nonBlank.source)
 ]
 /**
  * The combined regexp for all block parsers.
@@ -550,18 +598,18 @@ const blockRegexp = regexpFor(blockParsers, true)
 function flushLastBlock(state: ParserState) {
     let block = lastBlock(state)
     if (block.lines.length > 0) {
-        if (block.type == BlockType.Html)
-            block.lines.push("")
-        let lines = block.lines.join("\n")
         switch (block.type) {
             case BlockType.Inline:
-                inlines(stateFrom(state, lines))
+                inlines(stateFrom(state, block.lines
+                    .map(l => l.trimStart())
+                    .join("\n")))
                 break
             case BlockType.Text:
-                append(state, text(lines))
+                append(state, text(block.lines.join("\n")))
                 break
             case BlockType.Html:
-                appendHtml(state, lines)
+                block.lines.push("")
+                appendHtml(state, block.lines.join("\n"))
                 break
         }
         block.lines = []
@@ -643,9 +691,13 @@ export function appendMarkdown(input: string, doc: Element) {
         let line = lines[i]
         let st = stateFrom(state, line, 0)
         closeDiscontinuedBlocks(st)
-        while (!lastBlock(st).leaf && 
-            parseNext(blockRegexp, blockParsers, st, false));
-        lastBlock(st).lines.push(line.slice(st.nextIndex))
+        let block = lastBlock(st)
+        if (!block.leaf || block.element.tagName == "P")
+            while (parseNext(blockRegexp, blockParsers, st, false)) {
+                block = lastBlock(st)
+                if (block.leaf) break
+            }
+        block.lines.push(line.slice(st.nextIndex))
     }
     closeBlocksToIndex(state, 0)
 }

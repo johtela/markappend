@@ -317,6 +317,144 @@ or tabs be the same. So, this is not a thematic break`,
 ` *-*`,
 `<p><em>-</em></p>`)
 
+mdTest(`Example 57: Thematic breaks do not need blank lines before or after`,
+`- foo
+***
+- bar`,
+`<ul>
+<li>foo</li>
+</ul>
+<hr />
+<ul>
+<li>bar</li>
+</ul>`)
+
+mdTest(`Example 58: Thematic breaks can interrupt a paragraph`,
+`Foo
+***
+bar`,
+`<p>Foo</p><hr><p>bar</p>`)
+
+mdTest(`Example 59: Setext heading takes precedence over thematic break`,
+`Foo
+---
+bar`,
+`<h2>Foo</h2><p>bar</p>`)
+
+mdTest(`Example 60: When both a thematic break and a list item are possible 
+interpretations of a line, the thematic break takes precedence`,
+`* Foo
+* * *
+* Bar`,
+`<ul>
+<li>Foo</li>
+</ul>
+<hr />
+<ul>
+<li>Bar</li>
+</ul>`)
+
+mdTest(`Example 61: If you want a thematic break in a list item, use a different 
+bullet`,
+`- Foo
+- * * *`,
+`<ul>
+<li>Foo</li>
+<li>
+<hr />
+</li>
+</ul>`)
+/**
+ * ## ATX Headings
+ * 
+ * An ATX heading consists of a string of characters, parsed as inline content, 
+ * between an opening sequence of 1–6 unescaped `#` characters and an optional 
+ * closing sequence of any number of unescaped `#` characters. The opening 
+ * sequence of `#` characters must be followed by spaces or tabs, or by the end 
+ * of line. The optional closing sequence of `#`s must be preceded by spaces or 
+ * tabs and may be followed by spaces or tabs only. The opening `#` character 
+ * may be preceded by up to three spaces of indentation. The raw contents of the 
+ * heading are stripped of leading and trailing space or tabs before being 
+ * parsed as inline content. The heading level is equal to the number of `#` 
+ * characters in the opening sequence.
+ */
+mdTest(`Example 62: Simple headings`,
+`# foo
+## foo
+### foo
+#### foo
+##### foo
+###### foo`,
+`<h1>foo</h1><h2>foo</h2><h3>foo</h3><h4>foo</h4><h5>foo</h5><h6>foo</h6>`)
+
+mdTest(`Example 63: More than six # characters is not a heading`,
+`####### foo`,
+`<p>####### foo</p>`)
+/**
+ * At least one space or tab is required between the `#` characters and the 
+ * heading’s contents, unless the heading is empty. Note that many 
+ * implementations currently do not require the space. However, the space was 
+ * required by the original ATX implementation, and it helps prevent things like 
+ * the following from being parsed as headings.
+ */
+mdTest(`Example 64: Space required between # and heading`,
+`#5 bolt
+
+#hashtag`,
+`<p>#5 bolt</p><p>#hashtag</p>`)
+
+mdTest(`Example 65: This is not a heading, because the first # is escaped`,
+`\\## foo`,
+`<p>## foo</p>`)
+
+mdTest(`Example 66: Contents are parsed as inlines`,
+`# foo *bar* \\*baz\\*`,
+`<h1>foo <em>bar</em> *baz*</h1>`)
+
+mdTest(`Example 67: Leading and trailing spaces or tabs are ignored in parsing 
+inline content`,
+`#                  foo                     `,
+`<h1>foo</h1>`)
+
+mdTest(`Example 68: Up to three spaces of indentation are allowed`,
+` ### foo
+  ## foo
+   # foo`,
+`<h3>foo</h3><h2>foo</h2><h1>foo</h1>`)
+
+mdTest(`Example 69: Four spaces of indentation is too many`,
+`    # foo`,
+`<pre><code># foo</code></pre>`)
+
+mdTest(`Example 70`,
+`foo
+    # bar`,
+`<p>foo
+# bar</p>`)
+
+mdTest(`Example 77: ATX headings need not be separated from surrounding content 
+by blank lines, and they can interrupt paragraphs`,
+`****
+## foo
+****`,
+`<hr><h2>foo</h2><hr>`)
+
+mdTest(`Example 78`,
+`Foo bar
+# baz
+Bar foo`,
+`<p>Foo bar</p><h1>baz</h1><p>Bar foo</p>`)
+
+mdTest(`Example 79: ATX headings can be empty`,
+`## 
+# 
+### `,
+`<h2></h2><h1></h1><h3></h3>`)
+
+mdTest(`Example `,
+``,
+``)
+
 mdTest(`Example `,
 ``,
 ``)
@@ -335,7 +473,6 @@ mdTest(`Example `,
  * the first line containing a corresponding end tag. As a result, these blocks 
  * can contain blank lines:
  */
-
 mdTest(`Example149: Basic HTML blocks of type 6`,
 `<table>
   <tbody>
