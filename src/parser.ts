@@ -252,6 +252,7 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
  *   character.
  */
 const indentedCode = / {4}| {0,3}\t/yuis
+const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
@@ -457,7 +458,7 @@ const blockParsers = [
                 flushLastBlock(state)
                 closeLastBlock(state)
             }
-            else if (setext == "-") {
+            else if (setext == "-" && match[0].trim().length > 2) {
                 flushLastBlock(state)
                 append(state, elem('hr'))
             }
@@ -467,7 +468,7 @@ const blockParsers = [
                 append(state, text(match[0]))
             }
         },
-        / {0,3}(?<setext>-|=)\k<setext>{2,}\s*$/.source),
+        / {0,3}(?<setext>-|=)\k<setext>*\s*$/.source),
     parser(
         /**
          * ### Thematic Breaks
@@ -519,7 +520,7 @@ const blockParsers = [
                 flushLastBlock(state)
                 let code = elem('code')
                 openBlock(state, elem('pre', code), BlockType.Text, true, code,
-                    indentedCode)
+                    indentedCodeOrBlank)
             }
         },
         indentedCode.source),
@@ -601,7 +602,7 @@ function flushLastBlock(state: ParserState) {
         switch (block.type) {
             case BlockType.Inline:
                 inlines(stateFrom(state, block.lines
-                    .map(l => l.trimStart())
+                    .map(l => l.trim())
                     .join("\n")))
                 break
             case BlockType.Text:

@@ -450,6 +450,87 @@ mdTest(`Example 79: ATX headings can be empty`,
 # 
 ### `,
 `<h2></h2><h1></h1><h3></h3>`)
+/**
+ * ## Setext Headings
+ * 
+ * A setext heading consists of one or more lines of text, not interrupted by a 
+ * blank line, of which the first line does not have more than 3 spaces of 
+ * indentation, followed by a setext heading underline. The lines of text must 
+ * be such that, were they not followed by the setext heading underline, they 
+ * would be interpreted as a paragraph: they cannot be interpretable as a code 
+ * fence, ATX heading, block quote, thematic break, list item, or HTML block.
+ * 
+ * A setext heading underline is a sequence of `=` characters or a sequence of 
+ * `-` characters, with no more than 3 spaces of indentation and any number of 
+ * trailing spaces or tabs.
+ * 
+ * The heading is a level 1 heading if `=` characters are used in the setext 
+ * heading underline, and a level 2 heading if `-` characters are used. The 
+ * contents of the heading are the result of parsing the preceding lines of text 
+ * as CommonMark inline content.
+ * 
+ * In general, a setext heading need not be preceded or followed by a blank 
+ * line. However, it cannot interrupt a paragraph, so when a setext heading 
+ * comes after a paragraph, a blank line is needed between them.
+ */
+mdTest(`Example 80: Simple examples`,
+`Foo *bar*
+=========
+
+Foo *bar*
+---------`,
+`<h1>Foo <em>bar</em></h1>
+<h2>Foo <em>bar</em></h2>`)
+
+mdTest(`Example 81: The content of the header may span more than one line`,
+`Foo *bar
+baz*
+====`,
+`<h1>Foo <em>bar
+baz</em></h1>`)
+
+mdTest(`Example 82: The contents are the result of parsing the headings's raw 
+content as inlines. The heading’s raw content is formed by concatenating the 
+lines and removing initial and final spaces or tabs`,
+`  Foo *bar
+baz*	
+====`,
+`<h1>Foo <em>bar
+baz</em></h1>`)
+
+mdTest(`Example 83: The underlining can be any length`,
+`Foo
+-------------------------
+
+Foo
+=`,
+`<h2>Foo</h2>
+<h1>Foo</h1>`)
+
+mdTest(`Example 84: The heading content can be preceded by up to three spaces of 
+indentation, and need not line up with the underlining`,
+`   Foo
+---
+
+  Foo
+-----
+
+  Foo
+  ===`,
+`<h2>Foo</h2>
+<h2>Foo</h2>
+<h1>Foo</h1>`)
+
+mdTest(`Example 85: Four spaces of indentation is too many`,
+`    Foo
+    ---
+
+    Foo
+---`,
+`<pre><code>Foo
+---
+
+Foo</code></pre><hr>`)
 
 mdTest(`Example `,
 ``,
