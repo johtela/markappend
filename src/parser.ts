@@ -448,6 +448,12 @@ const blockParsers = [
     parser(
         /**
          * ### Setext Headings
+         *
+         * Matches Setext-style headings, which are underlined with `=` or `-`.
+         * If the previous block is a paragraph, it is converted to an `<h1>` 
+         * (for `=`) or `<h2>` (for `-`) heading. If the line is a thematic 
+         * break (three or more `-`), it creates an `<hr>`. Otherwise, starts 
+         * a new paragraph block.
          */
         (state, match) => {
             let { setext } = match.groups!
@@ -566,6 +572,26 @@ const blockParsers = [
                 undefined, nonBlank)
         },
         /(?= {0,3}<[a-z][a-z0-9\-]*(?:\s+[a-z:_][\w.:-]*\s*(?:=\s*"[^"]*"|\s*='[^']*'|=[^\s"'=<>`]+)?)*\s*>\s*$)/.source),
+    parser(
+        /**
+         * ### Lists
+         */
+        (state, match) => {
+            let { bullet, bulletno } = match.groups!
+            let block = lastBlock(state)
+            let cont = new RegExp(`(?= {${bullet.length}})`, "yui")
+            if (bulletno && block.element.tagName != "OL") {
+                let ol = elem('ol')
+                ol.start = Number.parseInt(bulletno)
+                openBlock(state, ol, BlockType.Inline, false, undefined, cont)
+            }
+            else if (!bulletno && block.element.tagName != "UL")
+                openBlock(state, elem('ul'), BlockType.Inline, false, undefined, 
+                    cont)
+            openBlock(state, elem('li'), BlockType.Inline, false, undefined,
+                new RegExp(` {${bullet.length}}`, "yui"))
+        },
+        / {0,3}(?<bullet>[\-+*]|(?<bulletno>\d{1,9})[.)]) {1,4}/.source),
     parser(
         /**
          * ### Paragraphs

@@ -532,6 +532,197 @@ mdTest(`Example 85: Four spaces of indentation is too many`,
 
 Foo</code></pre><hr>`)
 
+mdTest(`Example 86: The setext heading underline can be preceded by up to three 
+spaces of indentation, and may have trailing spaces or tabs`,
+`Foo
+   ----      `,
+`<h2>Foo</h2>`)
+
+mdTest(`Example 87: Four spaces of indentation is too many`,
+`Foo
+    ---`,
+`<p>Foo
+---</p>`)
+
+mdTest(`Example 88: The setext heading underline cannot contain internal spaces 
+or tabs`,
+`Foo
+= =
+
+Foo
+--- -`,
+`<p>Foo
+= =</p><p>Foo</p><hr>`)
+
+mdTest(`Example 89: Trailing spaces or tabs in the content line do not cause a 
+hard line break`,
+`Foo  
+-----`,
+`<h2>Foo</h2>`)
+
+mdTest(`Example 90: Nor does a backslash at the end`,
+`Foo\\
+----`,
+`<h2>Foo\\</h2>`)
+
+mdTest(`Example 91: Since indicators of block structure take precedence over 
+indicators of inline structure, the following are setext headings`,
+`\`Foo
+----
+\`
+
+<a title="a lot
+---
+of dashes"/>`,
+`<h2>\`Foo</h2><p>\`</p><h2>&lt;a title="a lot</h2><p>of dashes"/&gt;</p>`)
+
+mdTest(`Example 95: A blank line is needed between a paragraph and a following 
+setext heading, since otherwise the paragraph becomes part of the heading's 
+content`,
+`Foo
+Bar
+---`,
+`<h2>Foo
+Bar</h2>`)
+
+mdTest(`Example 96: But in general a blank line is not required before or after 
+setext headings`,
+`---
+Foo
+---
+Bar
+---
+Baz`,
+`<hr><h2>Foo</h2><h2>Bar</h2><p>Baz</p>`)
+
+mdTest(`Example 97: Setext headings cannot be empty`,
+`
+====`,
+`<p>====</p>`)
+
+mdTest(`Example 98: Setext heading text lines must not be interpretable as block 
+constructs other than paragraphs. So, the line of dashes in these examples gets 
+interpreted as a thematic break`,
+`---
+---`,
+`<hr><hr>`)
+
+mdTest(`Example 99`,
+`- foo
+-----`,
+`<ul>
+<li>foo</li>
+</ul><hr>`)
+
+mdTest(`Example 100`,
+`    foo
+---`,
+`<pre><code>foo</code></pre><hr>`)
+
+mdTest(`Example 101`,
+`> foo
+-----`,
+`<blockquote>
+<p>foo</p>
+</blockquote><hr>`)
+
+mdTest(`Example 102: If you want a heading with > foo as its literal text, you 
+can use backslash escapes`,
+`\\> foo
+------`,
+`<h2>&gt; foo</h2>`)
+/**
+ * Compatibility note: Most existing Markdown implementations do not allow the 
+ * text of setext headings to span multiple lines. But there is no consensus 
+ * about how to interpret
+ * 
+ *      Foo
+ *      bar
+ *      ---
+ *      baz
+ * 
+ * One can find four different interpretations:
+ * 
+ *  1.  paragraph “Foo”, heading “bar”, paragraph “baz”
+*   2.  paragraph “Foo bar”, thematic break, paragraph “baz”
+*   3.  paragraph “Foo bar — baz”
+*   4.  heading “Foo bar”, paragraph “baz”
+* 
+* We find interpretation 4 most natural, and interpretation 4 increases the 
+* expressive power of CommonMark, by allowing multiline headings. Authors who 
+* want interpretation 1 can put a blank line after the first paragraph.
+ */
+mdTest(`Example 103`,
+`Foo
+
+bar
+---
+baz`,
+`<p>Foo</p><h2>bar</h2><p>baz</p>`)
+
+mdTest(`Example 104: Authors who want interpretation 2 can put blank lines 
+around the thematic break`,
+`Foo
+bar
+
+---
+
+baz`,
+`<p>Foo
+bar</p><hr>
+<p>baz</p>`)
+
+mdTest(`Example 105: or use a thematic break that cannot count as a setext 
+heading underline, such as`,
+`Foo
+bar
+* * *
+baz`,
+`<p>Foo
+bar</p><hr><p>baz</p>`)
+
+mdTest(`Example 106: Authors who want interpretation 3 can use backslash 
+escapes`,
+`Foo
+bar
+\\---
+baz`,
+`<p>Foo
+bar
+---
+baz</p>`)
+/**
+ * ## Indented Code Blocks
+ * 
+ * An indented code block is composed of one or more indented chunks separated 
+ * by blank lines. An indented chunk is a sequence of non-blank lines, each 
+ * preceded by four or more spaces of indentation. The contents of the code 
+ * block are the literal contents of the lines, including trailing line endings, 
+ * minus four spaces of indentation. An indented code block has no info string.
+ * 
+ * An indented code block cannot interrupt a paragraph, so there must be a blank 
+ * line between a paragraph and a following indented code block. (A blank line 
+ * is not needed, however, between a code block and a following paragraph.)
+ */
+mdTest(`Example 107: Simple indented code block`,
+`    a simple
+      indented code block`,
+`<pre><code>a simple
+  indented code block</code></pre>`)
+
+mdTest(`Example 108: If there is any ambiguity between an interpretation of 
+indentation as a code block and as indicating that material belongs to a list 
+item, the list item interpretation takes precedence`,
+`  - foo
+
+    bar`,
+`<ul>
+<li>
+<p>foo</p>
+<p>bar</p>
+</li>
+</ul>`)
+
 mdTest(`Example `,
 ``,
 ``)
