@@ -39,6 +39,8 @@ export interface Parser {
  */
 enum BlockType { Text, Inline, Html }
 
+export type Closer = (state: ParserState, block: DocumentBlock) => void
+
 export interface DocumentBlock {
     /**
      * The element that corresponds to the block.
@@ -78,9 +80,9 @@ export interface DocumentBlock {
      */
     cont?: RegExp
     /**
-     * If set, the line that terminates the block will be included in it.
+     * A function that is called when the block is closed.
      */
-    includeTerm: boolean
+    closed?: Closer
 }
 /**
  * ## Parser State
@@ -152,9 +154,9 @@ export function text(data: string): Text {
  *   appends its element to its parent element in the previous block.
  */
 function openBlock(state: ParserState, element: Element, type: BlockType, 
-    leaf = true, parent = element, cont?: RegExp, includeTerm = false) {
+    leaf = true, parent = element, cont?: RegExp, closed?: Closer) {
     state.blocks.push(
-        { element, parent, type, leaf, lines: [], cont, includeTerm })
+        { element, parent, type, leaf, lines: [], cont, closed })
 }
 /**
  * Pops the last block from the stack and appends its element to the parent
@@ -192,6 +194,13 @@ function append(state: ParserState, ...nodes: Node[]) {
  */
 function appendHtml(state: ParserState, html: string) {
     lastBlock(state).parent.insertAdjacentHTML('beforeend', html)
+}
+/** 
+ * Add rest of the current input to the specified block. 
+ */
+function flushInputToBlock(state: ParserState, block: DocumentBlock) {
+    block.lines.push(state.input.slice(state.nextIndex))
+    state.nextIndex = state.input.length
 }
 /**
  * ## Constructing Combined Regular Expressions
@@ -435,6 +444,7 @@ function inlines(state: ParserState) {
     while (parseNext(inlineRegexp, inlineParsers, state, true));
     flushInline(state)
 }
+/** */
 /**
  * ## Block Parsers
  * 
@@ -443,6 +453,23 @@ function inlines(state: ParserState) {
  * line-by-line, as blocks have a nested, hierarchical structure. The combined 
  * regular expression matches block prefixes that indicate different block 
  * types.
+ * 
+ * ### Closing List Item Block
+ * 
+ * TODO: Explain.
+ */
+function closeListItem(state: ParserState, block: DocumentBlock) {
+    let last = state.blocks.length - 1
+    if (block.lines.length == 0 && block == state.blocks[last - 1] && 
+        block.element.childElementCount == 0 && 
+        state.blocks[last].element.tagName == "P") {
+        let para = state.blocks.pop()!
+        append(state, ...para.element.children)
+        block.lines = para.lines
+    }
+}
+/**
+ * Parser are defined here.
  */
 const blockParsers = [
     parser(
@@ -551,7 +578,7 @@ const blockParsers = [
             cont.lastIndex = state.nextIndex
              if (cont.test(line))
                 openBlock(state, lastBlock(state).parent, BlockType.Html, 
-                    true, undefined, cont, true)
+                    true, undefined, cont, flushInputToBlock)
             else {
                 appendHtml(state, line.slice(state.nextIndex) + "\n")
                 state.nextIndex = line.length
@@ -577,9 +604,14 @@ const blockParsers = [
          * ### Lists
          */
         (state, match) => {
-            let { bullet, bulletno } = match.groups!
+            let { bulletno } = match.groups!
+            let prefix = match[0]
+            let len = prefix.length
             let block = lastBlock(state)
-            let cont = new RegExp(`(?= {${bullet.length}})`, "yui")
+            let cont = new RegExp(`(?= {${len}}|\\s*$|${
+                prefix.replace(/\d+|[+*.)]/, m => 
+                    Number.isFinite(Number(m)) ? "\\d{1,9}" : "\\" + m)})`, 
+                "yui")
             if (bulletno && block.element.tagName != "OL") {
                 let ol = elem('ol')
                 ol.start = Number.parseInt(bulletno)
@@ -589,9 +621,9 @@ const blockParsers = [
                 openBlock(state, elem('ul'), BlockType.Inline, false, undefined, 
                     cont)
             openBlock(state, elem('li'), BlockType.Inline, false, undefined,
-                new RegExp(` {${bullet.length}}`, "yui"))
+                new RegExp(` {${len}}|\s*$`, "yui"), closeListItem)
         },
-        / {0,3}(?<bullet>[\-+*]|(?<bulletno>\d{1,9})[.)]) {1,4}/.source),
+        / {0,3}(?:[\-+*]|(?<bulletno>\d{1,9})[.)]) {1,4}/.source),
     parser(
         /**
          * ### Paragraphs
@@ -647,6 +679,10 @@ function flushLastBlock(state: ParserState) {
  * index. This is used to unwind the block stack to a certain depth.
  */
 function closeBlocksToIndex(state: ParserState, index: number) {
+    for (let j = index; j < state.blocks.length; ++j) {
+        let block = state.blocks[j]
+        block.closed?.(state, block)
+    }
     while (state.blocks.length > index) {
         flushLastBlock(state)
         closeLastBlock(state)
@@ -670,13 +706,8 @@ function closeDiscontinuedBlocks(state: ParserState) {
         if (block.cont) {
             block.cont.lastIndex = state.nextIndex
             let match = block.cont.exec(state.input)
-            if (!match || match.index != 0) {
-                if (block.includeTerm) {
-                    block.lines.push(state.input.slice(state.nextIndex))
-                    state.nextIndex = state.input.length
-                }
+            if (!match)
                 return closeBlocksToIndex(state, i)
-            }
             state.nextIndex = block.cont.lastIndex
         }
     }
@@ -726,5 +757,6 @@ export function appendMarkdown(input: string, doc: Element) {
             }
         block.lines.push(line.slice(st.nextIndex))
     }
+    state.input = ""
     closeBlocksToIndex(state, 0)
 }

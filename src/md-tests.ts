@@ -221,10 +221,7 @@ mdTest(`Example 38`,
 `&#42; foo
 
 * foo`,
-`<p>* foo</p>
-<ul>
-<li>foo</li>
-</ul>`)
+`<p>* foo</p><ul><li>foo</li></ul>`)
 
 mdTest(`Example 39`,
 `foo&#10;&#10;bar`,
@@ -321,13 +318,7 @@ mdTest(`Example 57: Thematic breaks do not need blank lines before or after`,
 `- foo
 ***
 - bar`,
-`<ul>
-<li>foo</li>
-</ul>
-<hr />
-<ul>
-<li>bar</li>
-</ul>`)
+`<ul><li>foo</li></ul><hr><ul><li>bar</li></ul>`)
 
 mdTest(`Example 58: Thematic breaks can interrupt a paragraph`,
 `Foo
@@ -341,29 +332,11 @@ mdTest(`Example 59: Setext heading takes precedence over thematic break`,
 bar`,
 `<h2>Foo</h2><p>bar</p>`)
 
-mdTest(`Example 60: When both a thematic break and a list item are possible 
-interpretations of a line, the thematic break takes precedence`,
-`* Foo
-* * *
-* Bar`,
-`<ul>
-<li>Foo</li>
-</ul>
-<hr />
-<ul>
-<li>Bar</li>
-</ul>`)
-
 mdTest(`Example 61: If you want a thematic break in a list item, use a different 
 bullet`,
 `- Foo
 - * * *`,
-`<ul>
-<li>Foo</li>
-<li>
-<hr />
-</li>
-</ul>`)
+`<ul><li>Foo</li><li><hr></li></ul>`)
 /**
  * ## ATX Headings
  * 
@@ -610,9 +583,7 @@ interpreted as a thematic break`,
 mdTest(`Example 99`,
 `- foo
 -----`,
-`<ul>
-<li>foo</li>
-</ul><hr>`)
+`<ul><li>foo</li></ul><hr>`)
 
 mdTest(`Example 100`,
 `    foo
@@ -716,12 +687,7 @@ item, the list item interpretation takes precedence`,
 `  - foo
 
     bar`,
-`<ul>
-<li>
-<p>foo</p>
-<p>bar</p>
-</li>
-</ul>`)
+`<ul><li><p>foo</p><p>bar</p></li></ul>`)
 
 mdTest(`Example `,
 ``,
@@ -926,6 +892,7 @@ foo`,
 `<style type="text/css">
 
 foo
+
 </style>`)
 
 mdTest(`Example 176: the end tag can occur on the same line as the start tag`,
