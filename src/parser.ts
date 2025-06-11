@@ -183,6 +183,14 @@ function lastBlockIsParagraph(state: ParserState): boolean {
     return lastBlock(state).element.tagName == "P"
 }
 /**
+ * Interrupts a paragraph block if one is open.
+ */
+function interruptParagraph(state: ParserState) {
+    flushLastBlock(state)
+    if (lastBlockIsParagraph(state))
+        closeLastBlock(state)
+}
+/**
  * Appends one or more nodes to the parent element of the current (topmost) 
  * block.
  */
@@ -200,6 +208,22 @@ function appendHtml(state: ParserState, html: string) {
  */
 function flushInputToBlock(state: ParserState, block: DocumentBlock) {
     block.lines.push(state.input.slice(state.nextIndex))
+    state.nextIndex = state.input.length
+}
+/**
+ * Trim empty lines from beginning and end of a block.
+ */
+function trimBlock(state: ParserState, block: DocumentBlock) {
+    while (block.lines.length > 0 && block.lines[block.lines.length - 1] == "")
+        block.lines.pop()
+    while (block.lines.length > 0 && block.lines[0] == "")
+        block.lines.shift()
+}
+/**
+ * Trim empty lines and discard the rest of the input.
+ */
+function trimAndDiscard(state: ParserState, block: DocumentBlock) {
+    trimBlock(state, block)
     state.nextIndex = state.input.length
 }
 /**
@@ -275,8 +299,11 @@ const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S
  * the end of input if no position is given).
  */
 function flushInline(state: ParserState, index?: number) {
-    if (index == undefined || index > state.nextIndex)
-        append(state, text(state.input.substring(state.nextIndex, index)))
+    if (index == undefined || index > state.nextIndex) {
+        let inp = state.input.substring(state.nextIndex, index)
+        if (inp)
+            append(state, text(inp))
+    }
 }
 /**
  * ### Emphasis and Strong
@@ -351,20 +378,20 @@ const inlineParsers = [
          * of the CommonMark specification:
          * 
          * - The opening and closing backtick sequences must match in length.
-         * - Leading and trailing spaces inside the code span are trimmed to a 
-         *   single space.
+         * - Leading and trailing whitespace inside the code span are trimmed.
          * - Newlines inside code spans are replaced with spaces.
          * - Backticks inside code spans are allowed if multiple backticks open
          *   it.
          */
         (state, match) => {
             let { code } = match.groups!
+            code = code.replaceAll("\n", " ")
             let cnt = code.length
             if (cnt > 2 && code[0] == " " && code[cnt - 1] == " ")
                 code = code.substring(1, cnt - 1)
-            append(state, elem('code', text(code.replaceAll("\n", " "))))
+            append(state, elem('code', text(code)))
         },
-        /(?<codedelim>`+)(?<code> .+ |[^`]+)\k<codedelim>/.source),
+        /(?<codedelim>`+)(?<code>\s.+\s|[^`]+)\k<codedelim>/.source),
     parser(
         /**
          * ### Links
@@ -444,19 +471,22 @@ function inlines(state: ParserState) {
     while (parseNext(inlineRegexp, inlineParsers, state, true));
     flushInline(state)
 }
-/** */
 /**
  * ## Block Parsers
  * 
  * Block parsers are defined similarly to inline parsers, each with a regular 
- * expression and a mtcher function. Block-level elements are parsed 
+ * expression and a matcher function. Block-level elements are parsed 
  * line-by-line, as blocks have a nested, hierarchical structure. The combined 
  * regular expression matches block prefixes that indicate different block 
  * types.
  * 
  * ### Closing List Item Block
  * 
- * TODO: Explain.
+ * The function below, `closeListItem`, is responsible for handling the closure
+ * of a list item block. If the list item is empty and immediately followed by
+ * an empty paragraph block, it removes the paragraph and merges its children
+ * into the list item. This ensures that paragraph tags are not generated for 
+ * tight lists, i.e. lists that do not have empty lines between its items.
  */
 function closeListItem(state: ParserState, block: DocumentBlock) {
     let last = state.blocks.length - 1
@@ -512,9 +542,7 @@ const blockParsers = [
          * Produces an `<hr>` element.
          */
         (state,) => {
-            flushLastBlock(state)
-            if (lastBlockIsParagraph(state))
-                closeLastBlock(state)
+            interruptParagraph(state)
             append(state, elem('hr'))
         },
         / {0,3}(?<brkchar>[*\-_])(?:\s*\k<brkchar>){2,}\s*$/.source),
@@ -527,9 +555,7 @@ const blockParsers = [
          * `<h6>`). The header text is parsed for inline elements.
          */
         (state, match) => {
-            flushLastBlock(state)
-            if (lastBlockIsParagraph(state))
-                closeLastBlock(state)
+            interruptParagraph(state)
             let { atxlevel, atxheader } = match.groups!
             let level = atxlevel.length
             openBlock(state, elem(<keyof HTMLElementTagNameMap>`h${level}`), 
@@ -553,10 +579,25 @@ const blockParsers = [
                 flushLastBlock(state)
                 let code = elem('code')
                 openBlock(state, elem('pre', code), BlockType.Text, true, code,
-                    indentedCodeOrBlank)
+                    indentedCodeOrBlank, trimBlock)
             }
         },
         indentedCode.source),
+    parser(
+        /**
+         * ### Fenced Code Blocks
+         * 
+         * TODO: Explain what the function below does.
+         */
+        (state, match) => {
+            let { codefence, codelang } = match.groups!
+            interruptParagraph(state)
+            let cont = new RegExp(`(?! {0,3}${codefence}*\\s*$)`, "yui")
+            let code = elem('code')
+            openBlock(state, elem('pre', code), BlockType.Text, true, code, 
+                cont, trimAndDiscard)
+        },
+        / {0,3}(?<codefence>(?:`|~){3,})(?:\s+(?<codelang>\S+))?.*$/.source),
     parser(
         /**
          * ### HTML Blocks (Type 1)
@@ -602,6 +643,13 @@ const blockParsers = [
     parser(
         /**
          * ### Lists
+         *
+         * Matches unordered (`-`, `+`, `*`) and ordered (`1.`, `2)`, etc.) 
+         * list items. When a list marker is found, this parser opens a new 
+         * `<ul>` or `<ol>` block if necessary, and then opens a new `<li>` 
+         * block for the list item. The continuation regular expression ensures 
+         * that subsequent lines are correctly associated with the current list 
+         * item or list.
          */
         (state, match) => {
             let { bulletno } = match.groups!
@@ -614,7 +662,8 @@ const blockParsers = [
                 "yui")
             if (bulletno && block.element.tagName != "OL") {
                 let ol = elem('ol')
-                ol.start = Number.parseInt(bulletno)
+                if (bulletno != "1")
+                    ol.start = Number.parseInt(bulletno)
                 openBlock(state, ol, BlockType.Inline, false, undefined, cont)
             }
             else if (!bulletno && block.element.tagName != "UL")

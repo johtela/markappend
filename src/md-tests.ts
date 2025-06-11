@@ -689,6 +689,172 @@ item, the list item interpretation takes precedence`,
     bar`,
 `<ul><li><p>foo</p><p>bar</p></li></ul>`)
 
+mdTest(`Example 109`,
+`1.  foo
+
+    - bar`,
+`<ol><li><p>foo</p><ul><li>bar</li></ul></li></ol>`)
+
+mdTest(`Example 110: The contents of a code block are literal text, and do not 
+get parsed as Markdown`,
+`    <a/>
+    *hi*
+
+    - one`,
+`<pre><code>&lt;a/&gt;
+*hi*
+
+- one</code></pre>`)
+
+mdTest(`Example 111: Here we have three chunks separated by blank lines`,
+`    chunk1
+
+    chunk2
+  
+ 
+ 
+    chunk3`,
+`<pre><code>chunk1
+
+chunk2
+
+
+
+chunk3</code></pre>`)
+
+mdTest(`Example 112: Any initial spaces or tabs beyond four spaces of 
+indentation will be included in the content, even in interior blank lines`,
+`    chunk1
+      
+      chunk2`,
+`<pre><code>chunk1
+  
+  chunk2</code></pre>`)
+
+mdTest(`Example 113: An indented code block cannot interrupt a paragraph. (This 
+allows hanging indents and the like.)`,
+`Foo
+    bar`,
+`<p>Foo
+bar</p>`)
+
+mdTest(`Example 114: However, any non-blank line with fewer than four spaces of 
+indentation ends the code block immediately. So a paragraph may occur 
+immediately after indented code`,
+`    foo
+bar`,
+`<pre><code>foo</code></pre><p>bar</p>`)
+
+mdTest(`Example 115: And indented code can occur immediately before and after 
+other kinds of blocks`,
+`# Heading
+    foo
+Heading
+------
+    foo
+----`,
+`<h1>Heading</h1><pre><code>foo</code></pre><h2>Heading</h2><pre><code>foo</code></pre><hr>`)
+
+mdTest(`Example 116: The first line can be preceded by more than four spaces of 
+indentation`,
+`        foo
+    bar`,
+`<pre><code>    foo
+bar</code></pre>`)
+
+mdTest(`Example 117: Blank lines preceding or following an indented code block 
+are not included in it`,
+`
+    
+    foo
+    
+`,
+`<pre><code>foo</code></pre>`)
+
+mdTest(`Example 118: Trailing spaces or tabs are included in the code block's 
+content`,
+`    foo  `,
+`<pre><code>foo  </code></pre>`)
+/**
+ * ## Fenced Code Blocks
+ * 
+ * A code fence is a sequence of at least three consecutive backtick characters 
+ * (`) or tildes (~). (Tildes and backticks cannot be mixed.) A fenced code 
+ * block begins with a code fence, preceded by up to three spaces of 
+ * indentation.
+ * 
+ * The line with the opening code fence may optionally contain some text 
+ * following the code fence; this is trimmed of leading and trailing spaces or 
+ * tabs and called the info string. If the info string comes after a backtick 
+ * fence, it may not contain any backtick characters. (The reason for this 
+ * restriction is that otherwise some inline code would be incorrectly 
+ * interpreted as the beginning of a fenced code block.)
+ * 
+ * The content of the code block consists of all subsequent lines, until a 
+ * closing code fence of the same type as the code block began with (backticks 
+ * or tildes), and with at least as many backticks or tildes as the opening code 
+ * fence. If the leading code fence is preceded by N spaces of indentation, then 
+ * up to N spaces of indentation are removed from each line of the content (if 
+ * present). (If a content line is not indented, it is preserved unchanged. If 
+ * it is indented N spaces or less, all of the indentation is removed.)
+ * 
+ * The closing code fence may be preceded by up to three spaces of indentation, 
+ * and may be followed only by spaces or tabs, which are ignored. If the end of 
+ * the containing block (or document) is reached and no closing code fence has 
+ * been found, the code block contains all of the lines after the opening code 
+ * fence until the end of the containing block (or document). (An alternative 
+ * spec would require backtracking in the event that a closing code fence is 
+ * not found. But this makes parsing much less efficient, and there seems to be 
+ * no real downside to the behavior described here.)
+ * 
+ * A fenced code block may interrupt a paragraph, and does not require a blank 
+ * line either before or after.
+ * 
+ * The content of a code fence is treated as literal text, not parsed as 
+ * inlines. The first word of the info string is typically used to specify the 
+ * language of the code sample, and rendered in the class attribute of the code 
+ * tag. However, this spec does not mandate any particular treatment of the info 
+ * string. 
+ */
+mdTest(`Example 119: Here is a simple example with backticks`,
+`\`\`\`
+<
+ >
+\`\`\``,
+`<pre><code>&lt;
+ &gt;</code></pre>`)
+
+mdTest(`Example 120: With tildes`,
+`~~~
+<
+ >
+~~~`,
+`<pre><code>&lt;
+ &gt;</code></pre>`)
+
+mdTest(`Example 121: Fewer than three backticks is not enough`,
+`\`\`
+foo
+\`\``,
+`<p><code>foo</code></p>`)
+
+mdTest(`Example 122: The closing code fence must use the same character as the 
+opening fence`,
+`\`\`\`
+aaa
+~~~
+\`\`\``,
+`<pre><code>aaa
+~~~</code></pre>`)
+
+mdTest(`Example 123`,
+`~~~
+aaa
+\`\`\`
+~~~`,
+`<pre><code>aaa
+\`\`\`</code></pre>`)
+
 mdTest(`Example `,
 ``,
 ``)
@@ -696,6 +862,19 @@ mdTest(`Example `,
 mdTest(`Example `,
 ``,
 ``)
+
+mdTest(`Example `,
+``,
+``)
+
+mdTest(`Example `,
+``,
+``)
+
+mdTest(`Example `,
+``,
+``)
+
 /**
  * ## HTML Blocks
  * 
