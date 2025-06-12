@@ -16,6 +16,30 @@ import { test } from "lits-extras/lib/tester"
 import 'lits-extras/lib/test-runner'
 import * as sd from './parser'
 /**
+ * ## CommonMark Test Case
+ * 
+ * We read the CommonMark test cases from a JSON file. Its structure is defined 
+ * below (unused properties are omitted).
+ */
+interface CommonMarkTest {
+    markdown: string
+    html: string
+    example: number
+    section: string
+}
+/**
+ * Load test cases from JSON file.
+ */
+let tests: CommonMarkTest[]
+
+async function loadTests() {
+    let response = await fetch('spec.json')
+    if (response.ok)
+        tests = await response.json()
+}
+
+window.onload = loadTests
+/**
  * ## Testing Helper
  *
  * We need a helper function for running markdown-to-HTML conversion tests.

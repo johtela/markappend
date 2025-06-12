@@ -312,9 +312,9 @@ const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const spTabsOptNl = /(?:[ \t]+\n?[ \t]*|[ \t]*\n?[ \t]+|\n)/.source
-const linkLabel = /\[(?<linklabel>(?:[^\]]|(?<=\\)\])+)\]/.source
+const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
-const linkTitle = /(?:"(?<linktitle>(?:[^"]|(?<=\\)")+)"|'(?<linktitle>(?:[^']|(?<=\\)')+)'|\((?<linktitle>(?:[^()]|(?<=\\)[()])+)\))?/.source
+const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 /**
  * ## Inline Parsers
