@@ -15,7 +15,8 @@
  * current parser state and the match(es) as arguments. A matcher must be 
  * provided for all Markdown [blocks and inlines][].
  *
- * [CommonMark specification]: https://spec.commonmark.org/0.31.2/#appendix-a-parsing-strategy
+ * [CommonMark specification]: 
+ * https://spec.commonmark.org/0.31.2/#appendix-a-parsing-strategy
  * [blocks and inlines]: https://spec.commonmark.org/0.31.2/#blocks-and-inlines
  */
 export type Matcher = (state: ParserState, match: RegExpExecArray) => void
@@ -30,17 +31,28 @@ export interface Parser {
 }
 /**
  * ## Blocks
- * 
- * A Markdown document is divided into _blocks_. Each block corresponds to an 
- * HTML element with a `display` style of `block`, such as headers, lists, or 
- * paragraphs. Blocks can contain _inline_ elements, including links, emphasized 
- * text, or code spans. Information about open blocks is stored in the 
- * `DocumentBlock` interface.
+ *
+ * A Markdown document is parsed as a sequence of blocks, each representing a 
+ * structural element such as a paragraph, heading, list, code block, or HTML 
+ * block. Each block corresponds to an HTML element (e.g., `<p>`, `<h1>`, 
+ * `<ul>`, `<pre>`) and may contain either plain text, inline elements, or 
+ * nested child blocks.
+ *
+ * The `DocumentBlock` interface stores information about each open block during 
+ * parsing, including its associated DOM element, parent element for appending 
+ * children, block type (text, inline, or HTML), whether it is a leaf or 
+ * container, accumulated lines of content, an optional continuation regular 
+ * expression to determine if the block should continue, and an optional closing 
+ * handler.
  */
 enum BlockType { Text, Inline, Html }
-
+/**
+ * A function type that handles closing a document block during parsing.
+ */
 export type Closer = (state: ParserState, block: DocumentBlock) => void
-
+/**
+ * Represents a block-level element in a parsed Markdown document.
+ */
 export interface DocumentBlock {
     /**
      * The element that corresponds to the block.
@@ -80,34 +92,52 @@ export interface DocumentBlock {
      */
     cont?: RegExp
     /**
-     * A function that is called when the block is closed.
+     * A function that is called before the block is closed.
      */
-    closed?: Closer
+    closing?: Closer
+}
+/**
+ * ## Link References
+ * 
+ * In Markdown, link reference definitions allow you to define a link'
+ * s destination and optional title separately from where the link is used. For 
+ * example:
+ *
+ *      [example]: https://example.com "Example Title"
+ *
+ * The `LinkRef` interface below is used to store the destination URL and the 
+ * optional title for each reference label. These definitions can then be looked 
+ * up when rendering reference-style links elsewhere in the document.
+ */
+export interface LinkRef {
+    destination: string
+    title?: string
 }
 /**
  * ## Parser State
  *
- * The parser state encapsulates the current position and context of the parsing 
- * process. It includes:
+ * The parser state tracks the current context and position during parsing.
+ * It contains:
  *
- *  - `input`: The full Markdown source string being parsed.
- *  - `nextIndex`: The current position in the input string from which parsing 
- *    should continue.
- *  - `blocks`: A stack of open `DocumentBlock` objects representing the current 
- *    block structure.
+ *  - `input`: The Markdown source string currently being parsed.
+ *  - `nextIndex`: The current position in the input string for parsing.
+ *  - `blocks`: The stack of open `DocumentBlock` objects representing the block 
+ *    hierarchy.
+ *  - `links`: A mapping of link reference labels to their definitions.
  *
  * This state object is passed to matcher functions and updated as the parser 
- * advances through the input.
+ * processes the input.
  */
 export interface ParserState {
     input: string
     nextIndex: number
     blocks: DocumentBlock[]
+    links: Record<string, LinkRef>
 }
 /**
  * ## Constructors
  * 
- * Helper functions for creating parsers and DOM elements.
+ * Helper functions for creating parsers, new states, and DOM elements.
  */
 export function parser(matched: Matcher, regexp: string): Parser {
     return { matched, regexp }
@@ -119,7 +149,7 @@ export function parser(matched: Matcher, regexp: string): Parser {
  */
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
     ParserState {
-    return { input, nextIndex, blocks: state.blocks }
+    return { input, nextIndex, blocks: state.blocks, links: state.links }
 }
 /**
  * The `elem` function creates an HTML element of the specified `tag` type.
@@ -154,9 +184,9 @@ export function text(data: string): Text {
  *   appends its element to its parent element in the previous block.
  */
 function openBlock(state: ParserState, element: Element, type: BlockType, 
-    leaf = true, parent = element, cont?: RegExp, closed?: Closer) {
+    leaf = true, parent = element, cont?: RegExp, closing?: Closer) {
     state.blocks.push(
-        { element, parent, type, leaf, lines: [], cont, closed })
+        { element, parent, type, leaf, lines: [], cont, closing })
 }
 /**
  * Pops the last block from the stack and appends its element to the parent
@@ -220,13 +250,6 @@ function trimBlock(state: ParserState, block: DocumentBlock) {
         block.lines.shift()
 }
 /**
- * Trim empty lines and discard the rest of the input.
- */
-function trimAndDiscard(state: ParserState, block: DocumentBlock) {
-    trimBlock(state, block)
-    state.nextIndex = state.input.length
-}
-/**
  * ## Constructing Combined Regular Expressions
  * 
  * This function takes a list of parsers and combines their regular expressions
@@ -245,8 +268,7 @@ function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
  * the parser array, the current parser state, and a flag indicating whether we 
  * are parsing inline content. If a match is found:
  * 
- *  1. It flushes any unprocessed text before the match (for inlines) or the 
- *     last block (for blocks).
+ *  1. It flushes any unprocessed text before the match (for inlines).
  *  2. It invokes the matcher function for the matched parser.
  *  3. It advances the `nextIndex` to continue parsing after the match.
  * 
@@ -289,6 +311,11 @@ const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
+const spTabsOptNl = /(?:[ \t]+\n?[ \t]*|[ \t]*\n?[ \t]+|\n)/.source
+const linkLabel = /\[(?<linklabel>(?:[^\]]|(?<=\\)\])+)\]/.source
+const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
+const linkTitle = /(?:"(?<linktitle>(?:[^"]|(?<=\\)")+)"|'(?<linktitle>(?:[^']|(?<=\\)')+)'|\((?<linktitle>(?:[^()]|(?<=\\)[()])+)\))?/.source
+const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 /**
  * ## Inline Parsers
  *
@@ -386,9 +413,9 @@ const inlineParsers = [
         (state, match) => {
             let { code } = match.groups!
             code = code.replaceAll("\n", " ")
-            let cnt = code.length
-            if (cnt > 2 && code[0] == " " && code[cnt - 1] == " ")
-                code = code.substring(1, cnt - 1)
+            let trim = /^ (.*[^ ].*) $/.exec(code)
+            if (trim)
+                code = trim[1]
             append(state, elem('code', text(code)))
         },
         /(?<codedelim>`+)(?<code>\s.+\s|[^`]+)\k<codedelim>/.source),
@@ -499,6 +526,18 @@ function closeListItem(state: ParserState, block: DocumentBlock) {
     }
 }
 /**
+ * ### Closing Fenced Code block
+ * 
+ * Trim empty lines and skip the end marker if present.
+ */
+function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
+    trimBlock(state, block)
+    let endmarker = / {0,3}(?:`|~){3,}\s*$/yiu
+    endmarker.lastIndex = state.nextIndex
+    if (endmarker.exec(state.input))
+        state.nextIndex = endmarker.lastIndex
+}
+/**
  * Parser are defined here.
  */
 const blockParsers = [
@@ -592,12 +631,14 @@ const blockParsers = [
         (state, match) => {
             let { codefence, codelang } = match.groups!
             interruptParagraph(state)
-            let cont = new RegExp(`(?! {0,3}${codefence}*\\s*$)`, "yui")
+            let cont = new RegExp(`(?! {0,3}${codefence}+\\s*$)`, "yui")
             let code = elem('code')
+            if (codelang)
+                code.className = `language-${codelang}`
             openBlock(state, elem('pre', code), BlockType.Text, true, code, 
-                cont, trimAndDiscard)
+                cont, closeFencedCodeBlock)
         },
-        / {0,3}(?<codefence>(?:`|~){3,})(?:\s+(?<codelang>\S+))?.*$/.source),
+        / {0,3}(?<codefence>(?:`|~){3,})(?:\s*(?<codelang>[^\s`~]+))?\s*$/.source),
     parser(
         /**
          * ### HTML Blocks (Type 1)
@@ -730,7 +771,7 @@ function flushLastBlock(state: ParserState) {
 function closeBlocksToIndex(state: ParserState, index: number) {
     for (let j = index; j < state.blocks.length; ++j) {
         let block = state.blocks[j]
-        block.closed?.(state, block)
+        block.closing?.(state, block)
     }
     while (state.blocks.length > index) {
         flushLastBlock(state)
@@ -762,6 +803,22 @@ function closeDiscontinuedBlocks(state: ParserState) {
     }
 }
 /**
+ * ## Link References
+ * 
+ * Function to collect and remove link references from the input. Returns the
+ * initial ParseState
+ */
+function linkRefs(input: string): [string, Record<string, LinkRef>] {
+    let matcher = new RegExp(linkref, "uimg")
+    let links: Record<string, LinkRef> = {}
+    input = input.replace(matcher, 
+        (match, label, _2, destination, title) => {
+            links[label] = { destination, title }
+            return ""
+        })
+    return [ input, links ]
+}
+/**
  * ## Main Parsing Function
  * 
  * `appendMarkdown` converts a Markdown string to HTML and appends the result 
@@ -786,13 +843,15 @@ function closeDiscontinuedBlocks(state: ParserState) {
  *  4.  After all lines are processed, flushes and closes all blocks, ensuring 
  *      that the resulting HTML structure is complete.
  */
-export function appendMarkdown(input: string, doc: Element) {
+export function appendMarkdown(doc: string, root: Element) {
+    let [ input, links ] = linkRefs(doc)
     let state: ParserState = {
-        input,
+        input: "",
         nextIndex: 0,
-        blocks: []
+        blocks: [],
+        links
     }
-    openBlock(state, doc, BlockType.Inline, false)
+    openBlock(state, root, BlockType.Inline, false)
     let lines = input.split("\n")
     for (let i = 0; i < lines.length; ++i) {
         let line = lines[i]
@@ -806,6 +865,5 @@ export function appendMarkdown(input: string, doc: Element) {
             }
         block.lines.push(line.slice(st.nextIndex))
     }
-    state.input = ""
     closeBlocksToIndex(state, 0)
 }

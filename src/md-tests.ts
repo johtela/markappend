@@ -855,26 +855,164 @@ aaa
 `<pre><code>aaa
 \`\`\`</code></pre>`)
 
-mdTest(`Example `,
-``,
-``)
+mdTest(`Example 124: The closing code fence must be at least as long as the 
+opening fence`,
+`\`\`\`\`
+aaa
+\`\`\`
+\`\`\`\`\`\``,
+`<pre><code>aaa
+\`\`\`</code></pre>`)
 
-mdTest(`Example `,
-``,
-``)
+mdTest(`Example 125`,
+`~~~~
+aaa
+~~~
+~~~~`,
+`<pre><code>aaa
+~~~</code></pre>`)
 
-mdTest(`Example `,
-``,
-``)
+mdTest(`Example 126: Unclosed code blocks are closed by the end of the document 
+(or the enclosing block quote or list item)`,
+`\`\`\``,
+`<pre><code></code></pre>`)
 
-mdTest(`Example `,
-``,
-``)
+mdTest(`Example 127`,
+`\`\`\`\`\`
 
-mdTest(`Example `,
-``,
-``)
+\`\`\`
+aaa`,
+`<pre><code>\`\`\`
+aaa</code></pre>`)
 
+mdTest(`Example 128`,
+`> \`\`\`
+> aaa
+
+bbb`,
+`<blockquote>
+<pre><code>aaa
+</code></pre>
+</blockquote>
+<p>bbb</p>`)
+
+mdTest(`Example 129: A code block can have all empty lines as its content`,
+`\`\`\`
+
+  
+\`\`\``,
+`<pre><code>  </code></pre>`)
+
+mdTest(`Example 130: A code block can be empty`,
+`\`\`\`
+\`\`\``,
+`<pre><code></code></pre>`)
+
+mdTest(`Example 134: Four spaces of indentation is too many`,
+`    \`\`\`
+    aaaa
+    \`\`\``,
+`<pre><code>\`\`\`
+aaaa
+\`\`\`</code></pre>`)
+
+mdTest(`Example 135: Closing fences may be preceded by up to three spaces of 
+indentation, and their indentation need not match that of the opening fence`,
+`\`\`\`
+aaaa
+  \`\`\``,
+`<pre><code>aaaa</code></pre>`)
+
+mdTest(`Example 136`,
+`   \`\`\`
+aaaa
+  \`\`\``,
+`<pre><code>aaaa</code></pre>`)
+
+mdTest(`Example 137: This is not a closing fence, because it is indented 4 
+spaces`,
+`\`\`\`
+aaaa
+    \`\`\``,
+`<pre><code>aaaa
+    \`\`\`</code></pre>`)
+
+mdTest(`Example 138: Code fences (opening and closing) cannot contain internal 
+spaces or tabs`,
+`\`\`\` \`\`\`
+aaa`,
+`<p><code> </code>
+aaa</p>`)
+
+mdTest(`Example 139`,
+`~~~~~~
+aaa
+~~~ ~~`,
+`<pre><code>aaa
+~~~ ~~</code></pre>`)
+
+mdTest(`Example 140: Fenced code blocks can interrupt paragraphs, and can be 
+followed directly by paragraphs, without a blank line between`,
+`foo
+\`\`\`
+bar
+\`\`\`
+baz`,
+`<p>foo</p><pre><code>bar</code></pre><p>baz</p>`)
+
+mdTest(`Example 140: Other blocks can also occur before and after fenced code 
+blocks without an intervening blank line`,
+`foo
+---
+~~~
+bar
+~~~
+# baz`,
+`<h2>foo</h2><pre><code>bar</code></pre><h1>baz</h1>`)
+/**
+ * An info string can be provided after the opening code fence. Although this 
+ * spec doesn’t mandate any particular treatment of the info string, the first 
+ * word is typically used to specify the language of the code block. In HTML 
+ * output, the language is normally indicated by adding a class to the code 
+ * element consisting of language- followed by the language name.
+ */
+mdTest(`Example 142`,
+`\`\`\`ruby
+def foo(x)
+  return 3
+end
+\`\`\``,
+`<pre><code class="language-ruby">def foo(x)
+  return 3
+end</code></pre>`)
+
+mdTest(`Example 143`,
+`~~~~    ruby 
+def foo(x)
+  return 3
+end
+~~~~~~~`,
+`<pre><code class="language-ruby">def foo(x)
+  return 3
+end</code></pre>`)
+
+mdTest(`Example 144`,
+`\`\`\`\`;
+\`\`\`\``,
+`<pre><code class="language-;"></code></pre>`)
+
+mdTest(`Example 145: Info strings for backtick code blocks cannot contain 
+backticks`,
+`\`\`\` aa \`\`\`
+foo`,
+`<p><code>aa</code>
+foo</p>`)
+
+mdTest(`Example 147: Closing code fences cannot have info strings`,
+`\`\`\`
+\`\`\` aaa
+\`\`\``,
+`<pre><code>\`\`\` aaa</code></pre>`)
 /**
  * ## HTML Blocks
  * 
@@ -1101,13 +1239,33 @@ mdTest(`Example 184: Up to three spaces of indentation, but not four`,
 `  <div>
 </div><pre><code>&lt;div&gt;</code></pre>`)
 
-mdTest(`Example `,
-``,
-``)
+mdTest(`Example 187: HTML blocks of type 7 cannot interrupt a paragraph`,
+`Foo
+<a href="bar">
+baz`,
+`<p>Foo<a href="bar">
+baz
+</a></p>`)
+/**
+ * ## Link Reference Definitions
+ * 
+ * A link reference definition consists of a link label, optionally preceded by 
+ * up to three spaces of indentation, followed by a colon (:), optional spaces 
+ * or tabs (including up to one line ending), a link destination, optional 
+ * spaces or tabs (including up to one line ending), and an optional link title, 
+ * which if it is present must be separated from the link destination by spaces 
+ * or tabs. No further character may occur.
+ * 
+ * A link reference definition does not correspond to a structural element of a 
+ * document. Instead, it defines a label which can be used in reference links 
+ * and reference-style images elsewhere in the document. Link reference 
+ * definitions can come either before or after the links that use them.
+ */
+mdTest(`Example 192`,
+`[foo]: /url "title"
 
-mdTest(`Example `,
-``,
-``)
+[foo]`,
+`<p><a href="/url" title="title">foo</a></p>`)
 
 mdTest(`Example `,
 ``,
