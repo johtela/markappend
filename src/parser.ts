@@ -114,6 +114,10 @@ export interface LinkRef {
     title?: string
 }
 /**
+ * Dictionary of link references.
+ */
+type LinkRefs = Record<string, LinkRef>
+/**
  * ## Parser State
  *
  * The parser state tracks the current context and position during parsing.
@@ -132,7 +136,7 @@ export interface ParserState {
     input: string
     nextIndex: number
     blocks: DocumentBlock[]
-    links: Record<string, LinkRef>
+    links: LinkRefs
 }
 /**
  * ## Constructors
@@ -806,11 +810,11 @@ function closeDiscontinuedBlocks(state: ParserState) {
  * ## Link References
  * 
  * Function to collect and remove link references from the input. Returns the
- * initial ParseState
+ * updated input and the dictionary of link references.
  */
-function linkRefs(input: string): [string, Record<string, LinkRef>] {
+function linkRefs(input: string): [string, LinkRefs] {
     let matcher = new RegExp(linkref, "uimg")
-    let links: Record<string, LinkRef> = {}
+    let links: LinkRefs = {}
     input = input.replace(matcher, 
         (match, label, _2, destination, title) => {
             links[label] = { destination, title }
