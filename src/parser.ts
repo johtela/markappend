@@ -7,6 +7,9 @@
  *
  * Note: The parser is not fully CommonMark compliant. Some of the more obscure 
  * rules have been intentionally omitted to keep the code simple.
+ */
+import { elem, text } from './helpers'
+/**
  *
  * ## Matchers and Parsers
  *
@@ -154,24 +157,6 @@ export function parser(matched: Matcher, regexp: string): Parser {
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
     ParserState {
     return { input, nextIndex, blocks: state.blocks, links: state.links }
-}
-/**
- * The `elem` function creates an HTML element of the specified `tag` type.
- * Optionally, any number of child nodes can be appended to the created element.
- * This provides a convenient way to construct DOM trees.
- */
-export function elem<K extends keyof HTMLElementTagNameMap>(tag: K, 
-    ...children: Node[]): HTMLElementTagNameMap[K] {
-    let res = document.createElement(tag)
-    if (children.length > 0)
-        res.append(...children)
-    return res
-}
-/**
- * Creates a text node containing the specified string data.
- */
-export function text(data: string): Text {
-    return document.createTextNode(data)
 }
 /**
  * ## Opening and Closing Blocks

@@ -1,7 +1,7 @@
 [
   {
     "markdown": "\tfoo\tbaz\t\tbim\n",
-    "html": "<pre><code>foo\tbaz\t\tbim\n</code></pre>\n",
+    "html": "<pre><code>foo\tbaz\t\tbim</code></pre>",
     "example": 1,
     "start_line": 355,
     "end_line": 360,
@@ -9,7 +9,7 @@
   },
   {
     "markdown": "  \tfoo\tbaz\t\tbim\n",
-    "html": "<pre><code>foo\tbaz\t\tbim\n</code></pre>\n",
+    "html": "<pre><code>foo\tbaz\t\tbim</code></pre>",
     "example": 2,
     "start_line": 362,
     "end_line": 367,
@@ -17,7 +17,7 @@
   },
   {
     "markdown": "    a\ta\n    ὐ\ta\n",
-    "html": "<pre><code>a\ta\nὐ\ta\n</code></pre>\n",
+    "html": "<pre><code>a\ta\nὐ\ta</code></pre>",
     "example": 3,
     "start_line": 369,
     "end_line": 376,

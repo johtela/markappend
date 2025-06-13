@@ -1,0 +1,15 @@
+table {
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+th {
+    text-align: left;
+}
+tr:first-of-type > th {
+    border-bottom: solid 2px var(--col-prim-dark);
+}
+td {
+    vertical-align: text-top;
+    border: solid 2px var(--col-prim-dark);
+    
+}
