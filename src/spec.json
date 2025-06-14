@@ -25,7 +25,7 @@
   },
   {
     "markdown": "  - foo\n\n\tbar\n",
-    "html": "<ul>\n<li>\n<p>foo</p>\n<p>bar</p>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>foo</p><p>bar</p></li></ul>",
     "example": 4,
     "start_line": 382,
     "end_line": 393,

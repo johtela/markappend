@@ -16,4 +16,4 @@ Thus, for example, a tab can be used instead of four spaces in an indented
 code block. (Note, however, that internal tabs are passed through as literal 
 tabs, not expanded to spaces.)
 
-<commonmark-runner examples="1-3" />
+<commonmark-runner examples="1-4" />

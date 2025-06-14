@@ -82,14 +82,17 @@ export class CommonMarkRunner extends StyledElement {
             if (e instanceof Error)
                 result = e.message + "\n" + e.stack
         }
-        this.renderTest(test, result)
+        this.renderTest(test, result, result == test.html)
     }
 
-    private renderTest(test: CommonMarkTest, result: string) {
+    private renderTest(test: CommonMarkTest, result: string, pass: boolean) {
+        let passcell = elem('th', text(pass ? "PASSED" : "FAILED"))
+        passcell.className = pass ? "passed" : "failed"
         this.body.append(elem('table', 
             elem('tr',
                 elem('th', text(`Example: ${test.example}`)),
-                elem('th', text(test.section))),
+                elem('th', text(test.section)),
+                passcell),
             elem('tr',
                 elem('th', text("Input")),
                 elem('th', text("Expected")),
