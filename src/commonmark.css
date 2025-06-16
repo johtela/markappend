@@ -1,23 +1,26 @@
 table {
     font-size: 1rem;
     border-collapse: collapse;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+    font-family: var(--sans-font);
+    width: 100%;
 }
 th {
-    font-family: var(--sans-font);
     text-align: left;
 }
-th.passed {
+th.pass {
+    text-align: right;
     color: green;
 }
-th.failed {
+th.fail {
+    text-align: right;
     color: red;
 }
-tr:first-of-type > th {
-    border-bottom: solid 2px var(--col-prim-dark);
-}
-td {
+tr:not(:last-of-type) > td {
     vertical-align: text-top;
     border: solid 2px var(--col-prim-dark);
     padding: 0.25rem;
+}
+code {
+    word-break: break-word;
 }

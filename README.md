@@ -1,4 +1,6 @@
-# 📝 Sparking Fast Markdown Parser ✨
+# ✨ Sparkling Fast Markdown Parser
 
-A single file markdown parser optimized for clarity and speed. Inspired by
-[Snarkdown](https://github.com/developit/snarkdown).
+A single-file Markdown parser optimized for clarity and speed. The parser 
+modifies the DOM directly instead of generating HTML strings. It is mostly 
+CommonMark compliant, omitting the more exotic rules that most users are not 
+even aware of.

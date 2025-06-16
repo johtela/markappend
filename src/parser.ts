@@ -371,7 +371,7 @@ const inlineParsers = [
                 append(state, elem('br'))
             append(state, text(esc))
         },
-        /\\(?<esc>[\p{P}\p{S}\n])/u.source),
+        /\\(?<esc>[!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~\n])/u.source),
     parser(
         /**
          * ### Entity and Numeric Character References
@@ -527,7 +527,7 @@ function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
         state.nextIndex = endmarker.lastIndex
 }
 /**
- * Parser are defined here.
+ * Parsers are defined here.
  */
 const blockParsers = [
     parser(

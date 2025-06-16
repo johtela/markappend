@@ -72,22 +72,26 @@ export class CommonMarkRunner extends StyledElement {
     }
 
     private runTest(test: CommonMarkTest) {
+        let duration = 0
         let result = "<<Not run>>"
         try {
             let root = elem('div')
+            let start = window.performance.now()
             appendMarkdown(test.markdown, root)
+            duration = window.performance.now() - start
             result = root.innerHTML
         }
         catch (e) {
             if (e instanceof Error)
                 result = e.message + "\n" + e.stack
         }
-        this.renderTest(test, result, result == test.html)
+        this.renderTest(test, result, result == test.html, duration)
     }
 
-    private renderTest(test: CommonMarkTest, result: string, pass: boolean) {
-        let passcell = elem('th', text(pass ? "PASSED" : "FAILED"))
-        passcell.className = pass ? "passed" : "failed"
+    private renderTest(test: CommonMarkTest, result: string, pass: boolean,
+        duration: number) {
+        let passcell = elem('th', text(pass ? "PASS" : "FAIL"))
+        passcell.className = pass ? "pass" : "fail"
         this.body.append(elem('table', 
             elem('tr',
                 elem('th', text(`Example: ${test.example}`)),
@@ -100,7 +104,9 @@ export class CommonMarkRunner extends StyledElement {
             elem('tr',
                 elem('td', elem('code', text(ws(test.markdown)))),
                 elem('td', elem('code', text(ws(test.html)))),
-                elem('td', elem('code', text(ws(result)))))))
+                elem('td', elem('code', text(ws(result))))),
+            elem('tr', 
+                elem('td', text(`In ${duration.toFixed(1)}ms`)))))
     }
 }
 customElements.define("commonmark-runner", CommonMarkRunner)
