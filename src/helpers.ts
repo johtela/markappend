@@ -33,9 +33,9 @@ export function text(data: string): Text {
 export function ws(value: string): string {
     return value.replaceAll(/\s/g, ch => {
         switch (ch) {
-            case "\t": return "⇥"
-            case "\n": return "↩"
-            case " ": return "␣"
+            case "\t": return "→"
+            case "\n": return "↩\n"
+            case " ": return "·"
             default: return ch
         }
     })

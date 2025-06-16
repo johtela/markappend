@@ -489,7 +489,7 @@
   },
   {
     "markdown": "# foo\n## foo\n### foo\n#### foo\n##### foo\n###### foo\n",
-    "html": "<h1>foo</h1>\n<h2>foo</h2>\n<h3>foo</h3>\n<h4>foo</h4>\n<h5>foo</h5>\n<h6>foo</h6>\n",
+    "html": "<h1>foo</h1><h2>foo</h2><h3>foo</h3><h4>foo</h4><h5>foo</h5><h6>foo</h6>\n",
     "example": 62,
     "start_line": 1112,
     "end_line": 1126,
@@ -497,7 +497,7 @@
   },
   {
     "markdown": "####### foo\n",
-    "html": "<p>####### foo</p>\n",
+    "html": "<p>####### foo</p>",
     "example": 63,
     "start_line": 1131,
     "end_line": 1135,
@@ -505,7 +505,7 @@
   },
   {
     "markdown": "#5 bolt\n\n#hashtag\n",
-    "html": "<p>#5 bolt</p>\n<p>#hashtag</p>\n",
+    "html": "<p>#5 bolt</p><p>#hashtag</p>",
     "example": 64,
     "start_line": 1146,
     "end_line": 1153,
@@ -513,7 +513,7 @@
   },
   {
     "markdown": "\\## foo\n",
-    "html": "<p>## foo</p>\n",
+    "html": "<p>## foo</p>",
     "example": 65,
     "start_line": 1158,
     "end_line": 1162,
@@ -537,7 +537,7 @@
   },
   {
     "markdown": " ### foo\n  ## foo\n   # foo\n",
-    "html": "<h3>foo</h3>\n<h2>foo</h2>\n<h1>foo</h1>\n",
+    "html": "<h3>foo</h3><h2>foo</h2><h1>foo</h1>\n",
     "example": 68,
     "start_line": 1185,
     "end_line": 1193,
@@ -545,7 +545,7 @@
   },
   {
     "markdown": "    # foo\n",
-    "html": "<pre><code># foo\n</code></pre>\n",
+    "html": "<pre><code># foo</code></pre>",
     "example": 69,
     "start_line": 1198,
     "end_line": 1203,
@@ -553,7 +553,7 @@
   },
   {
     "markdown": "foo\n    # bar\n",
-    "html": "<p>foo\n# bar</p>\n",
+    "html": "<p>foo\n# bar</p>",
     "example": 70,
     "start_line": 1206,
     "end_line": 1212,
@@ -609,7 +609,7 @@
   },
   {
     "markdown": "****\n## foo\n****\n",
-    "html": "<hr />\n<h2>foo</h2>\n<hr />\n",
+    "html": "<hr><h2>foo</h2><hr>\n",
     "example": 77,
     "start_line": 1283,
     "end_line": 1291,
@@ -617,15 +617,15 @@
   },
   {
     "markdown": "Foo bar\n# baz\nBar foo\n",
-    "html": "<p>Foo bar</p>\n<h1>baz</h1>\n<p>Bar foo</p>\n",
+    "html": "<p>Foo bar</p><h1>baz</h1><p>Bar foo</p>",
     "example": 78,
     "start_line": 1294,
     "end_line": 1302,
     "section": "ATX headings"
   },
   {
-    "markdown": "## \n#\n### ###\n",
-    "html": "<h2></h2>\n<h1></h1>\n<h3></h3>\n",
+    "markdown": "## \n# \n### \n",
+    "html": "<h2></h2><h1></h1><h3></h3>\n",
     "example": 79,
     "start_line": 1307,
     "end_line": 1315,
@@ -673,7 +673,7 @@
   },
   {
     "markdown": "    Foo\n    ---\n\n    Foo\n---\n",
-    "html": "<pre><code>Foo\n---\n\nFoo\n</code></pre>\n<hr />\n",
+    "html": "<pre><code>Foo\n---\n\nFoo</code></pre><hr>\n",
     "example": 85,
     "start_line": 1420,
     "end_line": 1433,
@@ -689,7 +689,7 @@
   },
   {
     "markdown": "Foo\n    ---\n",
-    "html": "<p>Foo\n---</p>\n",
+    "html": "<p>Foo\n---</p>",
     "example": 87,
     "start_line": 1449,
     "end_line": 1455,
@@ -697,7 +697,7 @@
   },
   {
     "markdown": "Foo\n= =\n\nFoo\n--- -\n",
-    "html": "<p>Foo\n= =</p>\n<p>Foo</p>\n<hr />\n",
+    "html": "<p>Foo\n= =</p><p>Foo</p><hr>\n",
     "example": 88,
     "start_line": 1460,
     "end_line": 1471,
@@ -721,7 +721,7 @@
   },
   {
     "markdown": "`Foo\n----\n`\n\n<a title=\"a lot\n---\nof dashes\"/>\n",
-    "html": "<h2>`Foo</h2>\n<p>`</p>\n<h2>&lt;a title=&quot;a lot</h2>\n<p>of dashes&quot;/&gt;</p>\n",
+    "html": "<h2>`Foo</h2><p>`</p><h2>&lt;a title=\"a lot</h2><p>of dashes\"/&gt;</p>",
     "example": 91,
     "start_line": 1497,
     "end_line": 1510,
@@ -761,7 +761,7 @@
   },
   {
     "markdown": "---\nFoo\n---\nBar\n---\nBaz\n",
-    "html": "<hr />\n<h2>Foo</h2>\n<h2>Bar</h2>\n<p>Baz</p>\n",
+    "html": "<hr><h2>Foo</h2><h2>Bar</h2><p>Baz</p>",
     "example": 96,
     "start_line": 1568,
     "end_line": 1580,
@@ -777,7 +777,7 @@
   },
   {
     "markdown": "---\n---\n",
-    "html": "<hr />\n<hr />\n",
+    "html": "<hr><hr>\n",
     "example": 98,
     "start_line": 1597,
     "end_line": 1603,
@@ -785,7 +785,7 @@
   },
   {
     "markdown": "- foo\n-----\n",
-    "html": "<ul>\n<li>foo</li>\n</ul>\n<hr />\n",
+    "html": "<ul><li>foo</li></ul><hr>\n",
     "example": 99,
     "start_line": 1606,
     "end_line": 1614,
@@ -793,7 +793,7 @@
   },
   {
     "markdown": "    foo\n---\n",
-    "html": "<pre><code>foo\n</code></pre>\n<hr />\n",
+    "html": "<pre><code>foo</code></pre><hr>\n",
     "example": 100,
     "start_line": 1617,
     "end_line": 1624,
@@ -817,7 +817,7 @@
   },
   {
     "markdown": "Foo\n\nbar\n---\nbaz\n",
-    "html": "<p>Foo</p>\n<h2>bar</h2>\n<p>baz</p>\n",
+    "html": "<p>Foo</p><h2>bar</h2><p>baz</p>",
     "example": 103,
     "start_line": 1672,
     "end_line": 1682,
@@ -825,7 +825,7 @@
   },
   {
     "markdown": "Foo\nbar\n\n---\n\nbaz\n",
-    "html": "<p>Foo\nbar</p>\n<hr />\n<p>baz</p>\n",
+    "html": "<p>Foo\nbar</p><hr>\n<p>baz</p>",
     "example": 104,
     "start_line": 1688,
     "end_line": 1700,
@@ -833,7 +833,7 @@
   },
   {
     "markdown": "Foo\nbar\n* * *\nbaz\n",
-    "html": "<p>Foo\nbar</p>\n<hr />\n<p>baz</p>\n",
+    "html": "<p>Foo\nbar</p><hr><p>baz</p>",
     "example": 105,
     "start_line": 1706,
     "end_line": 1716,
@@ -841,7 +841,7 @@
   },
   {
     "markdown": "Foo\nbar\n\\---\nbaz\n",
-    "html": "<p>Foo\nbar\n---\nbaz</p>\n",
+    "html": "<p>Foo\nbar\n---\nbaz</p>",
     "example": 106,
     "start_line": 1721,
     "end_line": 1731,
@@ -849,7 +849,7 @@
   },
   {
     "markdown": "    a simple\n      indented code block\n",
-    "html": "<pre><code>a simple\n  indented code block\n</code></pre>\n",
+    "html": "<pre><code>a simple\n  indented code block</code></pre>",
     "example": 107,
     "start_line": 1749,
     "end_line": 1756,
@@ -857,15 +857,15 @@
   },
   {
     "markdown": "  - foo\n\n    bar\n",
-    "html": "<ul>\n<li>\n<p>foo</p>\n<p>bar</p>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>foo</p><p>bar</p></li></ul>",
     "example": 108,
     "start_line": 1763,
     "end_line": 1774,
     "section": "Indented code blocks"
   },
   {
-    "markdown": "1.  foo\n\n    - bar\n",
-    "html": "<ol>\n<li>\n<p>foo</p>\n<ul>\n<li>bar</li>\n</ul>\n</li>\n</ol>\n",
+    "markdown": "1.  foo\n\n    - bar",
+    "html": "<ol><li><p>foo</p><ul><li>bar</li></ul></li></ol>",
     "example": 109,
     "start_line": 1777,
     "end_line": 1790,
@@ -873,7 +873,7 @@
   },
   {
     "markdown": "    <a/>\n    *hi*\n\n    - one\n",
-    "html": "<pre><code>&lt;a/&gt;\n*hi*\n\n- one\n</code></pre>\n",
+    "html": "<pre><code>&lt;a/&gt;\n*hi*\n\n- one</code></pre>",
     "example": 110,
     "start_line": 1797,
     "end_line": 1808,
@@ -881,7 +881,7 @@
   },
   {
     "markdown": "    chunk1\n\n    chunk2\n  \n \n \n    chunk3\n",
-    "html": "<pre><code>chunk1\n\nchunk2\n\n\n\nchunk3\n</code></pre>\n",
+    "html": "<pre><code>chunk1\n\nchunk2\n\n\n\nchunk3</code></pre>",
     "example": 111,
     "start_line": 1813,
     "end_line": 1830,
@@ -889,7 +889,7 @@
   },
   {
     "markdown": "    chunk1\n      \n      chunk2\n",
-    "html": "<pre><code>chunk1\n  \n  chunk2\n</code></pre>\n",
+    "html": "<pre><code>chunk1\n  \n  chunk2</code></pre>",
     "example": 112,
     "start_line": 1836,
     "end_line": 1845,
@@ -905,7 +905,7 @@
   },
   {
     "markdown": "    foo\nbar\n",
-    "html": "<pre><code>foo\n</code></pre>\n<p>bar</p>\n",
+    "html": "<pre><code>foo</code></pre><p>bar</p>",
     "example": 114,
     "start_line": 1865,
     "end_line": 1872,
@@ -913,7 +913,7 @@
   },
   {
     "markdown": "# Heading\n    foo\nHeading\n------\n    foo\n----\n",
-    "html": "<h1>Heading</h1>\n<pre><code>foo\n</code></pre>\n<h2>Heading</h2>\n<pre><code>foo\n</code></pre>\n<hr />\n",
+    "html": "<h1>Heading</h1><pre><code>foo</code></pre><h2>Heading</h2><pre><code>foo</code></pre><hr>\n",
     "example": 115,
     "start_line": 1878,
     "end_line": 1893,
@@ -921,7 +921,7 @@
   },
   {
     "markdown": "        foo\n    bar\n",
-    "html": "<pre><code>    foo\nbar\n</code></pre>\n",
+    "html": "<pre><code>    foo\nbar</code></pre>",
     "example": 116,
     "start_line": 1898,
     "end_line": 1905,
@@ -929,7 +929,7 @@
   },
   {
     "markdown": "\n    \n    foo\n    \n\n",
-    "html": "<pre><code>foo\n</code></pre>\n",
+    "html": "<pre><code>foo</code></pre>",
     "example": 117,
     "start_line": 1911,
     "end_line": 1920,
@@ -937,7 +937,7 @@
   },
   {
     "markdown": "    foo  \n",
-    "html": "<pre><code>foo  \n</code></pre>\n",
+    "html": "<pre><code>foo  </code></pre>",
     "example": 118,
     "start_line": 1925,
     "end_line": 1930,
@@ -945,7 +945,7 @@
   },
   {
     "markdown": "```\n<\n >\n```\n",
-    "html": "<pre><code>&lt;\n &gt;\n</code></pre>\n",
+    "html": "<pre><code>&lt;\n &gt;</code></pre>\n",
     "example": 119,
     "start_line": 1980,
     "end_line": 1989,
@@ -953,7 +953,7 @@
   },
   {
     "markdown": "~~~\n<\n >\n~~~\n",
-    "html": "<pre><code>&lt;\n &gt;\n</code></pre>\n",
+    "html": "<pre><code>&lt;\n &gt;</code></pre>\n",
     "example": 120,
     "start_line": 1994,
     "end_line": 2003,
@@ -961,7 +961,7 @@
   },
   {
     "markdown": "``\nfoo\n``\n",
-    "html": "<p><code>foo</code></p>\n",
+    "html": "<p><code>foo</code></p>",
     "example": 121,
     "start_line": 2007,
     "end_line": 2013,
@@ -969,7 +969,7 @@
   },
   {
     "markdown": "```\naaa\n~~~\n```\n",
-    "html": "<pre><code>aaa\n~~~\n</code></pre>\n",
+    "html": "<pre><code>aaa\n~~~</code></pre>\n",
     "example": 122,
     "start_line": 2018,
     "end_line": 2027,
@@ -977,7 +977,7 @@
   },
   {
     "markdown": "~~~\naaa\n```\n~~~\n",
-    "html": "<pre><code>aaa\n```\n</code></pre>\n",
+    "html": "<pre><code>aaa\n```</code></pre>\n",
     "example": 123,
     "start_line": 2030,
     "end_line": 2039,
@@ -985,7 +985,7 @@
   },
   {
     "markdown": "````\naaa\n```\n``````\n",
-    "html": "<pre><code>aaa\n```\n</code></pre>\n",
+    "html": "<pre><code>aaa\n```</code></pre>\n",
     "example": 124,
     "start_line": 2044,
     "end_line": 2053,
@@ -993,7 +993,7 @@
   },
   {
     "markdown": "~~~~\naaa\n~~~\n~~~~\n",
-    "html": "<pre><code>aaa\n~~~\n</code></pre>\n",
+    "html": "<pre><code>aaa\n~~~</code></pre>\n",
     "example": 125,
     "start_line": 2056,
     "end_line": 2065,
@@ -1001,7 +1001,7 @@
   },
   {
     "markdown": "```\n",
-    "html": "<pre><code></code></pre>\n",
+    "html": "<pre><code></code></pre>",
     "example": 126,
     "start_line": 2071,
     "end_line": 2075,
@@ -1009,7 +1009,7 @@
   },
   {
     "markdown": "`````\n\n```\naaa\n",
-    "html": "<pre><code>\n```\naaa\n</code></pre>\n",
+    "html": "<pre><code>```\naaa</code></pre>",
     "example": 127,
     "start_line": 2078,
     "end_line": 2088,
@@ -1025,7 +1025,7 @@
   },
   {
     "markdown": "```\n\n  \n```\n",
-    "html": "<pre><code>\n  \n</code></pre>\n",
+    "html": "<pre><code>  </code></pre>\n",
     "example": 129,
     "start_line": 2107,
     "end_line": 2116,
@@ -1065,7 +1065,7 @@
   },
   {
     "markdown": "    ```\n    aaa\n    ```\n",
-    "html": "<pre><code>```\naaa\n```\n</code></pre>\n",
+    "html": "<pre><code>```\naaa\n```</code></pre>",
     "example": 134,
     "start_line": 2175,
     "end_line": 2184,
@@ -1073,7 +1073,7 @@
   },
   {
     "markdown": "```\naaa\n  ```\n",
-    "html": "<pre><code>aaa\n</code></pre>\n",
+    "html": "<pre><code>aaa</code></pre>\n",
     "example": 135,
     "start_line": 2190,
     "end_line": 2197,
@@ -1081,7 +1081,7 @@
   },
   {
     "markdown": "   ```\naaa\n  ```\n",
-    "html": "<pre><code>aaa\n</code></pre>\n",
+    "html": "<pre><code>aaa</code></pre>\n",
     "example": 136,
     "start_line": 2200,
     "end_line": 2207,
@@ -1089,7 +1089,7 @@
   },
   {
     "markdown": "```\naaa\n    ```\n",
-    "html": "<pre><code>aaa\n    ```\n</code></pre>\n",
+    "html": "<pre><code>aaa\n    ```</code></pre>",
     "example": 137,
     "start_line": 2212,
     "end_line": 2220,
@@ -1097,7 +1097,7 @@
   },
   {
     "markdown": "``` ```\naaa\n",
-    "html": "<p><code> </code>\naaa</p>\n",
+    "html": "<p><code> </code>\naaa</p>",
     "example": 138,
     "start_line": 2226,
     "end_line": 2232,
@@ -1105,7 +1105,7 @@
   },
   {
     "markdown": "~~~~~~\naaa\n~~~ ~~\n",
-    "html": "<pre><code>aaa\n~~~ ~~\n</code></pre>\n",
+    "html": "<pre><code>aaa\n~~~ ~~</code></pre>",
     "example": 139,
     "start_line": 2235,
     "end_line": 2243,
@@ -1113,7 +1113,7 @@
   },
   {
     "markdown": "foo\n```\nbar\n```\nbaz\n",
-    "html": "<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n",
+    "html": "<p>foo</p><pre><code>bar</code></pre><p>baz</p>",
     "example": 140,
     "start_line": 2249,
     "end_line": 2260,
@@ -1121,7 +1121,7 @@
   },
   {
     "markdown": "foo\n---\n~~~\nbar\n~~~\n# baz\n",
-    "html": "<h2>foo</h2>\n<pre><code>bar\n</code></pre>\n<h1>baz</h1>\n",
+    "html": "<h2>foo</h2><pre><code>bar</code></pre><h1>baz</h1>\n",
     "example": 141,
     "start_line": 2266,
     "end_line": 2278,
@@ -1129,7 +1129,7 @@
   },
   {
     "markdown": "```ruby\ndef foo(x)\n  return 3\nend\n```\n",
-    "html": "<pre><code class=\"language-ruby\">def foo(x)\n  return 3\nend\n</code></pre>\n",
+    "html": "<pre><code class=\"language-ruby\">def foo(x)\n  return 3\nend</code></pre>\n",
     "example": 142,
     "start_line": 2288,
     "end_line": 2299,
@@ -1153,7 +1153,7 @@
   },
   {
     "markdown": "``` aa ```\nfoo\n",
-    "html": "<p><code>aa</code>\nfoo</p>\n",
+    "html": "<p><code>aa</code>\nfoo</p>",
     "example": 145,
     "start_line": 2326,
     "end_line": 2332,
@@ -1169,7 +1169,7 @@
   },
   {
     "markdown": "```\n``` aaa\n```\n",
-    "html": "<pre><code>``` aaa\n</code></pre>\n",
+    "html": "<pre><code>``` aaa</code></pre>\n",
     "example": 147,
     "start_line": 2349,
     "end_line": 2356,
@@ -1297,7 +1297,7 @@
   },
   {
     "markdown": "<Warning>\n*bar*\n</Warning>\n",
-    "html": "<Warning>\n*bar*\n</Warning>\n",
+    "html": "<warning>\n*bar*\n</warning>\n",
     "example": 163,
     "start_line": 2645,
     "end_line": 2653,
@@ -1337,7 +1337,7 @@
   },
   {
     "markdown": "<del>*foo*</del>\n",
-    "html": "<p><del><em>foo</em></del></p>\n",
+    "html": "<p><del><em>foo</em></del></p>",
     "example": 168,
     "start_line": 2715,
     "end_line": 2719,
@@ -1345,7 +1345,7 @@
   },
   {
     "markdown": "<pre language=\"haskell\"><code>\nimport Text.HTML.TagSoup\n\nmain :: IO ()\nmain = print $ parseTags tags\n</code></pre>\nokay\n",
-    "html": "<pre language=\"haskell\"><code>\nimport Text.HTML.TagSoup\n\nmain :: IO ()\nmain = print $ parseTags tags\n</code></pre>\n<p>okay</p>\n",
+    "html": "<pre language=\"haskell\"><code>\nimport Text.HTML.TagSoup\n\nmain :: IO ()\nmain = print $ parseTags tags\n</code></pre>\n<p>okay</p>",
     "example": 169,
     "start_line": 2731,
     "end_line": 2747,
@@ -1353,7 +1353,7 @@
   },
   {
     "markdown": "<script type=\"text/javascript\">\n// JavaScript example\n\ndocument.getElementById(\"demo\").innerHTML = \"Hello JavaScript!\";\n</script>\nokay\n",
-    "html": "<script type=\"text/javascript\">\n// JavaScript example\n\ndocument.getElementById(\"demo\").innerHTML = \"Hello JavaScript!\";\n</script>\n<p>okay</p>\n",
+    "html": "<script type=\"text/javascript\">\n// JavaScript example\n\ndocument.getElementById(\"demo\").innerHTML = \"Hello JavaScript!\";\n</script>\n<p>okay</p>",
     "example": 170,
     "start_line": 2752,
     "end_line": 2766,
@@ -1361,7 +1361,7 @@
   },
   {
     "markdown": "<textarea>\n\n*foo*\n\n_bar_\n\n</textarea>\n",
-    "html": "<textarea>\n\n*foo*\n\n_bar_\n\n</textarea>\n",
+    "html": "<textarea>\n*foo*\n\n_bar_\n\n</textarea>\n\n",
     "example": 171,
     "start_line": 2771,
     "end_line": 2787,
@@ -1369,7 +1369,7 @@
   },
   {
     "markdown": "<style\n  type=\"text/css\">\nh1 {color:red;}\n\np {color:blue;}\n</style>\nokay\n",
-    "html": "<style\n  type=\"text/css\">\nh1 {color:red;}\n\np {color:blue;}\n</style>\n<p>okay</p>\n",
+    "html": "<style type=\"text/css\">\nh1 {color:red;}\n\np {color:blue;}\n</style>\n<p>okay</p>",
     "example": 172,
     "start_line": 2791,
     "end_line": 2807,
@@ -1377,7 +1377,7 @@
   },
   {
     "markdown": "<style\n  type=\"text/css\">\n\nfoo\n",
-    "html": "<style\n  type=\"text/css\">\n\nfoo\n",
+    "html": "<style type=\"text/css\">\n\nfoo\n\n\n</style>",
     "example": 173,
     "start_line": 2814,
     "end_line": 2824,
@@ -1401,7 +1401,7 @@
   },
   {
     "markdown": "<style>p{color:red;}</style>\n*foo*\n",
-    "html": "<style>p{color:red;}</style>\n<p><em>foo</em></p>\n",
+    "html": "<style>p{color:red;}</style>\n<p><em>foo</em></p>",
     "example": 176,
     "start_line": 2856,
     "end_line": 2862,
@@ -1417,7 +1417,7 @@
   },
   {
     "markdown": "<script>\nfoo\n</script>1. *bar*\n",
-    "html": "<script>\nfoo\n</script>1. *bar*\n",
+    "html": "<script>\nfoo\n</script>1. *bar*\n\n",
     "example": 178,
     "start_line": 2877,
     "end_line": 2885,
@@ -1489,7 +1489,7 @@
   },
   {
     "markdown": "Foo\n<a href=\"bar\">\nbaz\n",
-    "html": "<p>Foo\n<a href=\"bar\">\nbaz</p>\n",
+    "html": "<p>Foo<a href=\"bar\">\nbaz\n</a></p>",
     "example": 187,
     "start_line": 3027,
     "end_line": 3035,
@@ -3849,7 +3849,7 @@
   },
   {
     "markdown": "[link](/uri \"title\")\n",
-    "html": "<p><a href=\"/uri\" title=\"title\">link</a></p>\n",
+    "html": "<p><a href=\"/uri\" title=\"title\">link</a></p>",
     "example": 482,
     "start_line": 7539,
     "end_line": 7543,

@@ -304,7 +304,9 @@ const spTabsOptNl = /(?:[ \t]+\n?[ \t]*|[ \t]*\n?[ \t]+|\n)/.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
+const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.source
 const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
+const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
 /**
  * ## Inline Parsers
  *
@@ -419,15 +421,16 @@ const inlineParsers = [
          * the link text and destination.
          */
         (state, match) => {
-            let { link, linkdest } = match.groups!
-            linkdest = linkdest.replaceAll(/\\\(|\\\)/, str => str[1])
+            let { linktext, linkdest, linktitle } = match.groups!
+            linkdest = linkdest.replaceAll(/\\\(|\\\)/g, str => str[1])
             let aelem = elem('a')
             aelem.href = linkdest
+            aelem.title = linktitle
             openBlock(state, aelem, BlockType.Inline)
-            inlines(stateFrom(state, link))
+            inlines(stateFrom(state, linktext))
             closeLastBlock(state)
         },
-        /\[(?<link>(?:\\\[|\\\]|[^\[\]])+)\]\((?<linkdest>(?:\\\(|\\\)|[^\s()])+)\)/.source),
+        inlineLink),
     parser(
         /**
          * ### Images
