@@ -30,13 +30,30 @@ export function text(data: string): Text {
  * 
  * Other whitespace characters are left unchanged.
  */
-export function ws(value: string): string {
-    return value.replaceAll(/\s/g, ch => {
-        switch (ch) {
-            case "\t": return "→"
-            case "\n": return "↩\n"
-            case " ": return "·"
-            default: return ch
-        }
-    })
+export function highlightWs(value: string): Node[] {
+    let res: Node[] = []
+    let ws = /\s/g
+    let pos = 0
+    let match: RegExpExecArray | null
+    while (match = ws.exec(value)) {
+        if (pos < match.index)
+            res.push(text(value.substring(pos, match.index)))
+        pos = match.index + match.length
+        let span = elem('span', text(wsText(match[0])))
+        span.className = "ws"
+        res.push(span)
+    }
+    if (pos < value.length)
+        res.push(text(value.slice(pos)))
+    return res
+}
+
+function wsText(ch: string): string {
+    let res: Element
+    switch (ch) {
+        case "\t": return "→"
+        case "\n": return "↩\n"
+        case " ": return "·"
+        default: return ch
+    }
 }

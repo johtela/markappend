@@ -7,7 +7,7 @@
  * [CommonMark]: https://spec.commonmark.org/0.31.2/
  */
 import { StyledElement } from 'litscript/lib/src/custom-elem'
-import { elem, text, ws } from './helpers'
+import { elem, text, highlightWs  } from './helpers'
 import { appendMarkdown } from './parser'
 import './commonmark.css'
 let loaded = import('./spec.json')
@@ -102,9 +102,10 @@ export class CommonMarkRunner extends StyledElement {
                 elem('th', text("Expected")),
                 elem('th', text("Actual"))),
             elem('tr',
-                elem('td', elem('code', text(ws(test.markdown)))),
-                elem('td', elem('code', text(ws(test.html)))),
-                elem('td', elem('code', text(ws(result))))),
+                elem('td', elem('pre', elem('code', 
+                    ...highlightWs(test.markdown)))),
+                elem('td', elem('pre', elem('code', ...highlightWs(test.html)))),
+                elem('td', elem('pre', elem('code', ...highlightWs(result))))),
             elem('tr', 
                 elem('td', text(`In ${duration.toFixed(1)}ms`)))))
     }
