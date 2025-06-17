@@ -54,6 +54,12 @@ enum BlockType { Text, Inline, Html }
  */
 export type Closer = (state: ParserState, block: DocumentBlock) => void
 /**
+ * A function type that is called when the `cont` regexp succeeds and block is
+ *  not closed.
+ */
+export type Continuator = (state: ParserState, block: DocumentBlock,
+    match: RegExpExecArray) => void
+/**
  * Represents a block-level element in a parsed Markdown document.
  */
 export interface DocumentBlock {
@@ -98,6 +104,11 @@ export interface DocumentBlock {
      * A function that is called before the block is closed.
      */
     closing?: Closer
+    /**
+     * Function that is called when the block continues to be open, i.e. when
+     * the `cont` regexp matches for a following line.
+     */
+    continuing?: Continuator
 }
 /**
  * ## Link References
@@ -791,6 +802,7 @@ function closeDiscontinuedBlocks(state: ParserState) {
             if (!match)
                 return closeBlocksToIndex(state, i)
             state.nextIndex = block.cont.lastIndex
+            block.continuing?.(state, block, match)
         }
     }
 }
