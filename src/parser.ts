@@ -8,7 +8,7 @@
  * Note: The parser is not fully CommonMark compliant. Some of the more obscure 
  * rules have been intentionally omitted to keep the code simple.
  */
-import { elem, text } from './helpers'
+import { elem, text, transition, ExpAuto } from './helpers'
 /**
  *
  * ## Matchers and Parsers
@@ -318,6 +318,12 @@ const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<l
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.source
 const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
+
+const linkLabelAuto = new ExpAuto(1, (start, inside, accept) => [
+    transition(start, /\[/, inside),
+    transition(inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside),
+    transition(inside, /\s*(?<!\\)\]/, accept)
+])
 /**
  * ## Inline Parsers
  *
