@@ -95,7 +95,7 @@ export interface State {
  * state.
  */
 export interface Transition {
-    regexp: RegExp
+    regexp: RegExp | null
     target: State 
 }    
 /**
@@ -111,10 +111,12 @@ export interface Transition {
  * The first argument is the source state, then comes the regexp that allows the
  * transition, and last the target state.
  */
-export function transition(source: State, regexp: string | RegExp, 
+export function transition(source: State, regexp: string | RegExp | null, 
     target: State): Transition {
-    let res = { source, regexp: new RegExp(regexp, "yu"), target }
+    let res = { regexp: regexp ? new RegExp(regexp, "yu") : null, target }
     source.next.push(res)
+    if (source.next.length > 1 && source.next.find(t => !t.regexp))
+        throw new Error("Only one ϵ transition allowed for a state")
     return res
 }
 /**
@@ -122,10 +124,9 @@ export function transition(source: State, regexp: string | RegExp,
  * accept states are stored here, as well as the current state.
  */
 export class ExpAuto {
-    readonly states: State[]
-    readonly transitions: Transition[]
-    readonly start: State
-    readonly accept: State
+    private states: State[]
+    private start: State
+    private accept: State
     current: State
     /**
      * ### Creating an Expression Automaton
@@ -136,19 +137,14 @@ export class ExpAuto {
      * starting state and the last is the end state. The `count` you specify 
      * should exclude these.
      * 
-     * Since expression automata always have a single entry and exit point 
-     * (start & accept states), they can be chained togeter. By providing the 
-     * `previous` automaton we make its accept state the start state of the 
-     * created automaton.
-     * 
      * The accept state can never have any outgoing transitions. This condition 
      * is validated in the constructor.
      */
-    constructor(count: number, init: (...states: State[]) => Transition[]) {
-        this.states = new Array<State>(count + 2).fill({ next: [] })
+    constructor(count: number, init: (...states: State[]) => void) {
+        this.states = Array.from({ length: count + 2 }, () => ({ next: [] }))
         this.start = this.states[0]
         this.accept = this.states[this.states.length - 1]
-        this.transitions = init(...this.states)
+        init(...this.states)
         if (this.accept.next.length > 0)
             throw new Error("Accept state cannot have outgoing transitions")
         this.current = this.start
@@ -175,11 +171,16 @@ export class ExpAuto {
             return true
         for (let i = 0; i < this.current.next.length; ++i) {
             let tr = this.current.next[i]
+            if (!tr.regexp) {
+                this.current = tr.target
+                return this.exec(input, pos)
+            }
             tr.regexp.lastIndex = pos
             let match = tr.regexp.exec(input)
             if (match) {
                 this.current = tr.target
-                return this.exec(input, match.index + match.length)
+                if (this.exec(input, match.index + match.length))
+                    return true
             }
         }
         return false
@@ -189,5 +190,40 @@ export class ExpAuto {
      */
     get accepted(): boolean {
         return this.current == this.accept
+    }
+    /**
+     * ## Concatenating Automata
+     * 
+     * Since expression automata always have single entry and exit points
+     * (start & accept states), they can be chained togeter with a transition.
+     * This creates a new automaton that matches both source automata in 
+     * succession.
+     * 
+     * The `concat` method clones a list of automata, combines their states to
+     * a single result automaton, and creates an empty transition from previous 
+     * automaton's accept state to the following automaton's start state.
+     */
+    static concat(...automata: ExpAuto[]): ExpAuto {
+        let res = structuredClone(automata[0])
+        let prev = res
+        for (let i = 1; i < automata.length; ++i) {
+            let curr = i == automata.length - 1 ? 
+                automata[i] : structuredClone(automata[i])
+            res.states.push(...curr.states)
+            transition(prev.accept, null, curr.start)
+            prev = curr
+        }
+        res.accept = prev.accept
+        return res
+    }
+    /**
+     * ## RegExp Conversions
+     * 
+     * You can get the possible transitions forward from the current state as
+     * a regexp. This is constructed by joining the transition regexps with a 
+     * disjunction `|`.
+     */
+    get nextRegExp(): string {
+        return this.current.next.map(t => `(?:${t.regexp?.source })`).join("|")
     }
 }

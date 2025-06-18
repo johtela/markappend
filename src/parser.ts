@@ -319,11 +319,11 @@ const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.sou
 const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
 
-const linkLabelAuto = new ExpAuto(1, (start, inside, accept) => [
-    transition(start, /\[/, inside),
-    transition(inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside),
+const linkLabelAuto = new ExpAuto(1, (start, inside, accept) => {
+    transition(start, /\[/, inside)
+    transition(inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside)
     transition(inside, /\s*(?<!\\)\]/, accept)
-])
+})
 /**
  * ## Inline Parsers
  *
