@@ -347,13 +347,14 @@ const linkTitleAuto = ExpAuto.create(3, (start, dquoted, squoted, parens,
 ])
 const nonEmptyLine = /\s*(?=\S)/
 const colonAuto = ExpAuto.simple(/:\s*/)
-const restWsAuto = ExpAuto.simple(/\*$/)
+const wsAuto = ExpAuto.simple(/\s*/)
 const linkRefAuto = ExpAuto.concat(
     linkLabelAuto.prepend(/^ {0,3}/),
     colonAuto,
     linkDestAuto.prepend(nonEmptyLine),
+    wsAuto,
     linkTitleAuto.prepend(nonEmptyLine),
-    restWsAuto)
+    wsAuto)
 
     
 /**
