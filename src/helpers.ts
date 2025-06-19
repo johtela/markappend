@@ -131,7 +131,16 @@ export class ExpAuto {
     /**
      * ### Creating an Expression Automaton
      * 
-     * You can create an expression automaton with one call using the function 
+     * This is a private constructor that is used for initializing properties.
+     */
+    private constructor(states: State[], start: State, accept: State) {
+        this.states = states
+        this.start = start
+        this.accept = accept
+        this.current = this.start
+    }
+    /**
+     * You can create an expression automaton with one call using the method 
      * below. You specify the number of states in the automaton and a callback
      * where you can create the transitions. The first state provided is the 
      * starting state and the last is the end state. The `count` you specify 
@@ -140,14 +149,28 @@ export class ExpAuto {
      * The accept state can never have any outgoing transitions. This condition 
      * is validated in the constructor.
      */
-    constructor(count: number, init: (...states: State[]) => void) {
-        this.states = Array.from({ length: count + 2 }, () => ({ next: [] }))
-        this.start = this.states[0]
-        this.accept = this.states[this.states.length - 1]
-        init(...this.states)
-        if (this.accept.next.length > 0)
+    static create(count: number, 
+        init: (...states: State[]) => [State, RegExp | string, State][]): 
+        ExpAuto {
+        let states = Array.from({ length: count + 2 }, () => ({ next: [] }))
+        let start = states[0]
+        let accept = states[states.length - 1]
+        let transitions = init(...states)
+        for (let i = 0; i < transition.length; ++i) {
+            let [source, regexp, target] = transitions[i]
+            transition(source, regexp, target)
+        }
+        if (accept.next.length > 0)
             throw new Error("Accept state cannot have outgoing transitions")
-        this.current = this.start
+        return new ExpAuto(states, start, accept)
+    }
+    /**
+     * The simplest automaton is one with only a start and accept state, and
+     * with single transition between those. The `simple` method is a shorthand 
+     * for creating such automata.
+     */
+    static simple(regexp: RegExp | string): ExpAuto {
+        return ExpAuto.create(0, (start, accept) => [[start, regexp, accept]])
     }
     /**
      * To (re)initialize an automaton to its starting state, you can call the
@@ -159,16 +182,17 @@ export class ExpAuto {
     /**
      * ## Executing the Automaton
      * 
-     * To advance the automaton, you need to feed it a string, and a starting
-     * position in it. The `exec` method takes these as arguments and returns
-     * `true` if the whole string was consumed; otherwise `false`. The current
-     * state of the automaton changes if the input matched it. You can use the 
-     * `accepted` property to check whether the automaton is in the accept 
-     * state afterwards.
+     * To advance the automaton, call the `exec` method with a string and a 
+     * starting position. It returns a tuple: `[accepted, newPos]`, where 
+     * `accepted` is `true` if the automaton reached the accept state or the
+     * whole input string was consumed. `newPos` is the position in the string 
+     * after the match attempt. The automaton's current state is updated as it
+     * processes the input. Use the `accepted` property to check if the 
+     * automaton is in the accept state after execution.
      */
-    exec(input: string, pos: number): boolean {
-        if (pos >= input.length)
-            return true
+    exec(input: string, pos: number): [boolean, number] {
+        if (pos >= input.length || this.current == this.accept)
+            return [true, pos]
         for (let i = 0; i < this.current.next.length; ++i) {
             let tr = this.current.next[i]
             if (!tr.regexp) {
@@ -179,11 +203,12 @@ export class ExpAuto {
             let match = tr.regexp.exec(input)
             if (match) {
                 this.current = tr.target
-                if (this.exec(input, match.index + match.length))
-                    return true
+                let res = this.exec(input, match.index + match.length)
+                if (res[0])
+                    return res
             }
         }
-        return false
+        return [false, pos]
     }
     /** 
      * Returns `true` if the automaton is in the accept state.
@@ -216,6 +241,18 @@ export class ExpAuto {
         res.accept = prev.accept
         return res
     }
+    /**
+     * If you want to add a simple prefix to an automaton, you can use the 
+     * `prepend` method. It creates a new automaton with a new starting state 
+     * and adds a transition from it with the given regexp to the old starting 
+     * state. Note that we don't modify `this` automaton, but return a new one
+     * that is linked to it.
+     */
+    prepend(regexp: RegExp | string): ExpAuto {
+        let newstart: State = { next: [] }
+        transition(newstart, regexp, this.start)
+        return new ExpAuto(this.states.concat(newstart), newstart, this.accept)
+    }   
     /**
      * ## RegExp Conversions
      * 
