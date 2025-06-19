@@ -156,7 +156,7 @@ export class ExpAuto {
         let start = states[0]
         let accept = states[states.length - 1]
         let transitions = init(...states)
-        for (let i = 0; i < transition.length; ++i) {
+        for (let i = 0; i < transitions.length; ++i) {
             let [source, regexp, target] = transitions[i]
             transition(source, regexp, target)
         }
@@ -250,9 +250,33 @@ export class ExpAuto {
      */
     prepend(regexp: RegExp | string): ExpAuto {
         let newstart: State = { next: [] }
-        transition(newstart, regexp, this.start)
-        return new ExpAuto(this.states.concat(newstart), newstart, this.accept)
-    }   
+        let states = [ ...this.states ]
+        states[0] = newstart
+        let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
+        for (let i = 0; i < this.start.next.length; ++i) {
+            let next = this.start.next[i]
+            transition(newstart, `${newregexp}(?:${next.regexp?.source})`, 
+                next.target)
+        }
+        return new ExpAuto(states, newstart, this.accept)
+    }
+    /**
+     * TODO: Explain.
+     */
+    append(regexp: RegExp | string): ExpAuto {
+        let res = structuredClone(this)
+        let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
+        for (let i = 0; i < res.states.length; ++i) {
+            let state = res.states[i]
+            for (let j = 0; j < state.next.length; ++j) {
+                let next = state.next[j]
+                if (next.target == res.accept)
+                    next.regexp = new RegExp(
+                        `(?:${next.regexp?.source})${newregexp}`, "yu")
+            }
+        }
+        return res
+    }
     /**
      * ## RegExp Conversions
      * 

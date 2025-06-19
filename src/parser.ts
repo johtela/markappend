@@ -345,18 +345,11 @@ const linkTitleAuto = ExpAuto.create(3, (start, dquoted, squoted, parens,
     [parens, /(?<!\\\))/, accept],
     [start, /[^"'(]/, accept]
 ])
-const nonEmptyLine = /\s*(?=\S)/
-const colonAuto = ExpAuto.simple(/:\s*/)
-const wsAuto = ExpAuto.simple(/\s*/)
+const ws = /\s*/
 const linkRefAuto = ExpAuto.concat(
-    linkLabelAuto.prepend(/^ {0,3}/),
-    colonAuto,
-    linkDestAuto.prepend(nonEmptyLine),
-    wsAuto,
-    linkTitleAuto.prepend(nonEmptyLine),
-    wsAuto)
-
-    
+    linkLabelAuto.prepend(/^ {0,3}/).append(/:\s*/),
+    linkDestAuto.prepend(ws).append(ws),
+    linkTitleAuto.prepend(ws).append(ws))
 /**
  * ## Inline Parsers
  *
