@@ -88,6 +88,7 @@ function wsText(ch: string): string {
  * transitions.
  */
 export interface State {
+    name?: string
     next: Transition[]
 }
 /**
@@ -100,14 +101,8 @@ export interface Transition {
 }    
 /**
  * Transitions are created in the initialization callback given as argument to
- * the AutoExp constructor. A typical usage is shown below. We create 2 states 
- * and transitions between them.
- * ```ts
- * let ea = new ExpAuto(2, null, (start, s1, s2, accept) => [
- *     transition(start, ".*", s1),
- *     transition(s1, "\\s", s2),
- *     transition(s2, "$", accept)])
- * ```
+ * the AutoExp constructor. 
+ * 
  * The first argument is the source state, then comes the regexp that allows the
  * transition, and last the target state.
  */
@@ -124,6 +119,7 @@ export function transition(source: State, regexp: string | RegExp | null,
  * accept states are stored here, as well as the current state.
  */
 export class ExpAuto {
+    readonly name: string | null
     private states: State[]
     private start: State
     private accept: State
@@ -133,36 +129,62 @@ export class ExpAuto {
      * 
      * This is a private constructor that is used for initializing properties.
      */
-    private constructor(states: State[], start: State, accept: State) {
+    private constructor(name: string | null, states: State[], start: State, 
+        accept: State) {
+        this.name = name
         this.states = states
         this.start = start
         this.accept = accept
         this.current = this.start
+        if (this.name)
+            for (let i = 0; i < states.length; ++i) {
+                let state = states[i]
+                if (!state.name)
+                    state.name = this.name
+            }
     }
     /**
      * You can create an expression automaton with one call using the method 
-     * below. You specify the number of states in the automaton and a callback
-     * where you can create the transitions. The first state provided is the 
-     * starting state and the last is the end state. The `count` you specify 
-     * should exclude these.
+     * below. You specify the states in the automaton and a list of triplets 
+     * for transitions. The first state provided is the starting state and the 
+     * last is the accept state. 
      * 
      * The accept state can never have any outgoing transitions. This condition 
      * is validated in the constructor.
      */
-    static create(count: number, 
-        init: (...states: State[]) => [State, RegExp | string, State][]): 
-        ExpAuto {
-        let states = Array.from({ length: count + 2 }, () => ({ next: [] }))
+    static createNamed(name: string | null, states: State[], 
+            transitions: [State, RegExp | string, State][]): ExpAuto {
         let start = states[0]
         let accept = states[states.length - 1]
-        let transitions = init(...states)
         for (let i = 0; i < transitions.length; ++i) {
             let [source, regexp, target] = transitions[i]
             transition(source, regexp, target)
         }
         if (accept.next.length > 0)
             throw new Error("Accept state cannot have outgoing transitions")
-        return new ExpAuto(states, start, accept)
+        return new ExpAuto(name, states, start, accept)
+    }
+    /**
+     * If you don't want to explicitly create the states (and name them), you
+     * can use the shorthand below. It takes the number of states excluding the
+     * start and accept state, and a callback function to return the transitions
+     * for those states.
+     * 
+     * A typical usage is shown below. We create 2 states and transitions 
+     * between them.
+     * ```ts
+     * let ea = ExpAuto.create(null, 2, (start, s1, s2, accept) => [
+     *     transition(start, ".*", s1),
+     *     transition(s1, "\\s", s2),
+     *     transition(s2, "$", accept)])
+     * ```     
+     */
+    static create(name: string | null, count: number, 
+        init: (...states: State[]) => [State, RegExp | string, State][]): 
+        ExpAuto {
+        let states = Array.from({ length: count + 2 }, () => ({ next: [] }))
+        let transitions = init(...states)
+        return ExpAuto.createNamed(name, states, transitions)
     }
     /**
      * The simplest automaton is one with only a start and accept state, and
@@ -170,7 +192,8 @@ export class ExpAuto {
      * for creating such automata.
      */
     static simple(regexp: RegExp | string): ExpAuto {
-        return ExpAuto.create(0, (start, accept) => [[start, regexp, accept]])
+        return ExpAuto.create(null, 0, (start, accept) => 
+            [[start, regexp, accept]])
     }
     /**
      * To (re)initialize an automaton to its starting state, you can call the
@@ -258,7 +281,7 @@ export class ExpAuto {
             transition(newstart, `${newregexp}(?:${next.regexp?.source})`, 
                 next.target)
         }
-        return new ExpAuto(states, newstart, this.accept)
+        return new ExpAuto(this.name, states, newstart, this.accept)
     }
     /**
      * TODO: Explain.

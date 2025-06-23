@@ -319,32 +319,34 @@ const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.sou
 const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
 
-const linkLabelAuto = ExpAuto.create(1, (start, inside, accept) => [
-    [start, /\[/, inside],
-    [inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside],
-    [inside, /\s*(?<!\\)\]/, accept]
-])
-const linkDestAuto = ExpAuto.create(2, (start, angled, plain, accept) => [
-    [start, /</, angled],
-    [angled, /(?:[^<>\n]|(?<=\\)[<>])+/, angled],
-    [angled, /(?<!\\)>/, accept],
-    [start, /(?<!<)/, plain],
-    [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain],
-    [plain, /\s|$/, accept]
-])
-const linkTitleAuto = ExpAuto.create(3, (start, dquoted, squoted, parens, 
-    accept) => [
-    [start, /"/, dquoted],
-    [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted],
-    [dquoted, /(?<!\\)"/, accept],
-    [start, /'/, squoted],
-    [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted],
-    [squoted, /(?<!\\)'/, accept],
-    [start, /\(/, parens],
-    [parens, /(?:\s*(?::[^()]|(?<=\\)[()])+)+/, parens],
-    [parens, /(?<!\\\))/, accept],
-    [start, /[^"'(]/, accept]
-])
+const linkLabelAuto = ExpAuto.create("linkLabel", 1, 
+    (start, inside, accept) => [
+        [start, /\[/, inside],
+        [inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside],
+        [inside, /\s*(?<!\\)\]/, accept]
+    ])
+const linkDestAuto = ExpAuto.create("linkDest", 2, 
+    (start, angled, plain, accept) => [
+        [start, /</, angled],
+        [angled, /(?:[^<>\n]|(?<=\\)[<>])+/, angled],
+        [angled, /(?<!\\)>/, accept],
+        [start, /(?<!<)/, plain],
+        [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain],
+        [plain, /\s|$/, accept]
+    ])
+const linkTitleAuto = ExpAuto.create("linkTitle", 3, 
+    (start, dquoted, squoted, parens, accept) => [
+        [start, /"/, dquoted],
+        [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted],
+        [dquoted, /(?<!\\)"/, accept],
+        [start, /'/, squoted],
+        [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted],
+        [squoted, /(?<!\\)'/, accept],
+        [start, /\(/, parens],
+        [parens, /(?:\s*(?::[^()]|(?<=\\)[()])+)+/, parens],
+        [parens, /(?<!\\\))/, accept],
+        [start, /[^"'(]/, accept]
+    ])
 const ws = /\s*/
 const linkRefAuto = ExpAuto.concat(
     linkLabelAuto.prepend(/^ {0,3}/).append(/:\s*/),
