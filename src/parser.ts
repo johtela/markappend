@@ -8,7 +8,7 @@
  * Note: The parser is not fully CommonMark compliant. Some of the more obscure 
  * rules have been intentionally omitted to keep the code simple.
  */
-import { elem, text, transition, ExpAuto } from './helpers'
+import { elem, text, state, ExpAuto } from './helpers'
 /**
  *
  * ## Matchers and Parsers
@@ -128,9 +128,11 @@ export interface LinkRef {
     title?: string
 }
 /**
- * Dictionary of link references.
+ * Dictionaries of link references and anchor tags whose targets are not 
+ * resolved yet.
  */
 type LinkRefs = Record<string, LinkRef>
+type Links = Record<string, HTMLAnchorElement>
 /**
  * ## Parser State
  *
@@ -150,7 +152,8 @@ export interface ParserState {
     input: string
     nextIndex: number
     blocks: DocumentBlock[]
-    links: LinkRefs
+    linkRefs: LinkRefs
+    links: Links
 }
 /**
  * ## Constructors
@@ -167,7 +170,8 @@ export function parser(matched: Matcher, regexp: string): Parser {
  */
 function stateFrom(state: ParserState, input: string, nextIndex = 0):
     ParserState {
-    return { input, nextIndex, blocks: state.blocks, links: state.links }
+    return { input, nextIndex, blocks: state.blocks, linkRefs: state.linkRefs,
+        links: state.links }
 }
 /**
  * ## Opening and Closing Blocks
@@ -319,13 +323,13 @@ const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.sou
 const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
 
-const linkLabelAuto = ExpAuto.create("linkLabel", 1, 
+const linkLabelAuto = ExpAuto.create([ undefined, "label", undefined ],
     (start, inside, accept) => [
         [start, /\[/, inside],
         [inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside],
         [inside, /\s*(?<!\\)\]/, accept]
     ])
-const linkDestAuto = ExpAuto.create("linkDest", 2, 
+const linkDestAuto = ExpAuto.create([ undefined, "dest", "dest", undefined ],
     (start, angled, plain, accept) => [
         [start, /</, angled],
         [angled, /(?:[^<>\n]|(?<=\\)[<>])+/, angled],
@@ -334,7 +338,8 @@ const linkDestAuto = ExpAuto.create("linkDest", 2,
         [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain],
         [plain, /\s|$/, accept]
     ])
-const linkTitleAuto = ExpAuto.create("linkTitle", 3, 
+const linkTitleAuto = ExpAuto.create([ undefined, "title", "title", "title", 
+    undefined ],
     (start, dquoted, squoted, parens, accept) => [
         [start, /"/, dquoted],
         [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted],
@@ -881,13 +886,14 @@ function linkRefs(input: string): [string, LinkRefs] {
  *  4.  After all lines are processed, flushes and closes all blocks, ensuring 
  *      that the resulting HTML structure is complete.
  */
-export function appendMarkdown(doc: string, root: Element) {
-    let [ input, links ] = linkRefs(doc)
+export function appendMarkdown(input: string, root: Element) {
+    linkRefAuto.init()
     let state: ParserState = {
         input: "",
         nextIndex: 0,
         blocks: [],
-        links
+        linkRefs: {},
+        links: {}
     }
     openBlock(state, root, BlockType.Inline, false)
     let lines = input.split("\n")

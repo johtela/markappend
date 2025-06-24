@@ -88,8 +88,14 @@ function wsText(ch: string): string {
  * transitions.
  */
 export interface State {
-    name?: string
+    group?: string
     next: Transition[]
+}
+/**
+ * Create a new state with no transitions.
+ */
+export function state(group?: string): State {
+    return { group, next: [] }
 }
 /**
  * A transition consist of the regexp that allows it to be taken and the next 
@@ -119,29 +125,23 @@ export function transition(source: State, regexp: string | RegExp | null,
  * accept states are stored here, as well as the current state.
  */
 export class ExpAuto {
-    readonly name: string | null
     private states: State[]
     private start: State
     private accept: State
+    groups: Record<string, string>
     current: State
     /**
      * ### Creating an Expression Automaton
      * 
      * This is a private constructor that is used for initializing properties.
      */
-    private constructor(name: string | null, states: State[], start: State, 
+    private constructor(states: State[], start: State, 
         accept: State) {
-        this.name = name
         this.states = states
         this.start = start
         this.accept = accept
+        this.groups = {}
         this.current = this.start
-        if (this.name)
-            for (let i = 0; i < states.length; ++i) {
-                let state = states[i]
-                if (!state.name)
-                    state.name = this.name
-            }
     }
     /**
      * You can create an expression automaton with one call using the method 
@@ -152,8 +152,8 @@ export class ExpAuto {
      * The accept state can never have any outgoing transitions. This condition 
      * is validated in the constructor.
      */
-    static createNamed(name: string | null, states: State[], 
-            transitions: [State, RegExp | string, State][]): ExpAuto {
+    static from(states: State[], 
+        transitions: [State, RegExp | string, State][]): ExpAuto {
         let start = states[0]
         let accept = states[states.length - 1]
         for (let i = 0; i < transitions.length; ++i) {
@@ -162,7 +162,7 @@ export class ExpAuto {
         }
         if (accept.next.length > 0)
             throw new Error("Accept state cannot have outgoing transitions")
-        return new ExpAuto(name, states, start, accept)
+        return new ExpAuto(states, start, accept)
     }
     /**
      * If you don't want to explicitly create the states (and name them), you
@@ -179,12 +179,15 @@ export class ExpAuto {
      *     transition(s2, "$", accept)])
      * ```     
      */
-    static create(name: string | null, count: number, 
+    static create(states: (string | undefined)[] | number, 
         init: (...states: State[]) => [State, RegExp | string, State][]): 
         ExpAuto {
-        let states = Array.from({ length: count + 2 }, () => ({ next: [] }))
-        let transitions = init(...states)
-        return ExpAuto.createNamed(name, states, transitions)
+        let sts = typeof states !='number' ? states.map(state) :
+            Array.from({ length: states + 2 }, () => ({ next: [] }))
+        if (init.length != sts.length)
+            throw new Error("Wrong number of arguments for the init function")
+        let transitions = init(...sts)
+        return ExpAuto.from(sts, transitions)
     }
     /**
      * The simplest automaton is one with only a start and accept state, and
@@ -192,8 +195,7 @@ export class ExpAuto {
      * for creating such automata.
      */
     static simple(regexp: RegExp | string): ExpAuto {
-        return ExpAuto.create(null, 0, (start, accept) => 
-            [[start, regexp, accept]])
+        return ExpAuto.create(0, (start, accept) => [[start, regexp, accept]])
     }
     /**
      * To (re)initialize an automaton to its starting state, you can call the
@@ -201,6 +203,14 @@ export class ExpAuto {
      */
     init() {
         this.current = this.start
+        this.groups = { }
+    }
+    /**
+     * Clone the automaton.
+     */
+    clone(): ExpAuto {
+        let obj = structuredClone(this)
+        return new ExpAuto(obj.states, obj.start, obj.accept)
     }
     /**
      * ## Executing the Automaton
@@ -217,7 +227,8 @@ export class ExpAuto {
         if (pos >= input.length || this.current == this.accept)
             return [true, pos]
         for (let i = 0; i < this.current.next.length; ++i) {
-            let tr = this.current.next[i]
+            let curr = this.current
+            let tr = curr.next[i]
             if (!tr.regexp) {
                 this.current = tr.target
                 return this.exec(input, pos)
@@ -225,6 +236,8 @@ export class ExpAuto {
             tr.regexp.lastIndex = pos
             let match = tr.regexp.exec(input)
             if (match) {
+                if (curr.group)
+                    this.groups[curr.group] += match[0]
                 this.current = tr.target
                 let res = this.exec(input, match.index + match.length)
                 if (res[0])
@@ -252,11 +265,11 @@ export class ExpAuto {
      * automaton's accept state to the following automaton's start state.
      */
     static concat(...automata: ExpAuto[]): ExpAuto {
-        let res = structuredClone(automata[0])
+        let res = automata[0].clone()
         let prev = res
         for (let i = 1; i < automata.length; ++i) {
             let curr = i == automata.length - 1 ? 
-                automata[i] : structuredClone(automata[i])
+                automata[i] : automata[i].clone()
             res.states.push(...curr.states)
             transition(prev.accept, null, curr.start)
             prev = curr
@@ -281,13 +294,13 @@ export class ExpAuto {
             transition(newstart, `${newregexp}(?:${next.regexp?.source})`, 
                 next.target)
         }
-        return new ExpAuto(this.name, states, newstart, this.accept)
+        return new ExpAuto(states, newstart, this.accept)
     }
     /**
      * TODO: Explain.
      */
     append(regexp: RegExp | string): ExpAuto {
-        let res = structuredClone(this)
+        let res = this.clone()
         let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
         for (let i = 0; i < res.states.length; ++i) {
             let state = res.states[i]
