@@ -8,7 +8,7 @@
  * Note: The parser is not fully CommonMark compliant. Some of the more obscure 
  * rules have been intentionally omitted to keep the code simple.
  */
-import { elem, text, state, ExpAuto } from './helpers'
+import { elem, text, ExpAuto } from './helpers'
 /**
  *
  * ## Matchers and Parsers
@@ -48,7 +48,7 @@ export interface Parser {
  * expression to determine if the block should continue, and an optional closing 
  * handler.
  */
-enum BlockType { Text, Inline, Html }
+enum BlockType { Text, Inline, Html, Skip }
 /**
  * A function type that handles closing a document block during parsing.
  */
@@ -132,7 +132,7 @@ export interface LinkRef {
  * resolved yet.
  */
 type LinkRefs = Record<string, LinkRef>
-type Links = Record<string, HTMLAnchorElement>
+type Links = Record<string, HTMLAnchorElement[]>
 /**
  * ## Parser State
  *
@@ -188,9 +188,10 @@ function stateFrom(state: ParserState, input: string, nextIndex = 0):
  *   appends its element to its parent element in the previous block.
  */
 function openBlock(state: ParserState, element: Element, type: BlockType, 
-    leaf = true, parent = element, cont?: RegExp, closing?: Closer) {
+    leaf = true, parent = element, cont?: RegExp, closing?: Closer,
+    continuing?: Continuator) {
     state.blocks.push(
-        { element, parent, type, leaf, lines: [], cont, closing })
+        { element, parent, type, leaf, lines: [], cont, closing, continuing })
 }
 /**
  * Pops the last block from the stack and appends its element to the parent
@@ -320,35 +321,33 @@ const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.source
-const linkref = `^ {0,3}${linkLabel}:${spTabsOptNl}${linkDest}${spTabsOptNl}${linkTitle}[ \t]*$`
 const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
 
-const linkLabelAuto = ExpAuto.create([ undefined, "label", undefined ],
-    (start, inside, accept) => [
-        [start, /\[/, inside],
-        [inside, /\s*(?:[^\]\s]|(?<=\\)\])+/, inside],
-        [inside, /\s*(?<!\\)\]/, accept]
+const linkLabelAuto = ExpAuto.create(1,
+    (start, label, accept) => [
+        [start, /\[/, label],
+        [label, /\s*(?:[^\]\s]|(?<=\\)\])+/, label, "label"],
+        [label, /\s*(?<!\\)\]/, accept]
     ])
-const linkDestAuto = ExpAuto.create([ undefined, "dest", "dest", undefined ],
+const linkDestAuto = ExpAuto.create(2,
     (start, angled, plain, accept) => [
         [start, /</, angled],
-        [angled, /(?:[^<>\n]|(?<=\\)[<>])+/, angled],
+        [angled, /(?:[^<>\n]|(?<=\\)[<>])+/, angled, "dest"],
         [angled, /(?<!\\)>/, accept],
         [start, /(?<!<)/, plain],
-        [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain],
+        [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain, "dest"],
         [plain, /\s|$/, accept]
     ])
-const linkTitleAuto = ExpAuto.create([ undefined, "title", "title", "title", 
-    undefined ],
+const linkTitleAuto = ExpAuto.create(3,
     (start, dquoted, squoted, parens, accept) => [
         [start, /"/, dquoted],
-        [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted],
+        [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted, "title"],
         [dquoted, /(?<!\\)"/, accept],
         [start, /'/, squoted],
-        [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted],
+        [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted, "title"],
         [squoted, /(?<!\\)'/, accept],
         [start, /\(/, parens],
-        [parens, /(?:\s*(?::[^()]|(?<=\\)[()])+)+/, parens],
+        [parens, /(?:\s*(?::[^()]|(?<=\\)[()])+)+/, parens, "title"],
         [parens, /(?<!\\\))/, accept],
         [start, /[^"'(]/, accept]
     ])
@@ -580,6 +579,58 @@ function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
         state.nextIndex = endmarker.lastIndex
 }
 /**
+ * ### Coninuing and Closing a Link Reference
+ * 
+ * Continuing a block will store the matched text into the current block, and
+ * feed the rest of the line to the expression automaton.
+ */
+function continueLinkRef(state: ParserState, block: DocumentBlock, 
+    match: RegExpExecArray) {
+    lastBlock(state).lines.push(state.input.slice(match.index))
+    let [res, pos] = linkRefAuto.exec(state.input, match.index)
+    if (res) {
+        if (linkRefAuto.accepted)
+            closeLinkRef(state)
+        else
+            block.cont = new RegExp(linkRefAuto.nextRegExp, "yui")
+    }
+    else {
+        block.element = elem('p')
+        block.parent = block.element
+        block.type = BlockType.Inline
+        block.cont = nonBlank
+    }
+}
+/**
+ * Closing a link reference block succesfully extracts the link label, 
+ * destination, and optional title and stores them to parser state record and
+ * fills them in any links with the same label, if such exist. Finally, we
+ * close the link ref block.
+ */
+function closeLinkRef(state: ParserState) {
+    let label = linkRefAuto.groups["label"]
+    let destination = linkRefAuto.groups["dest"]
+    let title = linkRefAuto.groups["title"]
+    state.linkRefs[label] = { destination, title }
+    state.links[label]?.forEach(aelem => {
+        aelem.href = destination
+        aelem.title = title
+    })
+    state.nextIndex = state.input.length
+    closeLastBlock(state)
+}
+/**
+ * ### Opening a Paragraph
+ * 
+ * Open a paragraph if the last block is not already one.
+ */
+function openParagraph(state: ParserState) {
+    if (!lastBlockIsParagraph(state)) {
+        flushLastBlock(state)
+        openBlock(state, elem('p'), BlockType.Inline, true, undefined, nonBlank)
+    }
+}
+/**
  * Parsers are defined here.
  */
 const blockParsers = [
@@ -758,19 +809,33 @@ const blockParsers = [
         / {0,3}(?:[\-+*]|(?<bulletno>\d{1,9})[.)]) {1,4}/.source),
     parser(
         /**
+         * ### Link References
+         * 
+         * TODO: Explain.
+         */
+        (state, match) => {
+            let [res, pos] = linkRefAuto.exec(state.input, match.index)
+            if (res) {
+                flushLastBlock(state)
+                openBlock(state, lastBlock(state).parent, BlockType.Skip, true,
+                    undefined, new RegExp(linkRefAuto.nextRegExp, "yui"),
+                    undefined, continueLinkRef)
+            }
+            else
+                openParagraph(state)
+            lastBlock(state).lines.push(state.input.slice(match.index))
+            if (res && linkRefAuto.accepted)
+                closeLinkRef(state)
+        },
+        linkRefAuto.startRegExp),
+    parser(
+        /**
          * ### Paragraphs
          * 
          * A sequence of non-blank lines that cannot be interpreted as other 
          * kinds of blocks forms a paragraph.
          */
-        (state,) => {
-            if (!lastBlockIsParagraph(state)) {
-                flushLastBlock(state)
-                openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
-                    nonBlank)
-            }
-        },  
-        nonBlank.source)
+        openParagraph, nonBlank.source)
 ]
 /**
  * The combined regexp for all block parsers.
@@ -844,22 +909,6 @@ function closeDiscontinuedBlocks(state: ParserState) {
             block.continuing?.(state, block, match)
         }
     }
-}
-/**
- * ## Link References
- * 
- * Function to collect and remove link references from the input. Returns the
- * updated input and the dictionary of link references.
- */
-function linkRefs(input: string): [string, LinkRefs] {
-    let matcher = new RegExp(linkref, "uimg")
-    let links: LinkRefs = {}
-    input = input.replace(matcher, 
-        (match, label, _2, destination, title) => {
-            links[label] = { destination, title }
-            return ""
-        })
-    return [ input, links ]
 }
 /**
  * ## Main Parsing Function

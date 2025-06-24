@@ -38,7 +38,7 @@ export function highlightWs(value: string): Node[] {
     while (match = ws.exec(value)) {
         if (pos < match.index)
             res.push(text(value.substring(pos, match.index)))
-        pos = match.index + match.length
+        pos = match.index + match[0].length
         let span = elem('span', text(wsText(match[0])))
         span.className = "ws"
         res.push(span)
@@ -84,19 +84,9 @@ function wsText(ch: string): string {
  * helps us construct block parsers whose continuation regular expressions can 
  * change as more lines are read.
  * 
- * States in an expression automaton store lists of incoming and outgoing 
- * transitions.
+ * States in an expression automaton is a list of outgoing transitions.
  */
-export interface State {
-    group?: string
-    next: Transition[]
-}
-/**
- * Create a new state with no transitions.
- */
-export function state(group?: string): State {
-    return { group, next: [] }
-}
+export type State = Transition[]
 /**
  * A transition consist of the regexp that allows it to be taken and the next 
  * state.
@@ -104,6 +94,7 @@ export function state(group?: string): State {
 export interface Transition {
     regexp: RegExp | null
     target: State 
+    group?: string
 }    
 /**
  * Transitions are created in the initialization callback given as argument to
@@ -113,10 +104,11 @@ export interface Transition {
  * transition, and last the target state.
  */
 export function transition(source: State, regexp: string | RegExp | null, 
-    target: State): Transition {
-    let res = { regexp: regexp ? new RegExp(regexp, "yu") : null, target }
-    source.next.push(res)
-    if (source.next.length > 1 && source.next.find(t => !t.regexp))
+    target: State, group?: string): Transition {
+    let res = { regexp: regexp ? new RegExp(regexp, "yui") : null, target, 
+        group }
+    source.push(res)
+    if (source.length > 1 && source.find(t => !t.regexp))
         throw new Error("Only one ϵ transition allowed for a state")
     return res
 }
@@ -125,9 +117,9 @@ export function transition(source: State, regexp: string | RegExp | null,
  * accept states are stored here, as well as the current state.
  */
 export class ExpAuto {
-    private states: State[]
-    private start: State
-    private accept: State
+    readonly states: State[]
+    start: State
+    accept: State
     groups: Record<string, string>
     current: State
     /**
@@ -145,49 +137,38 @@ export class ExpAuto {
     }
     /**
      * You can create an expression automaton with one call using the method 
-     * below. You specify the states in the automaton and a list of triplets 
-     * for transitions. The first state provided is the starting state and the 
-     * last is the accept state. 
+     * below. You specify the number states in the automaton and a list of 
+     * triplets for transitions. The first state provided is the starting state 
+     * and the last is the accept state. You should exclude them from the 
+     * `count` argument.
      * 
      * The accept state can never have any outgoing transitions. This condition 
      * is validated in the constructor.
-     */
-    static from(states: State[], 
-        transitions: [State, RegExp | string, State][]): ExpAuto {
-        let start = states[0]
-        let accept = states[states.length - 1]
-        for (let i = 0; i < transitions.length; ++i) {
-            let [source, regexp, target] = transitions[i]
-            transition(source, regexp, target)
-        }
-        if (accept.next.length > 0)
-            throw new Error("Accept state cannot have outgoing transitions")
-        return new ExpAuto(states, start, accept)
-    }
-    /**
-     * If you don't want to explicitly create the states (and name them), you
-     * can use the shorthand below. It takes the number of states excluding the
-     * start and accept state, and a callback function to return the transitions
-     * for those states.
-     * 
+     *
      * A typical usage is shown below. We create 2 states and transitions 
      * between them.
      * ```ts
-     * let ea = ExpAuto.create(null, 2, (start, s1, s2, accept) => [
+     * let ea = ExpAuto.create(2, (start, s1, s2, accept) => [
      *     transition(start, ".*", s1),
      *     transition(s1, "\\s", s2),
      *     transition(s2, "$", accept)])
      * ```     
      */
-    static create(states: (string | undefined)[] | number, 
-        init: (...states: State[]) => [State, RegExp | string, State][]): 
-        ExpAuto {
-        let sts = typeof states !='number' ? states.map(state) :
-            Array.from({ length: states + 2 }, () => ({ next: [] }))
-        if (init.length != sts.length)
+    static create(count: number, init: (...states: State[]) => 
+        [State, RegExp | string, State, string?][]): ExpAuto {
+        let states = Array.from({ length: count + 2 }, () => [])
+        if (init.length != states.length)
             throw new Error("Wrong number of arguments for the init function")
-        let transitions = init(...sts)
-        return ExpAuto.from(sts, transitions)
+        let transitions = init(...states)
+        let start = states[0]
+        let accept = states[states.length - 1]
+        for (let i = 0; i < transitions.length; ++i) {
+            let [source, regexp, target, group] = transitions[i]
+            transition(source, regexp, target, group)
+        }
+        if (accept.length > 0)
+            throw new Error("Accept state cannot have outgoing transitions")
+        return new ExpAuto(states, start, accept)
     }
     /**
      * The simplest automaton is one with only a start and accept state, and
@@ -226,9 +207,9 @@ export class ExpAuto {
     exec(input: string, pos: number): [boolean, number] {
         if (pos >= input.length || this.current == this.accept)
             return [true, pos]
-        for (let i = 0; i < this.current.next.length; ++i) {
+        for (let i = 0; i < this.current.length; ++i) {
             let curr = this.current
-            let tr = curr.next[i]
+            let tr = curr[i]
             if (!tr.regexp) {
                 this.current = tr.target
                 return this.exec(input, pos)
@@ -236,10 +217,14 @@ export class ExpAuto {
             tr.regexp.lastIndex = pos
             let match = tr.regexp.exec(input)
             if (match) {
-                if (curr.group)
-                    this.groups[curr.group] += match[0]
+                if (tr.group) {
+                    if (this.groups[tr.group]) 
+                        this.groups[tr.group] += match[0]
+                    else
+                        this.groups[tr.group] = match[0]
+                }
                 this.current = tr.target
-                let res = this.exec(input, match.index + match.length)
+                let res = this.exec(input, match.index + match[0].length)
                 if (res[0])
                     return res
             }
@@ -285,12 +270,12 @@ export class ExpAuto {
      * that is linked to it.
      */
     prepend(regexp: RegExp | string): ExpAuto {
-        let newstart: State = { next: [] }
+        let newstart: State = []
         let states = [ ...this.states ]
         states[0] = newstart
         let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
-        for (let i = 0; i < this.start.next.length; ++i) {
-            let next = this.start.next[i]
+        for (let i = 0; i < this.start.length; ++i) {
+            let next = this.start[i]
             transition(newstart, `${newregexp}(?:${next.regexp?.source})`, 
                 next.target)
         }
@@ -304,8 +289,8 @@ export class ExpAuto {
         let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
         for (let i = 0; i < res.states.length; ++i) {
             let state = res.states[i]
-            for (let j = 0; j < state.next.length; ++j) {
-                let next = state.next[j]
+            for (let j = 0; j < state.length; ++j) {
+                let next = state[j]
                 if (next.target == res.accept)
                     next.regexp = new RegExp(
                         `(?:${next.regexp?.source})${newregexp}`, "yu")
@@ -320,7 +305,19 @@ export class ExpAuto {
      * a regexp. This is constructed by joining the transition regexps with a 
      * disjunction `|`.
      */
-    get nextRegExp(): string {
-        return this.current.next.map(t => `(?:${t.regexp?.source })`).join("|")
+    getRegExp(state: State): string {
+        return state.map(t => `(?:${t.regexp?.source })`).join("|")
+    }
+    /**
+     * Get the start regexp of the automaton.
+     */
+    get startRegExp() {
+        return this.getRegExp(this.start)
+    }
+    /**
+     * Get the next regexp of the automaton.
+     */
+    get nextRegExp() {
+        return this.getRegExp(this.current)
     }
 }
