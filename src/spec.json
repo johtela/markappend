@@ -321,7 +321,7 @@
   },
   {
     "markdown": "[a](url &quot;tit&quot;)\n",
-    "html": "<p>[a](url \"tit\")\n</p>",
+    "html": "<p>[a](url \"tit\")</p>",
     "example": 41,
     "start_line": 817,
     "end_line": 821,

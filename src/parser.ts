@@ -352,7 +352,7 @@ const linkTitleAuto = ExpAuto.create(3,
         [start, /[^"'(]/, accept]
     ])
 const ws = /\s*/
-const linkRefAuto = ExpAuto.concat(
+const linkRef = ExpAuto.concat(
     linkLabelAuto.prepend(/^ {0,3}/).append(/:\s*/),
     linkDestAuto.prepend(ws).append(ws),
     linkTitleAuto.prepend(ws).append(ws))
@@ -586,20 +586,9 @@ function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
  */
 function continueLinkRef(state: ParserState, block: DocumentBlock, 
     match: RegExpExecArray) {
-    lastBlock(state).lines.push(state.input.slice(match.index))
-    let [res, pos] = linkRefAuto.exec(state.input, match.index)
-    if (res) {
-        if (linkRefAuto.accepted)
-            closeLinkRef(state)
-        else
-            block.cont = new RegExp(linkRefAuto.nextRegExp, "yui")
-    }
-    else {
-        block.element = elem('p')
-        block.parent = block.element
-        block.type = BlockType.Inline
-        block.cont = nonBlank
-    }
+    let [res,] = linkRef.exec(state.input, match.index)
+    if (!res || linkRef.accepted)
+        closeLinkRef(state, block)
 }
 /**
  * Closing a link reference block succesfully extracts the link label, 
@@ -607,17 +596,26 @@ function continueLinkRef(state: ParserState, block: DocumentBlock,
  * fills them in any links with the same label, if such exist. Finally, we
  * close the link ref block.
  */
-function closeLinkRef(state: ParserState) {
-    let label = linkRefAuto.groups["label"]
-    let destination = linkRefAuto.groups["dest"]
-    let title = linkRefAuto.groups["title"]
-    state.linkRefs[label] = { destination, title }
-    state.links[label]?.forEach(aelem => {
-        aelem.href = destination
-        aelem.title = title
-    })
-    state.nextIndex = state.input.length
-    closeLastBlock(state)
+function closeLinkRef(state: ParserState, block: DocumentBlock) {
+    if (linkRef.accepted) {
+        let label = linkRef.groups["label"]
+        let destination = linkRef.groups["dest"]
+        let title = linkRef.groups["title"]
+        state.linkRefs[label] = { destination, title }
+        state.links[label]?.forEach(aelem => {
+            aelem.href = destination
+            aelem.title = title
+        })
+        state.nextIndex = state.input.length
+        closeLastBlock(state)
+    }
+    else {
+        block.element = elem('p')
+        block.parent = block.element
+        block.type = BlockType.Inline
+        block.cont = nonBlank
+    }
+    linkRef.init()
 }
 /**
  * ### Opening a Paragraph
@@ -814,21 +812,19 @@ const blockParsers = [
          * TODO: Explain.
          */
         (state, match) => {
-            let [res, pos] = linkRefAuto.exec(state.input, match.index)
+            let [res,] = linkRef.exec(state.input, match.index)
             if (res) {
                 flushLastBlock(state)
                 openBlock(state, lastBlock(state).parent, BlockType.Skip, true,
-                    undefined, new RegExp(linkRefAuto.nextRegExp, "yui"),
-                    undefined, continueLinkRef)
+                    undefined, nonBlank, closeLinkRef, continueLinkRef)
+                if (linkRef.accepted)
+                    return closeLinkRef(state, lastBlock(state))
             }
             else
                 openParagraph(state)
-            lastBlock(state).lines.push(state.input.slice(match.index))
-            state.nextIndex = state.input.length
-            if (res && linkRefAuto.accepted)
-                closeLinkRef(state)
+            state.nextIndex = match.index
         },
-        linkRefAuto.startRegExp),
+        linkRef.startRegExp),
     parser(
         /**
          * ### Paragraphs
@@ -937,7 +933,7 @@ function closeDiscontinuedBlocks(state: ParserState) {
  *      that the resulting HTML structure is complete.
  */
 export function appendMarkdown(input: string, root: Element) {
-    linkRefAuto.init()
+    linkRef.init()
     let state: ParserState = {
         input: "",
         nextIndex: 0,

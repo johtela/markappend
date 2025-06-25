@@ -10,6 +10,6 @@
         "repository": "https://github.com/johtela/sparkdown",
         "download": "https://www.npmjs.com/package/sparkdown",
         "footer": "Copyright © 2025 Tommi Johtela",
-        "logo": "images/pencil-solid.svg"
+        "logo": "images/sparkdown.png"
     }
 }
