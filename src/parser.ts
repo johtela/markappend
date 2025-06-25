@@ -824,6 +824,7 @@ const blockParsers = [
             else
                 openParagraph(state)
             lastBlock(state).lines.push(state.input.slice(match.index))
+            state.nextIndex = state.input.length
             if (res && linkRefAuto.accepted)
                 closeLinkRef(state)
         },
