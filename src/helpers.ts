@@ -92,7 +92,7 @@ export type State = Transition[]
  * state.
  */
 export interface Transition {
-    regexp: RegExp | null
+    regexp: RegExp
     target: State 
     group?: string
 }    
@@ -103,15 +103,12 @@ export interface Transition {
  * The first argument is the source state, then comes the regexp that allows the
  * transition, and last the target state.
  */
-export function transition(source: State, regexp: string | RegExp | null, 
+export function transition(source: State, regexp: string | RegExp, 
     target: State, group?: string): Transition {
     if (source.find(tr => tr.target == target))
         throw new Error("Transition between source and target already exist")
-    let res = { regexp: regexp ? new RegExp(regexp, "yui") : null, target, 
-        group }
+    let res = { regexp: new RegExp(regexp, "yui"), target, group }
     source.push(res)
-    if (source.length > 1 && source.find(t => !t.regexp))
-        throw new Error("Empty transition must be the only possible transition")
     return res
 }
 /**
@@ -212,10 +209,6 @@ export class ExpAuto {
         for (let i = 0; i < this.current.length; ++i) {
             let curr = this.current
             let tr = curr[i]
-            if (!tr.regexp) {
-                this.current = tr.target
-                return this.exec(input, pos)
-            }
             tr.regexp.lastIndex = pos
             let match = tr.regexp.exec(input)
             if (match) {
@@ -257,8 +250,13 @@ export class ExpAuto {
         for (let i = 1; i < automata.length; ++i) {
             let curr = i == automata.length - 1 ? 
                 automata[i] : automata[i].clone()
+            let incoming = prev.incoming(prev.accept)
+            for (let j = 0; j < incoming.length; ++j) {
+                let [,tr] = incoming[j]
+                tr.target = curr.start
+            }
+            res.states.pop()
             res.states.push(...curr.states)
-            transition(prev.accept, null, curr.start)
             prev = curr
         }
         res.accept = prev.accept
@@ -278,7 +276,7 @@ export class ExpAuto {
         let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
         for (let i = 0; i < this.start.length; ++i) {
             let next = this.start[i]
-            transition(newstart, `${newregexp}(?:${next.regexp?.source})`, 
+            transition(newstart, `${newregexp}(?:${next.regexp.source})`, 
                 next.target)
         }
         return new ExpAuto(states, newstart, this.accept)
@@ -295,7 +293,7 @@ export class ExpAuto {
                 let next = state[j]
                 if (next.target == res.accept)
                     next.regexp = new RegExp(
-                        `(?:${next.regexp?.source})${newregexp}`, "yu")
+                        `(?:${next.regexp.source})${newregexp}`, "yu")
             }
         }
         return res
@@ -308,7 +306,7 @@ export class ExpAuto {
      * disjunction `|`.
      */
     getRegExp(state: State): string {
-        return state.map(t => `(?:${t.regexp?.source })`).join("|")
+        return state.map(t => `(?:${t.regexp.source})`).join("|")
     }
     /**
      * Get the start regexp of the automaton.
