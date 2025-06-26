@@ -105,11 +105,13 @@ export interface Transition {
  */
 export function transition(source: State, regexp: string | RegExp | null, 
     target: State, group?: string): Transition {
+    if (source.find(tr => tr.target == target))
+        throw new Error("Transition between source and target already exist")
     let res = { regexp: regexp ? new RegExp(regexp, "yui") : null, target, 
         group }
     source.push(res)
     if (source.length > 1 && source.find(t => !t.regexp))
-        throw new Error("Only one ϵ transition allowed for a state")
+        throw new Error("Empty transition must be the only possible transition")
     return res
 }
 /**
@@ -319,5 +321,23 @@ export class ExpAuto {
      */
     get nextRegExp() {
         return this.getRegExp(this.current)
+    }
+    /**
+     * Incoming transitions for given state. Result is a list of 
+     * (_state_, _transition_) tuples, where _state_ is the source of the
+     * transition.
+     */
+    private incoming(state: State): [State, Transition][] {
+        let res: [State, Transition][] = []
+        for (let i = 0; i < this.states.length; ++i) {
+            let source = this.states[i]
+            if (source != state)
+                for (let j = 0; j < source.length; ++j) {
+                    let trans = source[j]
+                    if (trans.target == state)
+                        res.push([source, trans])
+                }
+        }
+        return res
     }
 }
