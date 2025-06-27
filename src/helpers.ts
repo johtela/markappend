@@ -351,7 +351,7 @@ export class ExpAuto {
     eliminate(): ExpAuto {
         let res = this.clone()
         while (res.states.length > 2) {
-            let elim = res.states[1]
+            let elim = res.states[res.states.length - 2]
             let incoming = res.incoming(elim)
             for (let i = 0; i < incoming.length; ++i) {
                 let [source, inc] = incoming[i]
@@ -361,19 +361,19 @@ export class ExpAuto {
                         continue
                     let exist = source.find(t => t.target == out.target)
                     let loop = elim.find(t => t.target == elim)
-                    let regexp = exist ? 
-                        `${exist.regexp.source}|${inc.regexp.source}` :
-                        `${inc.regexp.source}`
-                    regexp += loop ? 
-                        `(?:${loop.regexp.source})*${out.regexp.source}` :
-                        `${out.regexp.source}`
-                    if (exist)
+                    let regexp = loop ? 
+                        `(?:(?:${inc.regexp.source})(?:${
+                            loop.regexp.source})*(?:${out.regexp.source}))` :
+                        `(?:(?:${inc.regexp.source})(?:${out.regexp.source}))`
+                    if (exist) {
+                        regexp = `(?:(?:${exist.regexp.source})|${regexp})`
                         source.splice(source.indexOf(exist), 1)
+                    }
                     transition(source, regexp, out.target)
                 }
                 source.splice(source.indexOf(inc), 1)
             }
-            res.states.splice(1, 1)
+            res.states.splice(res.states.length - 2, 1)
         }
         return res
     }
