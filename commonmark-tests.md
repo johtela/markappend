@@ -677,7 +677,36 @@ document. Instead, it defines a label which can be used in reference links and
 reference-style images elsewhere in the document. Link reference definitions 
 can come either before or after the links that use them.
 
-<commonmark-runner examples="192"></commonmark-runner>
+<commonmark-runner examples="192-193"></commonmark-runner>
+
+<commonmark-runner examples="195"></commonmark-runner>
+
+The title may extend over multiple lines:
+
+<commonmark-runner examples="196"></commonmark-runner>
+
+However, it may not contain a blank line:
+
+<commonmark-runner examples="197"></commonmark-runner>
+
+The title may be omitted:
+
+<commonmark-runner examples="198"></commonmark-runner>
+
+The link destination may not be omitted:
+
+<commonmark-runner examples="199"></commonmark-runner>
+
+However, an empty link destination may be specified using angle brackets:
+
+<commonmark-runner examples="200"></commonmark-runner>
+
+The title must be separated from the link destination by spaces or tabs:
+
+<commonmark-runner examples="201"></commonmark-runner>
+
+
+
 
 <commonmark-runner examples="482"></commonmark-runner>
 

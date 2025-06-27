@@ -50,15 +50,9 @@ export interface Parser {
  */
 enum BlockType { Text, Inline, Html, Skip }
 /**
- * A function type that handles closing a document block during parsing.
+ * An event function called when block continues or closes.
  */
-export type Closer = (state: ParserState, block: DocumentBlock) => void
-/**
- * A function type that is called when the `cont` regexp succeeds and block is
- *  not closed.
- */
-export type Continuator = (state: ParserState, block: DocumentBlock,
-    match: RegExpExecArray) => void
+export type BlockEvent = (state: ParserState, block: DocumentBlock) => void
 /**
  * Represents a block-level element in a parsed Markdown document.
  */
@@ -103,12 +97,12 @@ export interface DocumentBlock {
     /**
      * A function that is called before the block is closed.
      */
-    closing?: Closer
+    closing?: BlockEvent
     /**
      * Function that is called when the block continues to be open, i.e. when
      * the `cont` regexp matches for a following line.
      */
-    continuing?: Continuator
+    continuing?: BlockEvent
 }
 /**
  * ## Link References
@@ -188,8 +182,8 @@ function stateFrom(state: ParserState, input: string, nextIndex = 0):
  *   appends its element to its parent element in the previous block.
  */
 function openBlock(state: ParserState, element: Element, type: BlockType, 
-    leaf = true, parent = element, cont?: RegExp, closing?: Closer,
-    continuing?: Continuator) {
+    leaf = true, parent = element, cont?: RegExp, closing?: BlockEvent,
+    continuing?: BlockEvent) {
     state.blocks.push(
         { element, parent, type, leaf, lines: [], cont, closing, continuing })
 }
@@ -316,12 +310,13 @@ const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
-const spTabsOptNl = /(?:[ \t]+\n?[ \t]*|[ \t]*\n?[ \t]+|\n)/.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.source
-const inlineLink = `${linkText}\\(${spTabsOptNl}?${linkDest}${spTabsOptNl}${linkTitle}${spTabsOptNl}?\\)`
+const inlineLink = `${linkText}\\(\\s*${linkDest}\\s+${linkTitle}\\s*\\)`
+const fullReferenceLink = `${linkText}${linkLabel}`
+const collapsedReferenceLink = `${linkLabel}(?![(:])(?:\\[\\])?`
 
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
@@ -331,9 +326,9 @@ const linkLabelAuto = ExpAuto.create(1,
     ])
 const linkDestAuto = ExpAuto.create(2,
     (start, angled, plain, accept) => [
-        [start, /</, angled],
-        [angled, /(?:[^<>\n]|(?<=\\)[<>])+/, angled, "dest"],
-        [angled, /(?<!\\)>/, accept],
+        [start, /</, angled, "dest"],
+        [angled, /(?:[^<>]|(?<=\\)[<>])+/, angled, "dest"],
+        [angled, /(?<!\\)>(?:\s|$)/, accept, "dest"],
         [start, /(?<!<)/, plain],
         [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain, "dest"],
         [plain, /\s|$/, accept]
@@ -347,16 +342,15 @@ const linkTitleAuto = ExpAuto.create(3,
         [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted, "title"],
         [squoted, /(?<!\\)'/, accept],
         [start, /\(/, parens],
-        [parens, /(?:\s*(?::[^()]|(?<=\\)[()])+)+/, parens, "title"],
-        [parens, /(?<!\\\))/, accept],
-        [start, /[^"'(]/, accept]
+        [parens, /(?:\s*(?:[^()]|(?<=\\)[()])+)+/, parens, "title"],
+        [parens, /(?<!\\)\)/, accept],
+        [start, /(?!["'(])/, accept]
     ])
 const ws = /\s*/
 const linkRef = ExpAuto.concat(
     linkLabelAuto.prepend(/^ {0,3}/).append(/:\s*/),
     linkDestAuto.prepend(ws).append(ws),
     linkTitleAuto.prepend(ws).append(ws))
-const linkRefElim = linkRef.eliminate()
 /**
  * ## Inline Parsers
  *
@@ -391,6 +385,39 @@ function emOrStrong(regexp: string) {
             closeLastBlock(state)
         },
         regexp)
+}
+/**
+ * ### Links
+ * 
+ * Output link.
+ */
+function outputLink(state: ParserState, linktext: string, linkdest?: string, 
+    linktitle?: string): HTMLAnchorElement {
+    let anchor = elem('a')
+    if (linkdest) {
+        linkdest = linkdest.replaceAll(/\\\(|\\\)/g, str => str[1])
+        anchor.href = linkdest
+    }
+    if (linktitle)
+        anchor.title = linktitle
+    openBlock(state, anchor, BlockType.Inline)
+    inlines(stateFrom(state, linktext))
+    closeLastBlock(state)
+    return anchor
+}
+/**
+ * Output reference link.
+ */
+function outputReferenceLink(state: ParserState, linklabel: string, 
+    linktext: string) {
+    let linkRef = state.linkRefs[linklabel]
+    if (linkRef)
+        outputLink(state, linktext, linkRef.destination, linkRef.title)
+    else {
+        let anchors = state.links[linklabel] || []
+        anchors.push(outputLink(state, linktext))
+        state.links[linklabel] = anchors
+    }
 }
 /**
  * An array of inline Markdown parsers, each responsible for handling a specific
@@ -472,15 +499,27 @@ const inlineParsers = [
          */
         (state, match) => {
             let { linktext, linkdest, linktitle } = match.groups!
-            linkdest = linkdest.replaceAll(/\\\(|\\\)/g, str => str[1])
-            let aelem = elem('a')
-            aelem.href = linkdest
-            aelem.title = linktitle
-            openBlock(state, aelem, BlockType.Inline)
-            inlines(stateFrom(state, linktext))
-            closeLastBlock(state)
+            outputLink(state, linktext, linkdest, linktitle)
         },
         inlineLink),
+    parser(
+        /**
+         * Full reference links.
+         */
+        (state, match) => {
+            let { linktext, linklabel } = match.groups!
+            outputReferenceLink(state, linklabel, linktext)
+        },
+        fullReferenceLink),
+    parser(
+        /**
+         * Collapsed & shortcut reference links.
+         */
+        (state, match) => {
+            let { linklabel } = match.groups!
+            outputReferenceLink(state, linklabel, linklabel)
+        },
+        collapsedReferenceLink),
     parser(
         /**
          * ### Images
@@ -585,37 +624,49 @@ function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
  * Continuing a block will store the matched text into the current block, and
  * feed the rest of the line to the expression automaton.
  */
-function continueLinkRef(state: ParserState, block: DocumentBlock, 
-    match: RegExpExecArray) {
-    let [res,] = linkRef.exec(state.input, match.index)
+function continueLinkRef(state: ParserState, block: DocumentBlock) {
+    let [res,] = linkRef.exec(state.input, state.nextIndex)
     if (!res || linkRef.accepted)
-        closeLinkRef(state, block)
+        terminateLinkRef(state, block)
+}
+/**
+ * Called when a block regexp does not match any more. I.e. when an empty line
+ * or end of input is reached.
+ */
+function closeLinkRef(state: ParserState, block: DocumentBlock) {
+    let [res,] = linkRef.exec(state.input, state.nextIndex, true)
+    terminateLinkRef(state, block)
 }
 /**
  * Closing a link reference block succesfully extracts the link label, 
  * destination, and optional title and stores them to parser state record and
- * fills them in any links with the same label, if such exist. Finally, we
- * close the link ref block.
+ * fills them in any links with the same label, if such exist. 
+ * 
+ * Finally, we must remember reinitialize the automaton.
  */
-function closeLinkRef(state: ParserState, block: DocumentBlock) {
+function terminateLinkRef(state: ParserState, block: DocumentBlock) {
     if (linkRef.accepted) {
-        let label = linkRef.groups["label"]
-        let destination = linkRef.groups["dest"]
+        let label = linkRef.groups["label"]?.trim()
+        let destination = linkRef.groups["dest"]?.trim()
         let title = linkRef.groups["title"]
-        state.linkRefs[label] = { destination, title }
-        state.links[label]?.forEach(aelem => {
-            aelem.href = destination
-            aelem.title = title
-        })
-        state.nextIndex = state.input.length
-        closeLastBlock(state)
+        if (label && destination) {
+            if (/^<.*>$/.test(destination))
+                destination = destination.slice(1, destination.length - 1)
+            state.linkRefs[label] = { destination, title }
+            state.links[label]?.forEach(aelem => {
+                aelem.href = destination
+                aelem.title = title
+            })
+            state.nextIndex = state.input.length
+            closeLastBlock(state)
+            linkRef.init()
+            return
+        }
     }
-    else {
-        block.element = elem('p')
-        block.parent = block.element
-        block.type = BlockType.Inline
-        block.cont = nonBlank
-    }
+    block.element = elem('p')
+    block.parent = block.element
+    block.type = BlockType.Inline
+    block.cont = nonBlank
     linkRef.init()
 }
 /**
@@ -819,7 +870,7 @@ const blockParsers = [
                 openBlock(state, lastBlock(state).parent, BlockType.Skip, true,
                     undefined, nonBlank, closeLinkRef, continueLinkRef)
                 if (linkRef.accepted)
-                    return closeLinkRef(state, lastBlock(state))
+                    return terminateLinkRef(state, lastBlock(state))
             }
             else
                 openParagraph(state)
@@ -904,7 +955,7 @@ function closeDiscontinuedBlocks(state: ParserState) {
             if (!match)
                 return closeBlocksToIndex(state, i)
             state.nextIndex = block.cont.lastIndex
-            block.continuing?.(state, block, match)
+            block.continuing?.(state, block)
         }
     }
 }

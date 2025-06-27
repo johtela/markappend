@@ -203,8 +203,8 @@ export class ExpAuto {
      * processes the input. Use the `accepted` property to check if the 
      * automaton is in the accept state after execution.
      */
-    exec(input: string, pos: number): [boolean, number] {
-        if (pos >= input.length || this.current == this.accept)
+    exec(input: string, pos: number, lastInput = false): [boolean, number] {
+        if (this.current == this.accept || (!lastInput && pos >= input.length))
             return [true, pos]
         for (let i = 0; i < this.current.length; ++i) {
             let curr = this.current
@@ -213,13 +213,17 @@ export class ExpAuto {
             let match = tr.regexp.exec(input)
             if (match) {
                 if (tr.group) {
+                    let text = match[0]
+                    if (match.index + text.length >= input.length)
+                        text += "\n"
                     if (this.groups[tr.group]) 
-                        this.groups[tr.group] += match[0]
+                        this.groups[tr.group] += text
                     else
-                        this.groups[tr.group] = match[0]
+                        this.groups[tr.group] = text
                 }
                 this.current = tr.target
-                let res = this.exec(input, match.index + match[0].length)
+                let res = this.exec(input, match.index + match[0].length, 
+                    lastInput)
                 if (res[0])
                     return res
             }
@@ -251,10 +255,8 @@ export class ExpAuto {
             let curr = i == automata.length - 1 ? 
                 automata[i] : automata[i].clone()
             let incoming = prev.incoming(prev.accept)
-            for (let j = 0; j < incoming.length; ++j) {
-                let [,tr] = incoming[j]
-                tr.target = curr.start
-            }
+            for (let j = 0; j < incoming.length; ++j)
+                incoming[j].target = curr.start
             res.states.pop()
             res.states.push(...curr.states)
             prev = curr
@@ -277,7 +279,7 @@ export class ExpAuto {
         for (let i = 0; i < this.start.length; ++i) {
             let next = this.start[i]
             transition(newstart, `${newregexp}(?:${next.regexp.source})`, 
-                next.target)
+                next.target, next.group)
         }
         return new ExpAuto(states, newstart, this.accept)
     }
@@ -321,59 +323,18 @@ export class ExpAuto {
         return this.getRegExp(this.current)
     }
     /**
-     * Return incoming transitions for given state. Result is a list of 
-     * (_state_, _transition_) tuples, where _state_ is the source of the
-     * transition.
+     * Return incoming transitions for given state. 
      */
-    private incoming(state: State): [State, Transition][] {
-        let res: [State, Transition][] = []
+    private incoming(state: State): Transition[] {
+        let res = []
         for (let i = 0; i < this.states.length; ++i) {
             let source = this.states[i]
             if (source != state)
                 for (let j = 0; j < source.length; ++j) {
                     let trans = source[j]
                     if (trans.target == state)
-                        res.push([source, trans])
+                        res.push(trans)
                 }
-        }
-        return res
-    }
-
-    /**
-     * Simplify the automaton to one with just start and accept states, and a
-     * single transition between them. We use the _elimination method_ to 
-     * remove internal states one-by-one until only the start and accept state
-     * are present.
-     * 
-     * After elimination, the single remaining transition has the regexp that
-     * is equivalent to the whole automaton.
-     */
-    eliminate(): ExpAuto {
-        let res = this.clone()
-        while (res.states.length > 2) {
-            let elim = res.states[res.states.length - 2]
-            let incoming = res.incoming(elim)
-            for (let i = 0; i < incoming.length; ++i) {
-                let [source, inc] = incoming[i]
-                for (let j = 0; j < elim.length; ++j) {
-                    let out = elim[j]
-                    if (out.target == elim)
-                        continue
-                    let exist = source.find(t => t.target == out.target)
-                    let loop = elim.find(t => t.target == elim)
-                    let regexp = loop ? 
-                        `(?:(?:${inc.regexp.source})(?:${
-                            loop.regexp.source})*(?:${out.regexp.source}))` :
-                        `(?:(?:${inc.regexp.source})(?:${out.regexp.source}))`
-                    if (exist) {
-                        regexp = `(?:(?:${exist.regexp.source})|${regexp})`
-                        source.splice(source.indexOf(exist), 1)
-                    }
-                    transition(source, regexp, out.target)
-                }
-                source.splice(source.indexOf(inc), 1)
-            }
-            res.states.splice(res.states.length - 2, 1)
         }
         return res
     }
