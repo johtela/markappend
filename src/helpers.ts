@@ -321,7 +321,7 @@ export class ExpAuto {
         return this.getRegExp(this.current)
     }
     /**
-     * Incoming transitions for given state. Result is a list of 
+     * Return incoming transitions for given state. Result is a list of 
      * (_state_, _transition_) tuples, where _state_ is the source of the
      * transition.
      */
@@ -335,6 +335,45 @@ export class ExpAuto {
                     if (trans.target == state)
                         res.push([source, trans])
                 }
+        }
+        return res
+    }
+
+    /**
+     * Simplify the automaton to one with just start and accept states, and a
+     * single transition between them. We use the _elimination method_ to 
+     * remove internal states one-by-one until only the start and accept state
+     * are present.
+     * 
+     * After elimination, the single remaining transition has the regexp that
+     * is equivalent to the whole automaton.
+     */
+    eliminate(): ExpAuto {
+        let res = this.clone()
+        while (res.states.length > 2) {
+            let elim = res.states[1]
+            let incoming = res.incoming(elim)
+            for (let i = 0; i < incoming.length; ++i) {
+                let [source, inc] = incoming[i]
+                for (let j = 0; j < elim.length; ++j) {
+                    let out = elim[j]
+                    if (out.target == elim)
+                        continue
+                    let exist = source.find(t => t.target == out.target)
+                    let loop = elim.find(t => t.target == elim)
+                    let regexp = exist ? 
+                        `${exist.regexp.source}|${inc.regexp.source}` :
+                        `${inc.regexp.source}`
+                    regexp += loop ? 
+                        `(?:${loop.regexp.source})*${out.regexp.source}` :
+                        `${out.regexp.source}`
+                    if (exist)
+                        source.splice(source.indexOf(exist), 1)
+                    transition(source, regexp, out.target)
+                }
+                source.splice(source.indexOf(inc), 1)
+            }
+            res.states.splice(1, 1)
         }
         return res
     }

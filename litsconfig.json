@@ -6,10 +6,10 @@
     ],
     "updateToc": true,
     "frontMatter": {
-        "projectName": "sparkdown",
+        "projectName": "Sparkdown",
         "repository": "https://github.com/johtela/sparkdown",
         "download": "https://www.npmjs.com/package/sparkdown",
         "footer": "Copyright © 2025 Tommi Johtela",
-        "logo": "images/sparkdown.png"
+        "logo": "images/sparkdown.svg"
     }
 }

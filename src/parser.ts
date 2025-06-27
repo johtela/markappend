@@ -356,6 +356,7 @@ const linkRef = ExpAuto.concat(
     linkLabelAuto.prepend(/^ {0,3}/).append(/:\s*/),
     linkDestAuto.prepend(ws).append(ws),
     linkTitleAuto.prepend(ws).append(ws))
+const linkRefElim = linkRef.eliminate()
 /**
  * ## Inline Parsers
  *
