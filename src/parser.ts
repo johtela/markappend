@@ -320,37 +320,33 @@ const collapsedReferenceLink = `${linkLabel}(?![(:])(?:\\[\\])?`
 
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
-        [start, /\[/, label],
+        [start, / {0,3}\[/, label],
         [label, /\s*(?:[^\]\s]|(?<=\\)\])+/, label, "label"],
-        [label, /\s*(?<!\\)\]/, accept]
+        [label, /\s*(?<!\\)\]:\s*/, accept]
     ])
 const linkDestAuto = ExpAuto.create(2,
     (start, angled, plain, accept) => [
-        [start, /</, angled, "dest"],
+        [start, /\s*</, angled, "dest"],
         [angled, /(?:[^<>]|(?<=\\)[<>])+/, angled, "dest"],
-        [angled, /(?<!\\)>(?:\s|$)/, accept, "dest"],
-        [start, /(?<!<)/, plain],
+        [angled, /(?<!\\)>(?:\s+|$)/, accept, "dest"],
+        [start, /\s*(?<!<)/, plain],
         [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain, "dest"],
-        [plain, /\s|$/, accept]
+        [plain, /\s+|$/, accept]
     ])
 const linkTitleAuto = ExpAuto.create(3,
     (start, dquoted, squoted, parens, accept) => [
-        [start, /"/, dquoted],
+        [start, /\s*"/, dquoted],
         [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted, "title"],
-        [dquoted, /(?<!\\)"/, accept],
-        [start, /'/, squoted],
+        [dquoted, /(?<!\\)"\s*/, accept],
+        [start, /\s*'/, squoted],
         [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted, "title"],
-        [squoted, /(?<!\\)'/, accept],
-        [start, /\(/, parens],
+        [squoted, /(?<!\\)'\s*/, accept],
+        [start, /\s*\(/, parens],
         [parens, /(?:\s*(?:[^()]|(?<=\\)[()])+)+/, parens, "title"],
         [parens, /(?<!\\)\)/, accept],
-        [start, /(?!["'(])/, accept]
+        [start, /(?!["'(])\s*/, accept]
     ])
-const ws = /\s*/
-const linkRef = ExpAuto.concat(
-    linkLabelAuto.prepend(/^ {0,3}/).append(/:\s*/),
-    linkDestAuto.prepend(ws).append(ws),
-    linkTitleAuto.prepend(ws).append(ws))
+const linkRef = ExpAuto.concat(linkLabelAuto, linkDestAuto, linkTitleAuto)
 /**
  * ## Inline Parsers
  *

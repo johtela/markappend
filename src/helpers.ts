@@ -170,14 +170,6 @@ export class ExpAuto {
         return new ExpAuto(states, start, accept)
     }
     /**
-     * The simplest automaton is one with only a start and accept state, and
-     * with single transition between those. The `simple` method is a shorthand 
-     * for creating such automata.
-     */
-    static simple(regexp: RegExp | string): ExpAuto {
-        return ExpAuto.create(0, (start, accept) => [[start, regexp, accept]])
-    }
-    /**
      * To (re)initialize an automaton to its starting state, you can call the
      * `init` method.
      */
@@ -265,42 +257,6 @@ export class ExpAuto {
         return res
     }
     /**
-     * If you want to add a simple prefix to an automaton, you can use the 
-     * `prepend` method. It creates a new automaton with a new starting state 
-     * and adds a transition from it with the given regexp to the old starting 
-     * state. Note that we don't modify `this` automaton, but return a new one
-     * that is linked to it.
-     */
-    prepend(regexp: RegExp | string): ExpAuto {
-        let newstart: State = []
-        let states = [ ...this.states ]
-        states[0] = newstart
-        let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
-        for (let i = 0; i < this.start.length; ++i) {
-            let next = this.start[i]
-            transition(newstart, `${newregexp}(?:${next.regexp.source})`, 
-                next.target, next.group)
-        }
-        return new ExpAuto(states, newstart, this.accept)
-    }
-    /**
-     * TODO: Explain.
-     */
-    append(regexp: RegExp | string): ExpAuto {
-        let res = this.clone()
-        let newregexp = typeof(regexp) == 'string' ? regexp : regexp.source
-        for (let i = 0; i < res.states.length; ++i) {
-            let state = res.states[i]
-            for (let j = 0; j < state.length; ++j) {
-                let next = state[j]
-                if (next.target == res.accept)
-                    next.regexp = new RegExp(
-                        `(?:${next.regexp.source})${newregexp}`, "yu")
-            }
-        }
-        return res
-    }
-    /**
      * ## RegExp Conversions
      * 
      * You can get the possible transitions forward from the current state as
@@ -315,12 +271,6 @@ export class ExpAuto {
      */
     get startRegExp() {
         return this.getRegExp(this.start)
-    }
-    /**
-     * Get the next regexp of the automaton.
-     */
-    get nextRegExp() {
-        return this.getRegExp(this.current)
     }
     /**
      * Return incoming transitions for given state. 
