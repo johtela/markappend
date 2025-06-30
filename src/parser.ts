@@ -305,8 +305,10 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
  * - `nonBlank`: Matches any line containing at least one non-whitespace 
  *   character.
  */
+const escapes = /\\(?<esc>[!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~\n])/guis
 const indentedCode = / {4}| {0,3}\t/yuis
 const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
+const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}\*])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}])\k<emdelim>|(?<![\P{P}_])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
@@ -324,27 +326,24 @@ const linkLabelAuto = ExpAuto.create(1,
         [label, /\s*(?:[^\]\s]|(?<=\\)\])+/, label, "label"],
         [label, /\s*(?<!\\)\]:\s*/, accept]
     ])
-const linkDestAuto = ExpAuto.create(2,
-    (start, angled, plain, accept) => [
-        [start, /\s*</, angled, "dest"],
-        [angled, /(?:[^<>]|(?<=\\)[<>])+/, angled, "dest"],
-        [angled, /(?<!\\)>(?:\s+|$)/, accept, "dest"],
-        [start, /\s*(?<!<)/, plain],
-        [plain, /(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+/, plain, "dest"],
-        [plain, /\s+|$/, accept]
+const linkDestAuto = ExpAuto.create(0,
+    (start, accept) => [
+        [start, 
+            /\s*(?:<(?:[^<>]|(?<=\\)[<>])+(?<!\\)>|(?<!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+)(?:\s+|$)/, 
+            accept, "dest"],
     ])
 const linkTitleAuto = ExpAuto.create(3,
     (start, dquoted, squoted, parens, accept) => [
         [start, /\s*"/, dquoted],
         [dquoted, /(?:\s*(?:[^"\s]|(?<=\\)")+)+/, dquoted, "title"],
-        [dquoted, /(?<!\\)"\s*/, accept],
+        [dquoted, /(?<!\\)"\s*$/, accept],
         [start, /\s*'/, squoted],
         [squoted, /(?:\s*(?:[^'\s]|(?<=\\)')+)+/, squoted, "title"],
-        [squoted, /(?<!\\)'\s*/, accept],
+        [squoted, /(?<!\\)'\s*$/, accept],
         [start, /\s*\(/, parens],
         [parens, /(?:\s*(?:[^()]|(?<=\\)[()])+)+/, parens, "title"],
-        [parens, /(?<!\\)\)/, accept],
-        [start, /(?!["'(])\s*/, accept]
+        [parens, /(?<!\\)\)\s*$/, accept],
+        [start, /(?!["'(])|^/, accept]
     ])
 const linkRef = ExpAuto.concat(linkLabelAuto, linkDestAuto, linkTitleAuto)
 /**
@@ -406,6 +405,7 @@ function outputLink(state: ParserState, linktext: string, linkdest?: string,
  */
 function outputReferenceLink(state: ParserState, linklabel: string, 
     linktext: string) {
+    linklabel = linklabel.toUpperCase()
     let linkRef = state.linkRefs[linklabel]
     if (linkRef)
         outputLink(state, linktext, linkRef.destination, linkRef.title)
@@ -414,6 +414,12 @@ function outputReferenceLink(state: ParserState, linklabel: string,
         anchors.push(outputLink(state, linktext))
         state.links[linklabel] = anchors
     }
+}
+/**
+ * Escape all bacslash characters in a string.
+ */
+function replaceEscapes(text?: string): string | undefined {
+    return text?.replaceAll(escapes, str => str[1])
 }
 /**
  * An array of inline Markdown parsers, each responsible for handling a specific
@@ -446,7 +452,7 @@ const inlineParsers = [
                 append(state, elem('br'))
             append(state, text(esc))
         },
-        /\\(?<esc>[!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~\n])/u.source),
+        escapes.source),
     parser(
         /**
          * ### Entity and Numeric Character References
@@ -571,6 +577,8 @@ let inlineRegexp: RegExp
  * parsed, it flushes any remaining inline content in the parser state.
  */
 function inlines(state: ParserState) {
+    if (/^\s*$/.test(state.input))
+        return
     inlineRegexp = inlineRegexp || regexpFor(inlineParsers, false)
     while (parseNext(inlineRegexp, inlineParsers, state, true));
     flushInline(state)
@@ -621,16 +629,20 @@ function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
  * feed the rest of the line to the expression automaton.
  */
 function continueLinkRef(state: ParserState, block: DocumentBlock) {
-    let [res,] = linkRef.exec(state.input, state.nextIndex)
-    if (!res || linkRef.accepted)
+    let [res, pos] = linkRef.exec(state.input, state.nextIndex)
+    if (!res || linkRef.accepted) {
         terminateLinkRef(state, block)
+        state.nextIndex = pos
+    }
+    else 
+        state.nextIndex = state.input.length
 }
 /**
  * Called when a block regexp does not match any more. I.e. when an empty line
  * or end of input is reached.
  */
 function closeLinkRef(state: ParserState, block: DocumentBlock) {
-    let [res,] = linkRef.exec(state.input, state.nextIndex, true)
+    linkRef.exec(state.input, state.nextIndex, true)
     terminateLinkRef(state, block)
 }
 /**
@@ -642,20 +654,21 @@ function closeLinkRef(state: ParserState, block: DocumentBlock) {
  */
 function terminateLinkRef(state: ParserState, block: DocumentBlock) {
     if (linkRef.accepted) {
-        let label = linkRef.groups["label"]?.trim()
-        let destination = linkRef.groups["dest"]?.trim()
-        let title = linkRef.groups["title"]
+        let label = linkRef.groups["label"].trim().toUpperCase()
+        let destination = replaceEscapes(linkRef.groups["dest"]?.trim())
+        let title = replaceEscapes(linkRef.groups["title"])
         if (label && destination) {
             if (/^<.*>$/.test(destination))
                 destination = destination.slice(1, destination.length - 1)
             state.linkRefs[label] = { destination, title }
             state.links[label]?.forEach(aelem => {
-                aelem.href = destination
-                aelem.title = title
+                if (destination)
+                    aelem.href = destination
+                if (title)
+                    aelem.title = title
             })
-            state.nextIndex = state.input.length
+            delete state.links[label]
             closeLastBlock(state)
-            linkRef.init()
             return
         }
     }
@@ -663,7 +676,6 @@ function terminateLinkRef(state: ParserState, block: DocumentBlock) {
     block.parent = block.element
     block.type = BlockType.Inline
     block.cont = nonBlank
-    linkRef.init()
 }
 /**
  * ### Opening a Paragraph
@@ -822,6 +834,18 @@ const blockParsers = [
         /(?= {0,3}<[a-z][a-z0-9\-]*(?:\s+[a-z:_][\w.:-]*\s*(?:=\s*"[^"]*"|\s*='[^']*'|=[^\s"'=<>`]+)?)*\s*>\s*$)/.source),
     parser(
         /**
+         * ### Block Quotes
+         * 
+         * TODO: Explain.
+         */
+        (state,) => {
+            interruptParagraph(state)
+            openBlock(state, elem('blockquote'), BlockType.Inline, false,
+                undefined, blockQuote)
+        },
+        blockQuote.source),
+    parser(
+        /**
          * ### Lists
          *
          * Matches unordered (`-`, `+`, `*`) and ordered (`1.`, `2)`, etc.) 
@@ -860,16 +884,22 @@ const blockParsers = [
          * TODO: Explain.
          */
         (state, match) => {
-            let [res,] = linkRef.exec(state.input, match.index)
-            if (res) {
-                flushLastBlock(state)
-                openBlock(state, lastBlock(state).parent, BlockType.Skip, true,
-                    undefined, nonBlank, closeLinkRef, continueLinkRef)
-                if (linkRef.accepted)
-                    return terminateLinkRef(state, lastBlock(state))
+            if (!lastBlockIsParagraph(state)) {
+                linkRef.init()
+                let [res,] = linkRef.exec(state.input, match.index)
+                if (res) {
+                    flushLastBlock(state)
+                    openBlock(state, lastBlock(state).parent, BlockType.Skip, 
+                        true, undefined, nonBlank, 
+                        closeLinkRef, continueLinkRef)
+                    if (linkRef.accepted) {
+                        state.nextIndex = state.input.length
+                        return terminateLinkRef(state, lastBlock(state))
+                    }
+                }
+                else
+                    openParagraph(state)
             }
-            else
-                openParagraph(state)
             state.nextIndex = match.index
         },
         linkRef.startRegExp),
@@ -981,7 +1011,6 @@ function closeDiscontinuedBlocks(state: ParserState) {
  *      that the resulting HTML structure is complete.
  */
 export function appendMarkdown(input: string, root: Element) {
-    linkRef.init()
     let state: ParserState = {
         input: "",
         nextIndex: 0,

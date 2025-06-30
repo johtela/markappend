@@ -705,8 +705,282 @@ The title must be separated from the link destination by spaces or tabs:
 
 <commonmark-runner examples="201"></commonmark-runner>
 
+Both title and destination can contain backslash escapes and literal 
+backslashes:
+
+<commonmark-runner examples="202"></commonmark-runner>
+
+A link can come before its corresponding definition:
+
+<commonmark-runner examples="203"></commonmark-runner>
+
+If there are several matching definitions, the first one takes precedence:
+
+<commonmark-runner examples="204"></commonmark-runner>
+
+As noted in the section on Links, matching of labels is case-insensitive (see 
+matches).
+
+<commonmark-runner examples="205-206"></commonmark-runner>
+
+Whether something is a link reference definition is independent of whether the 
+link reference it defines is used in the document. Thus, for example, the 
+following document contains just a link reference definition, and no visible 
+content:
+
+<commonmark-runner examples="207"></commonmark-runner>
+
+Here is another one:
+
+<commonmark-runner examples="208"></commonmark-runner>
+
+This is not a link reference definition, because there are characters other than 
+spaces or tabs after the title:
+
+<commonmark-runner examples="209"></commonmark-runner>
+
+This is a link reference definition, but it has no title:
+
+<commonmark-runner examples="210"></commonmark-runner>
+
+This is not a link reference definition, because it is indented four spaces:
+
+<commonmark-runner examples="211"></commonmark-runner>
+
+This is not a link reference definition, because it occurs inside a code block:
+
+<commonmark-runner examples="212"></commonmark-runner>
+
+A link reference definition cannot interrupt a paragraph.
+
+<commonmark-runner examples="213"></commonmark-runner>
+
+However, it can directly follow other block elements, such as headings and 
+thematic breaks, and it need not be followed by a blank line.
+
+<commonmark-runner examples="214-216"></commonmark-runner>
+
+Several link reference definitions can occur one after another, without 
+intervening blank lines.
+
+<commonmark-runner examples="217"></commonmark-runner>
+
+Link reference definitions can occur inside block containers, like lists and 
+block quotations. They affect the entire document, not just the container in 
+which they are defined:
+
+<commonmark-runner examples="218"></commonmark-runner>
+
+### Paragraphs
+
+A sequence of non-blank lines that cannot be interpreted as other kinds of 
+blocks forms a paragraph. The contents of the paragraph are the result of 
+parsing the paragraph’s raw content as inlines. The paragraph’s raw content is 
+formed by concatenating the lines and removing initial and final spaces or tabs.
+
+A simple example with two paragraphs:
+
+<commonmark-runner examples="219"></commonmark-runner>
+
+Paragraphs can contain multiple lines, but no blank lines:
+
+<commonmark-runner examples="220"></commonmark-runner>
+
+Multiple blank lines between paragraphs have no effect:
+
+<commonmark-runner examples="221"></commonmark-runner>
+
+Leading spaces or tabs are skipped:
+
+<commonmark-runner examples="222"></commonmark-runner>
+
+Lines after the first may be indented any amount, since indented code blocks 
+cannot interrupt paragraphs.
+
+<commonmark-runner examples="223"></commonmark-runner>
+
+However, the first line may be preceded by up to three spaces of indentation. 
+Four spaces of indentation is too many:
+
+<commonmark-runner examples="224-225"></commonmark-runner>
+
+### Blank Lines
+
+Blank lines between block-level elements are ignored, except for the role they 
+play in determining whether a list is tight or loose.
+
+Blank lines at the beginning and end of the document are also ignored.
+
+<commonmark-runner examples="227"></commonmark-runner>
+
+## Container Blocks
+
+A container block is a block that has other blocks as its contents. There are 
+two basic kinds of container blocks: block quotes and list items. Lists are 
+meta-containers for list items.
+
+We define the syntax for container blocks recursively. The general form of the 
+definition is:
+
+If X is a sequence of blocks, then the result of transforming X in such-and-such 
+a way is a container of type Y with these blocks as its content.
+
+So, we explain what counts as a block quote or list item by explaining how these 
+can be generated from their contents. This should suffice to define the syntax, 
+although it does not give a recipe for parsing these constructions. (A recipe is 
+provided below in the section entitled A parsing strategy.)
+
+### Block Quotes
+
+A block quote marker, optionally preceded by up to three spaces of indentation, 
+consists of (a) the character `>` together with a following space of 
+indentation, or (b) a single character `>` not followed by a space of 
+indentation.
+
+The following rules define block quotes:
+
+1.  **Basic case.** If a string of lines Ls constitute a sequence of blocks 
+    _Bs_, then the result of prepending a block quote marker to the beginning of 
+    each line in _Ls_ is a block quote containing _Bs_.
+
+2.  **Consecutiveness**. A document cannot contain two block quotes in a row 
+    unless there is a blank line between them.
+
+Nothing else counts as a block quote.
+
+Here is a simple example:
+
+<commonmark-runner examples="228"></commonmark-runner>
+
+The space or tab after the > characters can be omitted:
+
+<commonmark-runner examples="229"></commonmark-runner>
+
+The > characters can be preceded by up to three spaces of indentation:
+
+<commonmark-runner examples="230"></commonmark-runner>
+
+Four spaces of indentation is too many:
+
+<commonmark-runner examples="231"></commonmark-runner>
+
+Laziness is not supported so, all the exceptions work:
+
+<commonmark-runner examples="234-237"></commonmark-runner>
+
+A block quote can be empty:
+
+<commonmark-runner examples="239-240"></commonmark-runner>
+
+A block quote can have initial or final blank lines:
+
+<commonmark-runner examples="241"></commonmark-runner>
+
+A blank line always separates block quotes:
+
+<commonmark-runner examples="242"></commonmark-runner>
+
+Consecutiveness means that if we put these block quotes together, we get a 
+single block quote:
+
+<commonmark-runner examples="243"></commonmark-runner>
+
+To get a block quote with two paragraphs, use:
+
+<commonmark-runner examples="244"></commonmark-runner>
+
+Block quotes can interrupt paragraphs:
+
+<commonmark-runner examples="245"></commonmark-runner>
+
+In general, blank lines are not needed before or after block quotes:
+
+<commonmark-runner examples="246"></commonmark-runner>
+
+More laziness exceptions:
+
+<commonmark-runner examples="248-249"></commonmark-runner>
+
+When including an indented code block in a block quote, remember that the block 
+quote marker includes both the `>` and a following space of indentation. So five 
+spaces are needed after the `>`:
+
+<commonmark-runner examples="252"></commonmark-runner>
+
+### List Items
+
+A list marker is a bullet list marker or an ordered list marker.
+
+A bullet list marker is a `-`, `+`, or `*` character.
+
+An ordered list marker is a sequence of 1–9 arabic digits (0-9), followed by 
+either a `.` character or a `)` character. (The reason for the length limit is 
+that with 10 digits we start seeing integer overflows in some browsers.)
+
+The following rules define list items:
+
+1.  **Basic case**. If a sequence of lines Ls constitute a sequence of blocks 
+    _Bs_ starting with a character other than a space or tab, and _M_ is a list 
+    marker of width _W_ followed by 1 ≤ _N_ ≤ 4 spaces of indentation, then the 
+    result of prepending _M_ and the following spaces to the first line of _Ls_, 
+    and indenting subsequent lines of _Ls_ by _W_ + _N_ spaces, is a list item 
+    with _Bs_ as its contents. The type of the list item (bullet or ordered) is 
+    determined by the type of its list marker. If the list item is ordered, then 
+    it is also assigned a start number, based on the ordered list marker.
+
+    Exceptions:
+
+    1.  When the first list item in a list interrupts a paragraph—that is, when 
+        it starts on a line that would otherwise count as paragraph continuation 
+        text—then (a) the lines Ls must not begin with a blank line, and (b) if 
+        the list item is ordered, the start number must be 1.
+    2.  If any line is a thematic break then that line is not a list item.
+
+For example, let _Ls_ be the lines
+
+<commonmark-runner examples="253"></commonmark-runner>
+
+And let M be the marker 1., and _N_ = 2. Then rule #1 says that the following is 
+an ordered list item with start number 1, and the same contents as Ls:
+
+<commonmark-runner examples="254"></commonmark-runner>
+
+The most important thing to notice is that the position of the text after the 
+list marker determines how much indentation is needed in subsequent blocks in 
+the list item. If the list marker takes up two spaces of indentation, and there 
+are three spaces between the list marker and the next character other than a 
+space or tab, then blocks must be indented five spaces in order to fall under 
+the list item.
+
+Here are some examples showing how far content must be indented to be put under 
+the list item:
+
+<commonmark-runner examples="255-258"></commonmark-runner>
+
+It is tempting to think of this in terms of columns: the continuation blocks 
+must be indented at least to the column of the first character other than a 
+space or tab after the list marker. However, that is not quite right. The spaces 
+of indentation after the list marker determine how much relative indentation is 
+needed. Which column this indentation reaches will depend on how the list item 
+is embedded in other constructions, as shown by this example:
+
+<commonmark-runner examples="259"></commonmark-runner>
+
+Here two occurs in the same column as the list marker `1.`, but is actually 
+contained in the list item, because there is sufficient indentation after the 
+last containing blockquote marker.
+
+The converse is also possible. In the following example, the word `two` occurs 
+far to the right of the initial text of the list item, `one`, but it is not 
+considered part of the list item, because it is not indented far enough past the 
+blockquote marker:
+
+<commonmark-runner examples="260"></commonmark-runner>
 
 
+## Inlines
+
+### Links
 
 <commonmark-runner examples="482"></commonmark-runner>
 

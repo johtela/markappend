@@ -196,10 +196,10 @@ export class ExpAuto {
      * automaton is in the accept state after execution.
      */
     exec(input: string, pos: number, lastInput = false): [boolean, number] {
-        if (this.current == this.accept || (!lastInput && pos >= input.length))
+        let curr = this.current
+        if (curr == this.accept || (!lastInput && pos >= input.length))
             return [true, pos]
-        for (let i = 0; i < this.current.length; ++i) {
-            let curr = this.current
+        for (let i = 0; i < curr.length; ++i) {
             let tr = curr[i]
             tr.regexp.lastIndex = pos
             let match = tr.regexp.exec(input)
