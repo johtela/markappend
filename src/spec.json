@@ -2081,7 +2081,7 @@
   },
   {
     "markdown": "-one\n\n2.two\n",
-    "html": "<p>-one</p>\n<p>2.two</p>\n",
+    "html": "<p>-one</p><p>2.two</p>",
     "example": 261,
     "start_line": 4297,
     "end_line": 4304,
@@ -2089,7 +2089,7 @@
   },
   {
     "markdown": "- foo\n\n\n  bar\n",
-    "html": "<ul>\n<li>\n<p>foo</p>\n<p>bar</p>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>foo</p><p>bar</p></li></ul>",
     "example": 262,
     "start_line": 4310,
     "end_line": 4322,
@@ -2097,7 +2097,7 @@
   },
   {
     "markdown": "1.  foo\n\n    ```\n    bar\n    ```\n\n    baz\n\n    > bam\n",
-    "html": "<ol>\n<li>\n<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n<blockquote>\n<p>bam</p>\n</blockquote>\n</li>\n</ol>\n",
+    "html": "<ol><li><p>foo</p><pre><code>bar</code></pre><p>baz</p><blockquote><p>bam</p></blockquote></li></ol>",
     "example": 263,
     "start_line": 4327,
     "end_line": 4349,
@@ -2105,15 +2105,15 @@
   },
   {
     "markdown": "- Foo\n\n      bar\n\n\n      baz\n",
-    "html": "<ul>\n<li>\n<p>Foo</p>\n<pre><code>bar\n\n\nbaz\n</code></pre>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>Foo</p><pre><code>bar\n\n\nbaz</code></pre></li></ul>",
     "example": 264,
     "start_line": 4355,
     "end_line": 4373,
     "section": "List items"
   },
   {
-    "markdown": "123456789. ok\n",
-    "html": "<ol start=\"123456789\">\n<li>ok</li>\n</ol>\n",
+    "markdown": "123456789. ok",
+    "html": "<ol start=\"123456789\"><li>ok</li></ol>",
     "example": 265,
     "start_line": 4377,
     "end_line": 4383,
@@ -2121,23 +2121,23 @@
   },
   {
     "markdown": "1234567890. not ok\n",
-    "html": "<p>1234567890. not ok</p>\n",
+    "html": "<p>1234567890. not ok</p>",
     "example": 266,
     "start_line": 4386,
     "end_line": 4390,
     "section": "List items"
   },
   {
-    "markdown": "0. ok\n",
-    "html": "<ol start=\"0\">\n<li>ok</li>\n</ol>\n",
+    "markdown": "0. ok",
+    "html": "<ol start=\"0\"><li>ok</li></ol>",
     "example": 267,
     "start_line": 4395,
     "end_line": 4401,
     "section": "List items"
   },
   {
-    "markdown": "003. ok\n",
-    "html": "<ol start=\"3\">\n<li>ok</li>\n</ol>\n",
+    "markdown": "003. ok",
+    "html": "<ol start=\"3\"><li>ok</li></ol>",
     "example": 268,
     "start_line": 4404,
     "end_line": 4410,
@@ -2145,7 +2145,7 @@
   },
   {
     "markdown": "-1. not ok\n",
-    "html": "<p>-1. not ok</p>\n",
+    "html": "<p>-1. not ok</p>",
     "example": 269,
     "start_line": 4415,
     "end_line": 4419,
@@ -2153,7 +2153,7 @@
   },
   {
     "markdown": "- foo\n\n      bar\n",
-    "html": "<ul>\n<li>\n<p>foo</p>\n<pre><code>bar\n</code></pre>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>foo</p><pre><code>bar</code></pre></li></ul>",
     "example": 270,
     "start_line": 4438,
     "end_line": 4450,
@@ -2161,7 +2161,7 @@
   },
   {
     "markdown": "  10.  foo\n\n           bar\n",
-    "html": "<ol start=\"10\">\n<li>\n<p>foo</p>\n<pre><code>bar\n</code></pre>\n</li>\n</ol>\n",
+    "html": "<ol start=\"10\"><li><p>foo</p><pre><code>bar</code></pre></li></ol>",
     "example": 271,
     "start_line": 4455,
     "end_line": 4467,
@@ -2169,7 +2169,7 @@
   },
   {
     "markdown": "    indented code\n\nparagraph\n\n    more code\n",
-    "html": "<pre><code>indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n",
+    "html": "<pre><code>indented code</code></pre><p>paragraph</p><pre><code>more code</code></pre>",
     "example": 272,
     "start_line": 4474,
     "end_line": 4486,
@@ -2177,7 +2177,7 @@
   },
   {
     "markdown": "1.     indented code\n\n   paragraph\n\n       more code\n",
-    "html": "<ol>\n<li>\n<pre><code>indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n</li>\n</ol>\n",
+    "html": "<ol><li><pre><code>indented code</code></pre><p>paragraph</p><pre><code>more code</code></pre></li></ol>",
     "example": 273,
     "start_line": 4489,
     "end_line": 4505,
@@ -2185,7 +2185,7 @@
   },
   {
     "markdown": "1.      indented code\n\n   paragraph\n\n       more code\n",
-    "html": "<ol>\n<li>\n<pre><code> indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n</li>\n</ol>\n",
+    "html": "<ol><li><pre><code> indented code</code></pre><p>paragraph</p><pre><code>more code</code></pre></li></ol>",
     "example": 274,
     "start_line": 4511,
     "end_line": 4527,
@@ -2193,15 +2193,15 @@
   },
   {
     "markdown": "   foo\n\nbar\n",
-    "html": "<p>foo</p>\n<p>bar</p>\n",
+    "html": "<p>foo</p><p>bar</p>",
     "example": 275,
     "start_line": 4538,
     "end_line": 4545,
     "section": "List items"
   },
   {
-    "markdown": "-    foo\n\n  bar\n",
-    "html": "<ul>\n<li>foo</li>\n</ul>\n<p>bar</p>\n",
+    "markdown": "-    foo\n  bar\n",
+    "html": "<ul><li>foo</li></ul><p>bar</p>",
     "example": 276,
     "start_line": 4548,
     "end_line": 4557,
@@ -2209,7 +2209,7 @@
   },
   {
     "markdown": "-  foo\n\n   bar\n",
-    "html": "<ul>\n<li>\n<p>foo</p>\n<p>bar</p>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>foo</p><p>bar</p></li></ul>",
     "example": 277,
     "start_line": 4565,
     "end_line": 4576,
@@ -2217,15 +2217,15 @@
   },
   {
     "markdown": "-\n  foo\n-\n  ```\n  bar\n  ```\n-\n      baz\n",
-    "html": "<ul>\n<li>foo</li>\n<li>\n<pre><code>bar\n</code></pre>\n</li>\n<li>\n<pre><code>baz\n</code></pre>\n</li>\n</ul>\n",
+    "html": "<ul><li>foo</li><li><pre><code>bar</code></pre></li><li><pre><code>baz</code></pre></li></ul>",
     "example": 278,
     "start_line": 4592,
     "end_line": 4613,
     "section": "List items"
   },
   {
-    "markdown": "-   \n  foo\n",
-    "html": "<ul>\n<li>foo</li>\n</ul>\n",
+    "markdown": "-   \n  foo",
+    "html": "<ul><li>foo</li></ul>",
     "example": 279,
     "start_line": 4618,
     "end_line": 4625,
@@ -2233,7 +2233,7 @@
   },
   {
     "markdown": "-\n\n  foo\n",
-    "html": "<ul>\n<li></li>\n</ul>\n<p>foo</p>\n",
+    "html": "<ul><li></li></ul><p>foo</p>",
     "example": 280,
     "start_line": 4632,
     "end_line": 4641,

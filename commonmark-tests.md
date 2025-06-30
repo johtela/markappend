@@ -977,6 +977,108 @@ blockquote marker:
 
 <commonmark-runner examples="260"></commonmark-runner>
 
+Note that at least one space or tab is needed between the list marker and any 
+following content, so these are not list items:
+
+<commonmark-runner examples="261"></commonmark-runner>
+
+A list item may contain blocks that are separated by more than one blank line.
+
+<commonmark-runner examples="262"></commonmark-runner>
+
+A list item may contain any kind of block:
+
+<commonmark-runner examples="263"></commonmark-runner>
+
+A list item that contains an indented code block will preserve empty lines within the code block verbatim.
+
+<commonmark-runner examples="264"></commonmark-runner>
+
+Note that ordered list start numbers must be nine digits or less:
+
+<commonmark-runner examples="265-266"></commonmark-runner>
+
+A start number may begin with 0s:
+
+<commonmark-runner examples="267-268"></commonmark-runner>
+
+A start number may not be negative:
+
+<commonmark-runner examples="269"></commonmark-runner>
+
+2.  Item starting with indented code. If a sequence of lines _Ls_ constitute a 
+    sequence of blocks _Bs_ starting with an indented code block, and _M_ is a 
+    list marker of width _W_ followed by one space of indentation, then the 
+    result of prepending _M_ and the following space to the first line of _Ls_, 
+    and indenting subsequent lines of Ls by _W_ + 1 spaces, is a list item with 
+    _Bs_ as its contents. If a line is empty, then it need not be indented. The 
+    type of the list item (bullet or ordered) is determined by the type of its 
+    list marker. If the list item is ordered, then it is also assigned a start 
+    number, based on the ordered list marker.
+
+An indented code block will have to be preceded by four spaces of indentation 
+beyond the edge of the region where text will be included in the list item. In 
+the following case that is 6 spaces:
+
+<commonmark-runner examples="270"></commonmark-runner>
+
+And in this case it is 11 spaces:
+
+<commonmark-runner examples="271"></commonmark-runner>
+
+If the first block in the list item is an indented code block, then by rule #2, 
+the contents must be preceded by one space of indentation after the list marker:
+
+<commonmark-runner examples="272-273"></commonmark-runner>
+
+Note that an additional space of indentation is interpreted as space inside the 
+code block:
+
+<commonmark-runner examples="274"></commonmark-runner>
+
+Note that rules #1 and #2 only apply to two cases: (a) cases in which the lines 
+to be included in a list item begin with a character other than a space or tab, 
+and (b) cases in which they begin with an indented code block. In a case like 
+the following, where the first block begins with three spaces of indentation, 
+the rules do not allow us to form a list item by indenting the whole thing and 
+prepending a list marker:
+
+<commonmark-runner examples="275-276"></commonmark-runner>
+
+This is not a significant restriction, because when a block is preceded by up to 
+three spaces of indentation, the indentation can always be removed without a 
+change in interpretation, allowing rule #1 to be applied. So, in the above case:
+
+<commonmark-runner examples="277"></commonmark-runner>
+
+3.  Item starting with a blank line. If a sequence of lines _Ls_ starting with a 
+    single blank line constitute a (possibly empty) sequence of blocks _Bs_, and 
+    _M_ is a list marker of width _W_, then the result of prepending _M_ to the 
+    first line of _Ls_, and preceding subsequent lines of _Ls_ by _W_ + 1 spaces 
+    of indentation, is a list item with _Bs_ as its contents. If a line is 
+    empty, then it need not be indented. The type of the list item (bullet or 
+    ordered) is determined by the type of its list marker. If the list item is 
+    ordered, then it is also assigned a start number, based on the ordered list 
+    marker.
+
+Here are some list items that start with a blank line but are not empty:
+
+<commonmark-runner examples="278"></commonmark-runner>
+
+When the list item starts with a blank line, the number of spaces following the 
+list marker doesn’t change the required indentation:
+
+<commonmark-runner examples="279"></commonmark-runner>
+
+A list item can begin with at most one blank line. In the following example, 
+`foo` is not part of the list item:
+
+<commonmark-runner examples="280"></commonmark-runner>
+
+Here is an empty bullet list item:
+
+<commonmark-runner examples="281"></commonmark-runner>
+
 
 ## Inlines
 

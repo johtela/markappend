@@ -591,9 +591,41 @@ function inlines(state: ParserState) {
  * line-by-line, as blocks have a nested, hierarchical structure. The combined 
  * regular expression matches block prefixes that indicate different block 
  * types.
+ *
+ * ### Lists
  * 
- * ### Closing List Item Block
- * 
+ * Open a list or list item.
+ */
+function openList(state: ParserState, match: RegExpExecArray, bulletsep: string, 
+    bulletno?: string) {
+    let prefix = match[0]
+    let len = prefix.length
+    let bslen = bulletsep.length
+    let allowEmpty = match.index + prefix.length >= state.input.length ?
+        "" : "|\\s*$"
+    if (bslen == 0)
+        len++
+    else if (bslen > 4 || allowEmpty.length == 0)
+        len -= (bslen - 1)
+    let block = lastBlock(state)
+    let cont = new RegExp(`(?= {${len}}${allowEmpty}|${
+        prefix.replaceAll(/\d+|[+*.)]/g, m => 
+            Number.isFinite(Number(m)) ? "\\d{1,9}" : "\\" + m)})`,
+        "yui")
+    if (bulletno && block.element.tagName != "OL") {
+        let ol = elem('ol')
+        if (bulletno != "1")
+            ol.start = Number.parseInt(bulletno)
+        openBlock(state, ol, BlockType.Inline, false, undefined, cont)
+    }
+    else if (!bulletno && block.element.tagName != "UL")
+        openBlock(state, elem('ul'), BlockType.Inline, false, undefined,
+            cont)
+    openBlock(state, elem('li'), BlockType.Inline, false, undefined,
+        new RegExp(` {${len}}${allowEmpty}`, "yui"), closeListItem)
+    state.nextIndex = match.index + len
+}
+/**
  * The function below, `closeListItem`, is responsible for handling the closure
  * of a list item block. If the list item is empty and immediately followed by
  * an empty paragraph block, it removes the paragraph and merges its children
@@ -703,25 +735,28 @@ const blockParsers = [
          * a new paragraph block.
          */
         (state, match) => {
-            let { setext } = match.groups!
+            let { setext, setextspaces } = match.groups!
             let block = lastBlock(state)
+            let len = match[0].trim().length
             if (block.element.tagName == "P") {
                 block.element = elem(setext == "=" ? 'h1' : 'h2')
                 block.parent = block.element
                 flushLastBlock(state)
                 closeLastBlock(state)
             }
-            else if (setext == "-" && match[0].trim().length > 2) {
+            else if (setext == "-" && len > 2) {
                 flushLastBlock(state)
                 append(state, elem('hr'))
             }
+            else if (setext == "-" && len == 1)
+                openList(state, match, setextspaces)
             else {
                 openBlock(state, elem('p'), BlockType.Inline, true, undefined, 
                     nonBlank)
                 append(state, text(match[0]))
             }
         },
-        / {0,3}(?<setext>-|=)\k<setext>*\s*$/.source),
+        / {0,3}(?<setext>-|=)\k<setext>*(?<setextspaces>\s*)$/.source),
     parser(
         /**
          * ### Thematic Breaks
@@ -856,27 +891,10 @@ const blockParsers = [
          * item or list.
          */
         (state, match) => {
-            let { bulletno } = match.groups!
-            let prefix = match[0]
-            let len = prefix.length
-            let block = lastBlock(state)
-            let cont = new RegExp(`(?= {${len}}|\\s*$|${
-                prefix.replace(/\d+|[+*.)]/, m => 
-                    Number.isFinite(Number(m)) ? "\\d{1,9}" : "\\" + m)})`, 
-                "yui")
-            if (bulletno && block.element.tagName != "OL") {
-                let ol = elem('ol')
-                if (bulletno != "1")
-                    ol.start = Number.parseInt(bulletno)
-                openBlock(state, ol, BlockType.Inline, false, undefined, cont)
-            }
-            else if (!bulletno && block.element.tagName != "UL")
-                openBlock(state, elem('ul'), BlockType.Inline, false, undefined, 
-                    cont)
-            openBlock(state, elem('li'), BlockType.Inline, false, undefined,
-                new RegExp(` {${len}}|\s*$`, "yui"), closeListItem)
+            let { bulletno, bulletsep } = match.groups!
+            openList(state, match, bulletsep, bulletno)
         },
-        / {0,3}(?:[\-+*]|(?<bulletno>\d{1,9})[.)]) {1,4}/.source),
+        / {0,3}(?:[\-+*]|(?<bulletno>\d{1,9})[.)])(?<bulletsep> +|$)/.source),
     parser(
         /**
          * ### Link References
