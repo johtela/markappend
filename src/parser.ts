@@ -488,7 +488,7 @@ const inlineParsers = [
                 code = trim[1]
             append(state, elem('code', text(code)))
         },
-        /(?<codedelim>`+)(?<code>\s.+\s|[^`]+)\k<codedelim>/.source),
+        /(?<codedelim>`+)(?<code>\s.+\s|(?:[^`]|(?!\k<codedelim>)`)+)\k<codedelim>/.source),
     parser(
         /**
          * ### Links
@@ -598,22 +598,26 @@ function inlines(state: ParserState) {
  */
 function openList(state: ParserState, match: RegExpExecArray, bulletsep: string, 
     bulletno?: string) {
+    let prefix = match[0]
+    let allowEmpty = match.index + prefix.length >= state.input.length ?
+        "" : "|\\s*$"
     let lastIndex = state.blocks.length - 1
     let last = state.blocks[lastIndex]
     if (last.element.tagName == "P") {
         let prev = state.blocks[lastIndex - 1]
-        if (prev.element.tagName != "LI") {
+        if (prev.element.tagName != "LI" && (allowEmpty.length == 0 ||
+            (bulletno && bulletno != "1"))) {
             state.nextIndex = match.index
             return
         }
         flushLastBlock(state)
-        closeListItem(state, prev)
+        if (prev.element.tagName == "LI")
+            closeListItem(state, prev)
+        else
+            closeLastBlock(state)
     }
-    let prefix = match[0]
     let len = prefix.length
     let bslen = bulletsep.length
-    let allowEmpty = match.index + prefix.length >= state.input.length ?
-        "" : "|\\s*$"
     if (bslen == 0)
         len++
     else if (bslen > 4 || allowEmpty.length == 0)

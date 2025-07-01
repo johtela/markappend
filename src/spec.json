@@ -2360,32 +2360,32 @@
     "section": "List items"
   },
   {
-    "markdown": "10) foo\n    - bar\n",
-    "html": "<ol start=\"10\">\n<li>foo\n<ul>\n<li>bar</li>\n</ul>\n</li>\n</ol>\n",
+    "markdown": "10) foo\n    - bar",
+    "html": "<ol start=\"10\"><li>foo<ul><li>bar</li></ul></li></ol>",
     "example": 296,
     "start_line": 4950,
     "end_line": 4961,
     "section": "List items"
   },
   {
-    "markdown": "10) foo\n   - bar\n",
-    "html": "<ol start=\"10\">\n<li>foo</li>\n</ol>\n<ul>\n<li>bar</li>\n</ul>\n",
+    "markdown": "10) foo\n   - bar",
+    "html": "<ol start=\"10\"><li>foo</li></ol><ul><li>bar</li></ul>",
     "example": 297,
     "start_line": 4966,
     "end_line": 4976,
     "section": "List items"
   },
   {
-    "markdown": "- - foo\n",
-    "html": "<ul>\n<li>\n<ul>\n<li>foo</li>\n</ul>\n</li>\n</ul>\n",
+    "markdown": "- - foo",
+    "html": "<ul><li><ul><li>foo</li></ul></li></ul>",
     "example": 298,
     "start_line": 4981,
     "end_line": 4991,
     "section": "List items"
   },
   {
-    "markdown": "1. - 2. foo\n",
-    "html": "<ol>\n<li>\n<ul>\n<li>\n<ol start=\"2\">\n<li>foo</li>\n</ol>\n</li>\n</ul>\n</li>\n</ol>\n",
+    "markdown": "1. - 2. foo",
+    "html": "<ol><li><ul><li><ol start=\"2\"><li>foo</li></ol></li></ul></li></ol>",
     "example": 299,
     "start_line": 4994,
     "end_line": 5008,
@@ -2400,24 +2400,24 @@
     "section": "List items"
   },
   {
-    "markdown": "- foo\n- bar\n+ baz\n",
-    "html": "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>\n<ul>\n<li>baz</li>\n</ul>\n",
+    "markdown": "- foo\n- bar\n+ baz",
+    "html": "<ul><li>foo</li><li>bar</li></ul><ul><li>baz</li></ul>",
     "example": 301,
     "start_line": 5249,
     "end_line": 5261,
     "section": "Lists"
   },
   {
-    "markdown": "1. foo\n2. bar\n3) baz\n",
-    "html": "<ol>\n<li>foo</li>\n<li>bar</li>\n</ol>\n<ol start=\"3\">\n<li>baz</li>\n</ol>\n",
+    "markdown": "1. foo\n2. bar\n3) baz",
+    "html": "<ol><li>foo</li><li>bar</li></ol><ol start=\"3\"><li>baz</li></ol>",
     "example": 302,
     "start_line": 5264,
     "end_line": 5276,
     "section": "Lists"
   },
   {
-    "markdown": "Foo\n- bar\n- baz\n",
-    "html": "<p>Foo</p>\n<ul>\n<li>bar</li>\n<li>baz</li>\n</ul>\n",
+    "markdown": "Foo\n- bar\n- baz",
+    "html": "<p>Foo</p><ul><li>bar</li><li>baz</li></ul>",
     "example": 303,
     "start_line": 5283,
     "end_line": 5293,
@@ -2425,15 +2425,15 @@
   },
   {
     "markdown": "The number of windows in my house is\n14.  The number of doors is 6.\n",
-    "html": "<p>The number of windows in my house is\n14.  The number of doors is 6.</p>\n",
+    "html": "<p>The number of windows in my house is\n14.  The number of doors is 6.</p>",
     "example": 304,
     "start_line": 5360,
     "end_line": 5366,
     "section": "Lists"
   },
   {
-    "markdown": "The number of windows in my house is\n1.  The number of doors is 6.\n",
-    "html": "<p>The number of windows in my house is</p>\n<ol>\n<li>The number of doors is 6.</li>\n</ol>\n",
+    "markdown": "The number of windows in my house is\n1.  The number of doors is 6.",
+    "html": "<p>The number of windows in my house is</p><ol><li>The number of doors is 6.</li></ol>",
     "example": 305,
     "start_line": 5370,
     "end_line": 5378,
@@ -2441,7 +2441,7 @@
   },
   {
     "markdown": "- foo\n\n- bar\n\n\n- baz\n",
-    "html": "<ul>\n<li>\n<p>foo</p>\n</li>\n<li>\n<p>bar</p>\n</li>\n<li>\n<p>baz</p>\n</li>\n</ul>\n",
+    "html": "<ul><li><p>foo</p></li><li><p>bar</p></li><li><p>baz</p></li></ul>",
     "example": 306,
     "start_line": 5384,
     "end_line": 5403,
@@ -2449,7 +2449,7 @@
   },
   {
     "markdown": "- foo\n  - bar\n    - baz\n\n\n      bim\n",
-    "html": "<ul>\n<li>foo\n<ul>\n<li>bar\n<ul>\n<li>\n<p>baz</p>\n<p>bim</p>\n</li>\n</ul>\n</li>\n</ul>\n</li>\n</ul>\n",
+    "html": "<ul><li>foo<ul><li>bar<ul><li><p>baz</p><p>bim</p></li></ul></li></ul></li></ul>",
     "example": 307,
     "start_line": 5405,
     "end_line": 5427,
@@ -2536,8 +2536,8 @@
     "section": "Lists"
   },
   {
-    "markdown": "- a\n- ```\n  b\n\n\n  ```\n- c\n",
-    "html": "<ul>\n<li>a</li>\n<li>\n<pre><code>b\n\n\n</code></pre>\n</li>\n<li>c</li>\n</ul>\n",
+    "markdown": "- a\n- ```\n  b\n\n\n  ```\n- c",
+    "html": "<ul><li>a</li><li><pre><code>b</code></pre></li><li>c</li></ul>",
     "example": 318,
     "start_line": 5664,
     "end_line": 5683,
@@ -2568,16 +2568,16 @@
     "section": "Lists"
   },
   {
-    "markdown": "- a\n",
-    "html": "<ul>\n<li>a</li>\n</ul>\n",
+    "markdown": "- a",
+    "html": "<ul><li>a</li></ul>",
     "example": 322,
     "start_line": 5757,
     "end_line": 5763,
     "section": "Lists"
   },
   {
-    "markdown": "- a\n  - b\n",
-    "html": "<ul>\n<li>a\n<ul>\n<li>b</li>\n</ul>\n</li>\n</ul>\n",
+    "markdown": "- a\n  - b",
+    "html": "<ul><li>a<ul><li>b</li></ul></li></ul>",
     "example": 323,
     "start_line": 5766,
     "end_line": 5777,
@@ -2585,7 +2585,7 @@
   },
   {
     "markdown": "1. ```\n   foo\n   ```\n\n   bar\n",
-    "html": "<ol>\n<li>\n<pre><code>foo\n</code></pre>\n<p>bar</p>\n</li>\n</ol>\n",
+    "html": "<ol><li><pre><code>foo</code></pre><p>bar</p></li></ol>",
     "example": 324,
     "start_line": 5783,
     "end_line": 5797,
@@ -2609,7 +2609,7 @@
   },
   {
     "markdown": "`hi`lo`\n",
-    "html": "<p><code>hi</code>lo`</p>\n",
+    "html": "<p><code>hi</code>lo`</p>",
     "example": 327,
     "start_line": 5854,
     "end_line": 5858,
@@ -2617,7 +2617,7 @@
   },
   {
     "markdown": "`foo`\n",
-    "html": "<p><code>foo</code></p>\n",
+    "html": "<p><code>foo</code></p>",
     "example": 328,
     "start_line": 5886,
     "end_line": 5890,
@@ -2625,7 +2625,7 @@
   },
   {
     "markdown": "`` foo ` bar ``\n",
-    "html": "<p><code>foo ` bar</code></p>\n",
+    "html": "<p><code>foo ` bar</code></p>",
     "example": 329,
     "start_line": 5897,
     "end_line": 5901,
@@ -2633,7 +2633,7 @@
   },
   {
     "markdown": "` `` `\n",
-    "html": "<p><code>``</code></p>\n",
+    "html": "<p><code>``</code></p>",
     "example": 330,
     "start_line": 5907,
     "end_line": 5911,
@@ -2641,7 +2641,7 @@
   },
   {
     "markdown": "`  ``  `\n",
-    "html": "<p><code> `` </code></p>\n",
+    "html": "<p><code> `` </code></p>",
     "example": 331,
     "start_line": 5915,
     "end_line": 5919,
@@ -2649,7 +2649,7 @@
   },
   {
     "markdown": "` a`\n",
-    "html": "<p><code> a</code></p>\n",
+    "html": "<p><code> a</code></p>",
     "example": 332,
     "start_line": 5924,
     "end_line": 5928,
@@ -2657,7 +2657,7 @@
   },
   {
     "markdown": "` b `\n",
-    "html": "<p><code> b </code></p>\n",
+    "html": "<p><code>&nbsp;b&nbsp;</code></p>",
     "example": 333,
     "start_line": 5933,
     "end_line": 5937,
@@ -2665,7 +2665,7 @@
   },
   {
     "markdown": "` `\n`  `\n",
-    "html": "<p><code> </code>\n<code>  </code></p>\n",
+    "html": "<p><code> </code>\n<code>  </code></p>",
     "example": 334,
     "start_line": 5941,
     "end_line": 5947,
@@ -2673,7 +2673,7 @@
   },
   {
     "markdown": "``\nfoo\nbar  \nbaz\n``\n",
-    "html": "<p><code>foo bar   baz</code></p>\n",
+    "html": "<p><code>foo bar baz</code></p>",
     "example": 335,
     "start_line": 5952,
     "end_line": 5960,
@@ -2681,7 +2681,7 @@
   },
   {
     "markdown": "``\nfoo \n``\n",
-    "html": "<p><code>foo </code></p>\n",
+    "html": "<p><code>foo</code></p>",
     "example": 336,
     "start_line": 5962,
     "end_line": 5968,
@@ -2689,7 +2689,7 @@
   },
   {
     "markdown": "`foo   bar \nbaz`\n",
-    "html": "<p><code>foo   bar  baz</code></p>\n",
+    "html": "<p><code>foo   bar baz</code></p>",
     "example": 337,
     "start_line": 5973,
     "end_line": 5978,
@@ -2697,7 +2697,7 @@
   },
   {
     "markdown": "`foo\\`bar`\n",
-    "html": "<p><code>foo\\</code>bar`</p>\n",
+    "html": "<p><code>foo\\</code>bar`</p>",
     "example": 338,
     "start_line": 5990,
     "end_line": 5994,
@@ -2705,7 +2705,7 @@
   },
   {
     "markdown": "``foo`bar``\n",
-    "html": "<p><code>foo`bar</code></p>\n",
+    "html": "<p><code>foo`bar</code></p>",
     "example": 339,
     "start_line": 6001,
     "end_line": 6005,
@@ -2713,7 +2713,7 @@
   },
   {
     "markdown": "` foo `` bar `\n",
-    "html": "<p><code>foo `` bar</code></p>\n",
+    "html": "<p><code>foo `` bar</code></p>",
     "example": 340,
     "start_line": 6007,
     "end_line": 6011,
@@ -2721,7 +2721,7 @@
   },
   {
     "markdown": "*foo`*`\n",
-    "html": "<p>*foo<code>*</code></p>\n",
+    "html": "<p>*foo<code>*</code></p>",
     "example": 341,
     "start_line": 6019,
     "end_line": 6023,
@@ -2729,7 +2729,7 @@
   },
   {
     "markdown": "[not a `link](/foo`)\n",
-    "html": "<p>[not a <code>link](/foo</code>)</p>\n",
+    "html": "<p>[not a <code>link](/foo</code>)</p>",
     "example": 342,
     "start_line": 6028,
     "end_line": 6032,
@@ -2737,7 +2737,7 @@
   },
   {
     "markdown": "`<a href=\"`\">`\n",
-    "html": "<p><code>&lt;a href=&quot;</code>&quot;&gt;`</p>\n",
+    "html": "<p><code>&lt;a href=\"</code>\"&gt;`</p>",
     "example": 343,
     "start_line": 6038,
     "end_line": 6042,
@@ -2745,7 +2745,7 @@
   },
   {
     "markdown": "<a href=\"`\">`\n",
-    "html": "<p><a href=\"`\">`</p>\n",
+    "html": "<p><a href=\"`\"></a>`</p>",
     "example": 344,
     "start_line": 6047,
     "end_line": 6051,
@@ -2753,7 +2753,7 @@
   },
   {
     "markdown": "`<https://foo.bar.`baz>`\n",
-    "html": "<p><code>&lt;https://foo.bar.</code>baz&gt;`</p>\n",
+    "html": "<p><code>&lt;https://foo.bar.</code>baz&gt;`</p>",
     "example": 345,
     "start_line": 6056,
     "end_line": 6060,
@@ -2761,7 +2761,7 @@
   },
   {
     "markdown": "<https://foo.bar.`baz>`\n",
-    "html": "<p><a href=\"https://foo.bar.%60baz\">https://foo.bar.`baz</a>`</p>\n",
+    "html": "<p><a href=\"https://foo.bar.%60baz\">https://foo.bar.`baz</a>`</p>",
     "example": 346,
     "start_line": 6065,
     "end_line": 6069,
@@ -2777,7 +2777,7 @@
   },
   {
     "markdown": "`foo\n",
-    "html": "<p>`foo</p>\n",
+    "html": "<p>`foo</p>",
     "example": 348,
     "start_line": 6082,
     "end_line": 6086,
@@ -2785,7 +2785,7 @@
   },
   {
     "markdown": "`foo``bar``\n",
-    "html": "<p>`foo<code>bar</code></p>\n",
+    "html": "<p>`foo<code>bar</code></p>",
     "example": 349,
     "start_line": 6091,
     "end_line": 6095,

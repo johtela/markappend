@@ -1128,11 +1128,325 @@ So, in this case we need two spaces indent:
 
 <commonmark-runner examples="294"></commonmark-runner>
 
-One is not enough:
+Here we need four, because the list marker is wider:
 
-<commonmark-runner examples="295"></commonmark-runner>
+<commonmark-runner examples="296"></commonmark-runner>
+
+Three is not enough:
+
+<commonmark-runner examples="297"></commonmark-runner>
+
+A list may be the first block in a list item:
+
+<commonmark-runner examples="298-299"></commonmark-runner>
+
+### Lists
+
+A list is a sequence of one or more list items of the same type. The list items 
+may be separated by any number of blank lines.
+
+Two list items are of the same type if they begin with a list marker of the same 
+type. Two list markers are of the same type if (a) they are bullet list markers 
+using the same character (`-`, `+`, or `*`) or (b) they are ordered list numbers 
+with the same delimiter (either `.` or `)`).
+
+A list is an ordered list if its constituent list items begin with ordered list 
+markers, and a bullet list if its constituent list items begin with bullet list 
+markers.
+
+The start number of an ordered list is determined by the list number of its 
+initial list item. The numbers of subsequent list items are disregarded.
+
+A list is loose if any of its constituent list items are separated by blank 
+lines, or if any of its constituent list items directly contain two block-level 
+elements with a blank line between them. Otherwise a list is tight. (The 
+difference in HTML output is that paragraphs in a loose list are wrapped in 
+`<p>` tags, while paragraphs in a tight list are not.)
+
+Changing the bullet or ordered list delimiter starts a new list:
+
+<commonmark-runner examples="301-302"></commonmark-runner>
+
+In CommonMark, a list can interrupt a paragraph. That is, no blank line is 
+needed to separate a paragraph from a following list:
+
+<commonmark-runner examples="303"></commonmark-runner>
+
+Since it is well established Markdown practice to allow lists to interrupt 
+paragraphs inside list items, the principle of uniformity requires us to allow 
+this outside list items as well. (reStructuredText takes a different approach, 
+requiring blank lines before lists even inside other list items.)
+
+In order to solve the problem of unwanted lists in paragraphs with hard-wrapped 
+numerals, we allow only lists starting with 1 to interrupt paragraphs. Thus,
+
+<commonmark-runner examples="304"></commonmark-runner>
+
+We may still get an unintended result in cases like
+
+<commonmark-runner examples="305"></commonmark-runner>
+
+but this rule should prevent most spurious list captures.
+
+There can be any number of blank lines between items:
+
+<commonmark-runner examples="306-307"></commonmark-runner>
+
+This is a tight list, because the blank lines are in a code block:
+
+<commonmark-runner examples="318"></commonmark-runner>
+
+A single-paragraph list is tight:
+
+<commonmark-runner examples="322-323"></commonmark-runner>
+
+This list is loose, because of the blank line between the two block elements in 
+the list item:
+
+<commonmark-runner examples="324"></commonmark-runner>
 
 ## Inlines
+
+Inlines are parsed sequentially from the beginning of the character stream to 
+the end (left to right, in left-to-right languages). Thus, for example, in
+
+<commonmark-runner examples="327"></commonmark-runner>
+
+`hi` is parsed as code, leaving the backtick at the end as a literal backtick.
+
+### Code Spans
+
+A backtick string is a string of one or more backtick characters (`` ` ``) that 
+is neither preceded nor followed by a backtick.
+
+A code span begins with a backtick string and ends with a backtick string of 
+equal length. The contents of the code span are the characters between these two 
+backtick strings, normalized in the following ways:
+
+-   First, line endings are converted to spaces.
+-   If the resulting string both begins and ends with a space character, but 
+    does not consist entirely of space characters, a single space character is 
+    removed from the front and back. This allows you to include code that begins 
+    or ends with backtick characters, which must be separated by whitespace from 
+    the opening or closing backtick strings.
+
+This is a simple code span:
+
+<commonmark-runner examples="328"></commonmark-runner>
+
+Here two backticks are used, because the code contains a backtick. This example 
+also illustrates stripping of a single leading and trailing space:
+
+<commonmark-runner examples="329"></commonmark-runner>
+
+This example shows the motivation for stripping leading and trailing spaces:
+
+<commonmark-runner examples="330"></commonmark-runner>
+
+Note that only one space is stripped:
+
+<commonmark-runner examples="331"></commonmark-runner>
+
+The stripping only happens if the space is on both sides of the string:
+
+<commonmark-runner examples="332"></commonmark-runner>
+
+Only spaces, and not unicode whitespace in general, are stripped in this way:
+
+<commonmark-runner examples="333"></commonmark-runner>
+
+Line endings are treated like spaces:
+
+<commonmark-runner examples="335-336"></commonmark-runner>
+
+Interior spaces are not collapsed:
+
+<commonmark-runner examples="337"></commonmark-runner>
+
+Note that backslash escapes do not work in code spans. All backslashes are 
+treated literally:
+
+<commonmark-runner examples="338"></commonmark-runner>
+
+Backslash escapes are never needed, because one can always choose a string of 
+_n_ backtick characters as delimiters, where the code does not contain any 
+strings of exactly _n_ backtick characters.
+
+<commonmark-runner examples="339-340"></commonmark-runner>
+
+Code span backticks have higher precedence than any other inline constructs 
+except HTML tags and autolinks. Thus, for example, this is not parsed as 
+emphasized text, since the second * is part of a code span:
+
+<commonmark-runner examples="341"></commonmark-runner>
+
+And this is not parsed as a link:
+
+<commonmark-runner examples="342"></commonmark-runner>
+
+Code spans, HTML tags, and autolinks have the same precedence. Thus, this is 
+code:
+
+<commonmark-runner examples="343"></commonmark-runner>
+
+But this is an HTML tag:
+
+<commonmark-runner examples="344"></commonmark-runner>
+
+And this is code:
+
+<commonmark-runner examples="345"></commonmark-runner>
+
+But this is an autolink:
+
+<commonmark-runner examples="346"></commonmark-runner>
+
+When a backtick string is not closed by a matching backtick string, we just have 
+literal backticks:
+
+<commonmark-runner examples="348"></commonmark-runner>
+
+### Emphasis and Strong Emphasis
+
+John Gruber’s original Markdown syntax description says:
+
+Markdown treats asterisks (`*`) and underscores (`_`) as indicators of emphasis. 
+Text wrapped with one `*` or `_` will be wrapped with an HTML `<em>` tag; double 
+`*`’s or `_`’s will be wrapped with an HTML `<strong>` tag.
+
+This is enough for most users, but these rules leave much undecided, especially 
+when it comes to nested emphasis. The original Markdown.pl test suite makes it 
+clear that triple `***` and `___` delimiters can be used for strong emphasis, 
+and most implementations have also allowed the following patterns:
+
+    ***strong emph***
+    ***strong** in emph*
+    ***emph* in strong**
+    **in strong *emph***
+    *in emph **strong***
+
+The following patterns are less widely supported, but the intent is clear and 
+they are useful (especially in contexts like bibliography entries):
+
+    *emph *with emph* in it*
+    **strong **with strong** in it**
+
+Many implementations have also restricted intraword emphasis to the `*` forms, 
+to avoid unwanted emphasis in words containing internal underscores. (It is best 
+practice to put these in code spans, but users often do not.)
+
+    internal emphasis: foo*bar*baz
+    no emphasis: foo_bar_baz
+
+The rules given below capture all of these patterns, while allowing for 
+efficient parsing strategies that do not backtrack.
+
+First, some definitions. A delimiter run is either a sequence of one or more `*` 
+characters that is not preceded or followed by a non-backslash-escaped `*` 
+character, or a sequence of one or more `_` characters that is not preceded or 
+followed by a non-backslash-escaped `_` character.
+
+A left-flanking delimiter run is a delimiter run that is (1) not followed by 
+Unicode whitespace, and either (2a) not followed by a Unicode punctuation 
+character, or (2b) followed by a Unicode punctuation character and preceded by 
+Unicode whitespace or a Unicode punctuation character. For purposes of this 
+definition, the beginning and the end of the line count as Unicode whitespace.
+
+A right-flanking delimiter run is a delimiter run that is (1) not preceded by 
+Unicode whitespace, and either (2a) not preceded by a Unicode punctuation 
+character, or (2b) preceded by a Unicode punctuation character and followed by 
+Unicode whitespace or a Unicode punctuation character. For purposes of this 
+definition, the beginning and the end of the line count as Unicode whitespace.
+
+Here are some examples of delimiter runs.
+
+-   left-flanking but not right-flanking:
+
+        ***abc
+        _abc
+        **"abc"
+        _"abc"
+
+-   right-flanking but not left-flanking:
+
+        abc***
+        abc_
+        "abc"**
+        "abc"_
+
+-   Both left and right-flanking:
+
+        abc***def
+        "abc"_"def"
+
+-   Neither left nor right-flanking:
+
+        abc *** def
+        a _ b
+
+(The idea of distinguishing left-flanking and right-flanking delimiter runs 
+based on the character before and the character after comes from Roopesh 
+Chander’s vfmd. vfmd uses the terminology “emphasis indicator string” instead 
+of “delimiter run,” and its rules for distinguishing left- and right-flanking 
+runs are a bit more complex than the ones given here.)
+
+The following rules define emphasis and strong emphasis:
+
+1.  A single `*` character can open emphasis iff (if and only if) it is part of 
+    a left-flanking delimiter run.
+
+2.  A single `_` character can open emphasis iff it is part of a left-flanking 
+    delimiter run and either (a) not part of a right-flanking delimiter run or 
+    (b) part of a right-flanking delimiter run preceded by a Unicode punctuation 
+    character.
+
+3.  A single `*` character can close emphasis iff it is part of a right-flanking 
+    delimiter run.
+
+4.  A single `_` character can close emphasis iff it is part of a right-flanking 
+    delimiter run and either (a) not part of a left-flanking delimiter run or 
+    (b) part of a left-flanking delimiter run followed by a Unicode punctuation 
+    character.
+
+5.  A double `**` can open strong emphasis iff it is part of a left-flanking 
+    delimiter run.
+
+6.  A double `__` can open strong emphasis iff it is part of a left-flanking 
+    delimiter run and either (a) not part of a right-flanking delimiter run or 
+    (b) part of a right-flanking delimiter run preceded by a Unicode punctuation 
+    character.
+
+7.  A double `**` can close strong emphasis iff it is part of a right-flanking 
+    delimiter run.
+
+8.  A double `__` can close strong emphasis iff it is part of a right-flanking 
+    delimiter run and either (a) not part of a left-flanking delimiter run or 
+    (b) part of a left-flanking delimiter run followed by a Unicode punctuation 
+    character.
+
+9.  Emphasis begins with a delimiter that can open emphasis and ends with a 
+    delimiter that can close emphasis, and that uses the same character (`_` or 
+    `*`) as the opening delimiter. The opening and closing delimiters must 
+    belong to separate delimiter runs. If one of the delimiters can both open 
+    and close emphasis, then the sum of the lengths of the delimiter runs 
+    containing the opening and closing delimiters must not be a multiple of 3 
+    unless both lengths are multiples of 3.
+
+10. Strong emphasis begins with a delimiter that can open strong emphasis and 
+    ends with a delimiter that can close strong emphasis, and that uses the same 
+    character (`_` or `*`) as the opening delimiter. The opening and closing 
+    delimiters must belong to separate delimiter runs. If one of the delimiters 
+    can both open and close strong emphasis, then the sum of the lengths of the 
+    delimiter runs containing the opening and closing delimiters must not be a 
+    multiple of 3 unless both lengths are multiples of 3.
+
+11. A literal `*` character cannot occur at the beginning or end of 
+    `*`-delimited emphasis or `**`-delimited strong emphasis, unless it is 
+    backslash-escaped.
+
+12. A literal `_` character cannot occur at the beginning or end of 
+    `_`-delimited emphasis or `__`-delimited strong emphasis, unless it is 
+    backslash-escaped.
 
 ### Links
 
