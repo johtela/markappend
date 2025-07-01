@@ -598,6 +598,17 @@ function inlines(state: ParserState) {
  */
 function openList(state: ParserState, match: RegExpExecArray, bulletsep: string, 
     bulletno?: string) {
+    let lastIndex = state.blocks.length - 1
+    let last = state.blocks[lastIndex]
+    if (last.element.tagName == "P") {
+        let prev = state.blocks[lastIndex - 1]
+        if (prev.element.tagName != "LI") {
+            state.nextIndex = match.index
+            return
+        }
+        flushLastBlock(state)
+        closeListItem(state, prev)
+    }
     let prefix = match[0]
     let len = prefix.length
     let bslen = bulletsep.length
@@ -608,10 +619,10 @@ function openList(state: ParserState, match: RegExpExecArray, bulletsep: string,
     else if (bslen > 4 || allowEmpty.length == 0)
         len -= (bslen - 1)
     let block = lastBlock(state)
-    let cont = new RegExp(`(?= {${len}}${allowEmpty}|${
-        prefix.replaceAll(/\d+|[+*.)]/g, m => 
-            Number.isFinite(Number(m)) ? "\\d{1,9}" : "\\" + m)})`,
-        "yui")
+    let bulletRe = prefix.replaceAll(/\d+|[+*.)]|\s+$/g, m => 
+            m[0] == " " ? `(?:${m}|$)` :
+            Number.isFinite(Number(m)) ? "\\d{1,9}" : "\\" + m)
+    let cont = new RegExp(`(?= {${len}}${allowEmpty}|${bulletRe})`, "yui")
     if (bulletno && block.element.tagName != "OL") {
         let ol = elem('ol')
         if (bulletno != "1")
@@ -638,7 +649,7 @@ function closeListItem(state: ParserState, block: DocumentBlock) {
         block.element.childElementCount == 0 && 
         state.blocks[last].element.tagName == "P") {
         let para = state.blocks.pop()!
-        append(state, ...para.element.children)
+        append(state, ...para.element.childNodes)
         block.lines = para.lines
     }
 }

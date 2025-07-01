@@ -1079,6 +1079,58 @@ Here is an empty bullet list item:
 
 <commonmark-runner examples="281"></commonmark-runner>
 
+It does not matter whether there are spaces or tabs following the list marker:
+
+<commonmark-runner examples="282"></commonmark-runner>
+
+Here is an empty ordered list item:
+
+<commonmark-runner examples="283"></commonmark-runner>
+
+A list may start or end with an empty list item:
+
+<commonmark-runner examples="284"></commonmark-runner>
+
+However, an empty list item cannot interrupt a paragraph:
+
+<commonmark-runner examples="285"></commonmark-runner>
+
+4.  Indentation. If a sequence of lines _Ls_ constitutes a list item according 
+    to rule #1, #2, or #3, then the result of preceding each line of _Ls_ by
+    up to three spaces of indentation (the same for each line) also 
+    constitutes a list item with the same contents and attributes. If a line 
+    is empty, then it need not be indented.
+
+Indented one space:
+
+<commonmark-runner examples="286"></commonmark-runner>
+
+Indented two spaces:
+
+<commonmark-runner examples="287"></commonmark-runner>
+
+Indented three spaces:
+
+<commonmark-runner examples="288"></commonmark-runner>
+
+Four spaces indent gives a code block:
+
+<commonmark-runner examples="289"></commonmark-runner>
+
+5.  That’s all. Nothing that is not counted as a list item by rules #1–4 
+    counts as a list item.
+
+The rules for sublists follow from the general rules above. A sublist must be 
+indented the same number of spaces of indentation a paragraph would need to be 
+in order to be included in the list item.
+
+So, in this case we need two spaces indent:
+
+<commonmark-runner examples="294"></commonmark-runner>
+
+One is not enough:
+
+<commonmark-runner examples="295"></commonmark-runner>
 
 ## Inlines
 

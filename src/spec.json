@@ -2240,24 +2240,24 @@
     "section": "List items"
   },
   {
-    "markdown": "- foo\n-\n- bar\n",
-    "html": "<ul>\n<li>foo</li>\n<li></li>\n<li>bar</li>\n</ul>\n",
+    "markdown": "- foo\n-\n- bar",
+    "html": "<ul><li>foo</li><li></li><li>bar</li></ul>",
     "example": 281,
     "start_line": 4646,
     "end_line": 4656,
     "section": "List items"
   },
   {
-    "markdown": "- foo\n-   \n- bar\n",
-    "html": "<ul>\n<li>foo</li>\n<li></li>\n<li>bar</li>\n</ul>\n",
+    "markdown": "- foo\n-   \n- bar",
+    "html": "<ul><li>foo</li><li></li><li>bar</li></ul>",
     "example": 282,
     "start_line": 4661,
     "end_line": 4671,
     "section": "List items"
   },
   {
-    "markdown": "1. foo\n2.\n3. bar\n",
-    "html": "<ol>\n<li>foo</li>\n<li></li>\n<li>bar</li>\n</ol>\n",
+    "markdown": "1. foo\n2.\n3. bar",
+    "html": "<ol><li>foo</li><li></li><li>bar</li></ol>",
     "example": 283,
     "start_line": 4676,
     "end_line": 4686,
@@ -2265,7 +2265,7 @@
   },
   {
     "markdown": "*\n",
-    "html": "<ul>\n<li></li>\n</ul>\n",
+    "html": "<ul><li></li></ul>",
     "example": 284,
     "start_line": 4691,
     "end_line": 4697,
@@ -2273,7 +2273,7 @@
   },
   {
     "markdown": "foo\n*\n\nfoo\n1.\n",
-    "html": "<p>foo\n*</p>\n<p>foo\n1.</p>\n",
+    "html": "<p>foo\n*</p><p>foo\n1.</p>",
     "example": 285,
     "start_line": 4701,
     "end_line": 4712,
@@ -2281,7 +2281,7 @@
   },
   {
     "markdown": " 1.  A paragraph\n     with two lines.\n\n         indented code\n\n     > A block quote.\n",
-    "html": "<ol>\n<li>\n<p>A paragraph\nwith two lines.</p>\n<pre><code>indented code\n</code></pre>\n<blockquote>\n<p>A block quote.</p>\n</blockquote>\n</li>\n</ol>\n",
+    "html": "<ol><li><p>A paragraph\nwith two lines.</p><pre><code>indented code</code></pre><blockquote><p>A block quote.</p></blockquote></li></ol>",
     "example": 286,
     "start_line": 4723,
     "end_line": 4742,
@@ -2289,7 +2289,7 @@
   },
   {
     "markdown": "  1.  A paragraph\n      with two lines.\n\n          indented code\n\n      > A block quote.\n",
-    "html": "<ol>\n<li>\n<p>A paragraph\nwith two lines.</p>\n<pre><code>indented code\n</code></pre>\n<blockquote>\n<p>A block quote.</p>\n</blockquote>\n</li>\n</ol>\n",
+    "html": "<ol><li><p>A paragraph\nwith two lines.</p><pre><code>indented code</code></pre><blockquote><p>A block quote.</p></blockquote></li></ol>",
     "example": 287,
     "start_line": 4747,
     "end_line": 4766,
@@ -2297,7 +2297,7 @@
   },
   {
     "markdown": "   1.  A paragraph\n       with two lines.\n\n           indented code\n\n       > A block quote.\n",
-    "html": "<ol>\n<li>\n<p>A paragraph\nwith two lines.</p>\n<pre><code>indented code\n</code></pre>\n<blockquote>\n<p>A block quote.</p>\n</blockquote>\n</li>\n</ol>\n",
+    "html": "<ol><li><p>A paragraph\nwith two lines.</p><pre><code>indented code</code></pre><blockquote><p>A block quote.</p></blockquote></li></ol>",
     "example": 288,
     "start_line": 4771,
     "end_line": 4790,
@@ -2305,7 +2305,7 @@
   },
   {
     "markdown": "    1.  A paragraph\n        with two lines.\n\n            indented code\n\n        > A block quote.\n",
-    "html": "<pre><code>1.  A paragraph\n    with two lines.\n\n        indented code\n\n    &gt; A block quote.\n</code></pre>\n",
+    "html": "<pre><code>1.  A paragraph\n    with two lines.\n\n        indented code\n\n    &gt; A block quote.</code></pre>",
     "example": 289,
     "start_line": 4795,
     "end_line": 4810,
@@ -2344,8 +2344,8 @@
     "section": "List items"
   },
   {
-    "markdown": "- foo\n  - bar\n    - baz\n      - boo\n",
-    "html": "<ul>\n<li>foo\n<ul>\n<li>bar\n<ul>\n<li>baz\n<ul>\n<li>boo</li>\n</ul>\n</li>\n</ul>\n</li>\n</ul>\n</li>\n</ul>\n",
+    "markdown": "- foo\n  - bar\n    - baz\n      - boo",
+    "html": "<ul><li>foo<ul><li>bar<ul><li>baz<ul><li>boo</li></ul></li></ul></li></ul></li></ul>",
     "example": 294,
     "start_line": 4907,
     "end_line": 4928,
