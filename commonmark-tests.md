@@ -1448,6 +1448,121 @@ The following rules define emphasis and strong emphasis:
     `_`-delimited emphasis or `__`-delimited strong emphasis, unless it is 
     backslash-escaped.
 
+Where rules 1–12 above are compatible with multiple parsings, the following 
+principles resolve ambiguity:
+
+13. The number of nestings should be minimized. Thus, for example, an 
+    interpretation `<strong>`...`</strong>` is always preferred to 
+    `<em><em>`...`</em></em>`.
+
+14. An interpretation `<em><strong>`...`</strong></em>` is always preferred to 
+    `<strong><em>`...`</em></strong>`.
+
+15. When two potential emphasis or strong emphasis spans overlap, so that the 
+    second begins before the first ends and ends after the first ends, the first 
+    takes precedence. Thus, for example, `*foo _bar* baz_` is parsed as 
+    `<em>foo _bar</em> baz_` rather than `*foo <em>bar* baz</em>`.
+
+16. When there are two potential emphasis or strong emphasis spans with the same 
+    closing delimiter, the shorter one (the one that opens later) takes 
+    precedence. Thus, for example, `**foo **bar baz**` is parsed as 
+    `**foo <strong>bar baz</strong>` rather than 
+    `<strong>foo **bar baz</strong>`.
+
+17. Inline code spans, links, images, and HTML tags group more tightly than 
+    emphasis. So, when there is a choice between an interpretation that contains 
+    one of these elements and one that does not, the former always wins. Thus, 
+    for example, `*[foo*](bar)` is parsed as `*<a href="bar">foo*</a>` rather 
+    than as `<em>[foo</em>](bar)`.
+
+These rules can be illustrated through a series of examples.
+
+Rule 1:
+
+<commonmark-runner examples="350"></commonmark-runner>
+
+This is not emphasis, because the opening `*` is followed by whitespace, and 
+hence not part of a left-flanking delimiter run:
+
+<commonmark-runner examples="351"></commonmark-runner>
+
+This is not emphasis, because the opening `*` is preceded by an alphanumeric and 
+followed by punctuation, and hence not part of a left-flanking delimiter run:
+
+<commonmark-runner examples="352"></commonmark-runner>
+
+Unicode nonbreaking spaces count as whitespace, too:
+
+<commonmark-runner examples="353"></commonmark-runner>
+
+Unicode symbols count as punctuation, too:
+
+<commonmark-runner examples="354"></commonmark-runner>
+
+Intraword emphasis with `*` is permitted:
+
+<commonmark-runner examples="355-356"></commonmark-runner>
+
+Rule 2:
+
+<commonmark-runner examples="357"></commonmark-runner>
+
+This is not emphasis, because the opening `_` is followed by whitespace:
+
+<commonmark-runner examples="358"></commonmark-runner>
+
+This is not emphasis, because the opening `_` is preceded by an alphanumeric and 
+followed by punctuation:
+
+<commonmark-runner examples="359"></commonmark-runner>
+
+Here `_` does not generate emphasis, because the first delimiter run is 
+right-flanking and the second left-flanking:
+
+<commonmark-runner examples="363"></commonmark-runner>
+
+This is emphasis, even though the opening delimiter is both left- and 
+right-flanking, because it is preceded by punctuation:
+
+<commonmark-runner examples="364"></commonmark-runner>
+
+Rule 3:
+
+This is not emphasis, because the closing delimiter does not match the opening 
+delimiter:
+
+<commonmark-runner examples="365"></commonmark-runner>
+
+This is not emphasis, because the closing `*` is preceded by whitespace:
+
+<commonmark-runner examples="366"></commonmark-runner>
+
+A line ending also counts as whitespace:
+
+<commonmark-runner examples="367"></commonmark-runner>
+
+This is not emphasis, because the second `*` is preceded by punctuation and 
+followed by an alphanumeric (hence it is not part of a right-flanking delimiter 
+run):
+
+<commonmark-runner examples="368"></commonmark-runner>
+
+Intraword emphasis with `*` is allowed:
+
+<commonmark-runner examples="370"></commonmark-runner>
+
+Rule 4:
+
+This is not emphasis, because the closing `_` is preceded by whitespace:
+
+<commonmark-runner examples="371"></commonmark-runner>
+
+This is not emphasis, because the second `_` is preceded by punctuation and 
+followed by an alphanumeric:
+
+<commonmark-runner examples="372"></commonmark-runner>
+
+
 ### Links
 
 <commonmark-runner examples="482"></commonmark-runner>
