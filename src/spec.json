@@ -3009,7 +3009,7 @@
   },
   {
     "markdown": "_(bar)_.\n",
-    "html": "<p><em>(bar)</em>.</p>\n",
+    "html": "<p><em>(bar)</em>.</p>",
     "example": 377,
     "start_line": 6571,
     "end_line": 6575,
@@ -3017,7 +3017,7 @@
   },
   {
     "markdown": "**foo bar**\n",
-    "html": "<p><strong>foo bar</strong></p>\n",
+    "html": "<p><strong>foo bar</strong></p>",
     "example": 378,
     "start_line": 6580,
     "end_line": 6584,
@@ -3025,7 +3025,7 @@
   },
   {
     "markdown": "** foo bar**\n",
-    "html": "<p>** foo bar**</p>\n",
+    "html": "<p>** foo bar**</p>",
     "example": 379,
     "start_line": 6590,
     "end_line": 6594,
@@ -3033,7 +3033,7 @@
   },
   {
     "markdown": "a**\"foo\"**\n",
-    "html": "<p>a**&quot;foo&quot;**</p>\n",
+    "html": "<p>a**\"foo\"**</p>",
     "example": 380,
     "start_line": 6601,
     "end_line": 6605,
@@ -3041,7 +3041,7 @@
   },
   {
     "markdown": "foo**bar**\n",
-    "html": "<p>foo<strong>bar</strong></p>\n",
+    "html": "<p>foo<strong>bar</strong></p>",
     "example": 381,
     "start_line": 6610,
     "end_line": 6614,
@@ -3049,7 +3049,7 @@
   },
   {
     "markdown": "__foo bar__\n",
-    "html": "<p><strong>foo bar</strong></p>\n",
+    "html": "<p><strong>foo bar</strong></p>",
     "example": 382,
     "start_line": 6619,
     "end_line": 6623,
@@ -3057,7 +3057,7 @@
   },
   {
     "markdown": "__ foo bar__\n",
-    "html": "<p>__ foo bar__</p>\n",
+    "html": "<p>__ foo bar__</p>",
     "example": 383,
     "start_line": 6629,
     "end_line": 6633,
@@ -3065,7 +3065,7 @@
   },
   {
     "markdown": "__\nfoo bar__\n",
-    "html": "<p>__\nfoo bar__</p>\n",
+    "html": "<p>__\nfoo bar__</p>",
     "example": 384,
     "start_line": 6637,
     "end_line": 6643,
@@ -3073,7 +3073,7 @@
   },
   {
     "markdown": "a__\"foo\"__\n",
-    "html": "<p>a__&quot;foo&quot;__</p>\n",
+    "html": "<p>a__\"foo\"__</p>",
     "example": 385,
     "start_line": 6649,
     "end_line": 6653,
@@ -3113,7 +3113,7 @@
   },
   {
     "markdown": "foo-__(bar)__\n",
-    "html": "<p>foo-<strong>(bar)</strong></p>\n",
+    "html": "<p>foo-<strong>(bar)</strong></p>",
     "example": 390,
     "start_line": 6690,
     "end_line": 6694,
@@ -3121,7 +3121,7 @@
   },
   {
     "markdown": "**foo bar **\n",
-    "html": "<p>**foo bar **</p>\n",
+    "html": "<p>**foo bar **</p>",
     "example": 391,
     "start_line": 6703,
     "end_line": 6707,
@@ -3145,7 +3145,7 @@
   },
   {
     "markdown": "**Gomphocarpus (*Gomphocarpus physocarpus*, syn.\n*Asclepias physocarpa*)**\n",
-    "html": "<p><strong>Gomphocarpus (<em>Gomphocarpus physocarpus</em>, syn.\n<em>Asclepias physocarpa</em>)</strong></p>\n",
+    "html": "<p><strong>Gomphocarpus (<em>Gomphocarpus physocarpus</em>, syn.\n<em>Asclepias physocarpa</em>)</strong></p>",
     "example": 394,
     "start_line": 6733,
     "end_line": 6739,
@@ -3153,7 +3153,7 @@
   },
   {
     "markdown": "**foo \"*bar*\" foo**\n",
-    "html": "<p><strong>foo &quot;<em>bar</em>&quot; foo</strong></p>\n",
+    "html": "<p><strong>foo \"<em>bar</em>\" foo</strong></p>",
     "example": 395,
     "start_line": 6742,
     "end_line": 6746,
@@ -3161,7 +3161,7 @@
   },
   {
     "markdown": "**foo**bar\n",
-    "html": "<p><strong>foo</strong>bar</p>\n",
+    "html": "<p><strong>foo</strong>bar</p>",
     "example": 396,
     "start_line": 6751,
     "end_line": 6755,

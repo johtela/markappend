@@ -1562,6 +1562,78 @@ followed by an alphanumeric:
 
 <commonmark-runner examples="372"></commonmark-runner>
 
+This is emphasis, even though the closing delimiter is both left- and 
+right-flanking, because it is followed by punctuation:
+
+<commonmark-runner examples="377"></commonmark-runner>
+
+Rule 5:
+
+<commonmark-runner examples="378"></commonmark-runner>
+
+This is not strong emphasis, because the opening delimiter is followed by 
+whitespace:
+
+<commonmark-runner examples="379"></commonmark-runner>
+
+Intraword strong emphasis with `**` is permitted:
+
+<commonmark-runner examples="381"></commonmark-runner>
+
+Rule 6:
+
+<commonmark-runner examples="382"></commonmark-runner>
+
+This is not strong emphasis, because the opening delimiter is followed by 
+whitespace:
+
+<commonmark-runner examples="383"></commonmark-runner>
+
+A line ending counts as whitespace:
+
+<commonmark-runner examples="384"></commonmark-runner>
+
+This is strong emphasis, even though the opening delimiter is both left- and 
+right-flanking, because it is preceded by punctuation:
+
+<commonmark-runner examples="390"></commonmark-runner>
+
+Rule 7:
+
+This is not strong emphasis, because the closing delimiter is preceded by 
+whitespace:
+
+<commonmark-runner examples="391"></commonmark-runner>
+
+The point of this restriction is more easily appreciated with these examples:
+
+<commonmark-runner examples="394-395"></commonmark-runner>
+
+Intraword emphasis:
+
+<commonmark-runner examples="396"></commonmark-runner>
+
+Rule 8:
+
+This is not strong emphasis, because the closing delimiter is preceded by 
+whitespace:
+
+<commonmark-runner examples="397"></commonmark-runner>
+
+This is not strong emphasis, because the second `__` is preceded by punctuation 
+and followed by an alphanumeric:
+
+<commonmark-runner examples="398"></commonmark-runner>
+
+<commonmark-runner examples="399"></commonmark-runner>
+
+<commonmark-runner examples="400"></commonmark-runner>
+
+<commonmark-runner examples="401"></commonmark-runner>
+
+<commonmark-runner examples="402"></commonmark-runner>
+
+<commonmark-runner examples="403"></commonmark-runner>
 
 ### Links
 
