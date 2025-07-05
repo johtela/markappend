@@ -3169,7 +3169,7 @@
   },
   {
     "markdown": "__foo bar __\n",
-    "html": "<p>__foo bar __</p>\n",
+    "html": "<p>__foo bar __</p>",
     "example": 397,
     "start_line": 6763,
     "end_line": 6767,
@@ -3217,7 +3217,7 @@
   },
   {
     "markdown": "__(bar)__.\n",
-    "html": "<p><strong>(bar)</strong>.</p>\n",
+    "html": "<p><strong>(bar)</strong>.</p>",
     "example": 403,
     "start_line": 6817,
     "end_line": 6821,
@@ -3225,7 +3225,7 @@
   },
   {
     "markdown": "*foo [bar](/url)*\n",
-    "html": "<p><em>foo <a href=\"/url\">bar</a></em></p>\n",
+    "html": "<p><em>foo <a href=\"/url\">bar</a></em></p>",
     "example": 404,
     "start_line": 6829,
     "end_line": 6833,

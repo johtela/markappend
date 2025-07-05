@@ -316,7 +316,7 @@ const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.source
-const inlineLink = `${linkText}\\(\\s*${linkDest}\\s+${linkTitle}\\s*\\)`
+const inlineLink = `${linkText}\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`
 const fullReferenceLink = `${linkText}${linkLabel}`
 const collapsedReferenceLink = `${linkLabel}(?![(:])(?:\\[\\])?`
 

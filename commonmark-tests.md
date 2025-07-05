@@ -1620,20 +1620,15 @@ whitespace:
 
 <commonmark-runner examples="397"></commonmark-runner>
 
-This is not strong emphasis, because the second `__` is preceded by punctuation 
-and followed by an alphanumeric:
-
-<commonmark-runner examples="398"></commonmark-runner>
-
-<commonmark-runner examples="399"></commonmark-runner>
-
-<commonmark-runner examples="400"></commonmark-runner>
-
-<commonmark-runner examples="401"></commonmark-runner>
-
-<commonmark-runner examples="402"></commonmark-runner>
-
 <commonmark-runner examples="403"></commonmark-runner>
+
+Rule 9:
+
+Any nonempty sequence of inline elements can be the contents of an emphasized 
+span.
+
+<commonmark-runner examples="404"></commonmark-runner>
+
 
 ### Links
 
