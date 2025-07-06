@@ -1280,10 +1280,6 @@ emphasized text, since the second * is part of a code span:
 
 <commonmark-runner examples="341"></commonmark-runner>
 
-And this is not parsed as a link:
-
-<commonmark-runner examples="342"></commonmark-runner>
-
 Code spans, HTML tags, and autolinks have the same precedence. Thus, this is 
 code:
 
@@ -1603,11 +1599,7 @@ Rule 7:
 This is not strong emphasis, because the closing delimiter is preceded by 
 whitespace:
 
-<commonmark-runner examples="391"></commonmark-runner>
-
-The point of this restriction is more easily appreciated with these examples:
-
-<commonmark-runner examples="394-395"></commonmark-runner>
+<commonmark-runner examples="395"></commonmark-runner>
 
 Intraword emphasis:
 
@@ -1618,8 +1610,6 @@ Rule 8:
 This is not strong emphasis, because the closing delimiter is preceded by 
 whitespace:
 
-<commonmark-runner examples="397"></commonmark-runner>
-
 <commonmark-runner examples="403"></commonmark-runner>
 
 Rule 9:
@@ -1627,8 +1617,96 @@ Rule 9:
 Any nonempty sequence of inline elements can be the contents of an emphasized 
 span.
 
-<commonmark-runner examples="404"></commonmark-runner>
+<commonmark-runner examples="404-405"></commonmark-runner>
 
+In particular, emphasis and strong emphasis can be nested inside emphasis:
+
+<commonmark-runner examples="406-407"></commonmark-runner>
+
+<commonmark-runner examples="410-411"></commonmark-runner>
+
+Note that in the preceding case, the interpretation
+
+    <p><em>foo</em><em>bar<em></em>baz</em></p>
+
+is precluded by the condition that a delimiter that can both open and close 
+(like the `*` after `foo`) cannot form emphasis if the sum of the lengths of the 
+delimiter runs containing the opening and closing delimiters is a multiple of 3 
+unless both lengths are multiples of 3.
+
+For the same reason, we don’t get two consecutive emphasis sections in this 
+example:
+
+<commonmark-runner examples="412"></commonmark-runner>
+
+<commonmark-runner examples="414-415"></commonmark-runner>
+
+Indefinite levels of nesting are possible:
+
+<commonmark-runner examples="418-419"></commonmark-runner>
+
+There can be no empty emphasis or strong emphasis:
+
+<commonmark-runner examples="420-421"></commonmark-runner>
+
+Rule 10:
+
+Any nonempty sequence of inline elements can be the contents of an strongly 
+emphasized span.
+
+<commonmark-runner examples="422-423"></commonmark-runner>
+
+In particular, emphasis and strong emphasis can be nested inside strong 
+emphasis:
+
+<commonmark-runner examples="424-425"></commonmark-runner>
+
+<commonmark-runner examples="427-429"></commonmark-runner>
+
+<commonmark-runner examples="431"></commonmark-runner>
+
+Indefinite levels of nesting are possible:
+
+<commonmark-runner examples="432-433"></commonmark-runner>
+
+There can be no empty emphasis or strong emphasis:
+
+<commonmark-runner examples="434-435"></commonmark-runner>
+
+Rule 11:
+
+<commonmark-runner examples="436-441"></commonmark-runner>
+
+Note that when delimiters do not match evenly, Rule 11 determines that the 
+excess literal `*` characters will appear outside of the emphasis, rather than 
+inside it:
+
+<commonmark-runner examples="442"></commonmark-runner>
+
+<commonmark-runner examples="444-445"></commonmark-runner>
+
+Rule 12:
+
+<commonmark-runner examples="448-454"></commonmark-runner>
+
+Note that when delimiters do not match evenly, Rule 12 determines that the 
+excess literal `_` characters will appear outside of the emphasis, rather than 
+inside it:
+
+<commonmark-runner examples="456-457"></commonmark-runner>
+
+Rule 13 implies that if you want emphasis nested directly inside emphasis, you 
+must use different delimiters:
+
+<commonmark-runner examples="460-463"></commonmark-runner>
+
+Rule 15:
+
+<commonmark-runner examples="469-470"></commonmark-runner>
+
+Rule 17:
+
+<commonmark-runner examples="475-477"></commonmark-runner>
 
 ### Links
 

@@ -3233,7 +3233,7 @@
   },
   {
     "markdown": "*foo\nbar*\n",
-    "html": "<p><em>foo\nbar</em></p>\n",
+    "html": "<p><em>foo\nbar</em></p>",
     "example": 405,
     "start_line": 6836,
     "end_line": 6842,
@@ -3241,7 +3241,7 @@
   },
   {
     "markdown": "_foo __bar__ baz_\n",
-    "html": "<p><em>foo <strong>bar</strong> baz</em></p>\n",
+    "html": "<p><em>foo <strong>bar</strong> baz</em></p>",
     "example": 406,
     "start_line": 6848,
     "end_line": 6852,
@@ -3249,7 +3249,7 @@
   },
   {
     "markdown": "_foo _bar_ baz_\n",
-    "html": "<p><em>foo <em>bar</em> baz</em></p>\n",
+    "html": "<p><em>foo <em>bar</em> baz</em></p>",
     "example": 407,
     "start_line": 6855,
     "end_line": 6859,
@@ -3273,7 +3273,7 @@
   },
   {
     "markdown": "*foo **bar** baz*\n",
-    "html": "<p><em>foo <strong>bar</strong> baz</em></p>\n",
+    "html": "<p><em>foo <strong>bar</strong> baz</em></p>",
     "example": 410,
     "start_line": 6876,
     "end_line": 6880,
@@ -3281,7 +3281,7 @@
   },
   {
     "markdown": "*foo**bar**baz*\n",
-    "html": "<p><em>foo<strong>bar</strong>baz</em></p>\n",
+    "html": "<p><em>foo<strong>bar</strong>baz</em></p>",
     "example": 411,
     "start_line": 6882,
     "end_line": 6886,
@@ -3289,7 +3289,7 @@
   },
   {
     "markdown": "*foo**bar*\n",
-    "html": "<p><em>foo**bar</em></p>\n",
+    "html": "<p><em>foo**bar</em></p>",
     "example": 412,
     "start_line": 6906,
     "end_line": 6910,
@@ -3305,7 +3305,7 @@
   },
   {
     "markdown": "*foo **bar***\n",
-    "html": "<p><em>foo <strong>bar</strong></em></p>\n",
+    "html": "<p><em>foo <strong>bar</strong></em></p>",
     "example": 414,
     "start_line": 6926,
     "end_line": 6930,
@@ -3313,7 +3313,7 @@
   },
   {
     "markdown": "*foo**bar***\n",
-    "html": "<p><em>foo<strong>bar</strong></em></p>\n",
+    "html": "<p><em>foo<strong>bar</strong></em></p>",
     "example": 415,
     "start_line": 6933,
     "end_line": 6937,
@@ -3337,7 +3337,7 @@
   },
   {
     "markdown": "*foo **bar *baz* bim** bop*\n",
-    "html": "<p><em>foo <strong>bar <em>baz</em> bim</strong> bop</em></p>\n",
+    "html": "<p><em>foo <strong>bar <em>baz</em> bim</strong> bop</em></p>",
     "example": 418,
     "start_line": 6959,
     "end_line": 6963,
@@ -3345,7 +3345,7 @@
   },
   {
     "markdown": "*foo [*bar*](/url)*\n",
-    "html": "<p><em>foo <a href=\"/url\"><em>bar</em></a></em></p>\n",
+    "html": "<p><em>foo <a href=\"/url\"><em>bar</em></a></em></p>",
     "example": 419,
     "start_line": 6966,
     "end_line": 6970,
@@ -3353,7 +3353,7 @@
   },
   {
     "markdown": "** is not an empty emphasis\n",
-    "html": "<p>** is not an empty emphasis</p>\n",
+    "html": "<p>** is not an empty emphasis</p>",
     "example": 420,
     "start_line": 6975,
     "end_line": 6979,
@@ -3361,7 +3361,7 @@
   },
   {
     "markdown": "**** is not an empty strong emphasis\n",
-    "html": "<p>**** is not an empty strong emphasis</p>\n",
+    "html": "<p>**** is not an empty strong emphasis</p>",
     "example": 421,
     "start_line": 6982,
     "end_line": 6986,
@@ -3369,7 +3369,7 @@
   },
   {
     "markdown": "**foo [bar](/url)**\n",
-    "html": "<p><strong>foo <a href=\"/url\">bar</a></strong></p>\n",
+    "html": "<p><strong>foo <a href=\"/url\">bar</a></strong></p>",
     "example": 422,
     "start_line": 6995,
     "end_line": 6999,
@@ -3377,7 +3377,7 @@
   },
   {
     "markdown": "**foo\nbar**\n",
-    "html": "<p><strong>foo\nbar</strong></p>\n",
+    "html": "<p><strong>foo\nbar</strong></p>",
     "example": 423,
     "start_line": 7002,
     "end_line": 7008,
@@ -3385,7 +3385,7 @@
   },
   {
     "markdown": "__foo _bar_ baz__\n",
-    "html": "<p><strong>foo <em>bar</em> baz</strong></p>\n",
+    "html": "<p><strong>foo <em>bar</em> baz</strong></p>",
     "example": 424,
     "start_line": 7014,
     "end_line": 7018,
@@ -3393,7 +3393,7 @@
   },
   {
     "markdown": "__foo __bar__ baz__\n",
-    "html": "<p><strong>foo <strong>bar</strong> baz</strong></p>\n",
+    "html": "<p><strong>foo <strong>bar</strong> baz</strong></p>",
     "example": 425,
     "start_line": 7021,
     "end_line": 7025,
@@ -3409,7 +3409,7 @@
   },
   {
     "markdown": "**foo **bar****\n",
-    "html": "<p><strong>foo <strong>bar</strong></strong></p>\n",
+    "html": "<p><strong>foo <strong>bar</strong></strong></p>",
     "example": 427,
     "start_line": 7035,
     "end_line": 7039,
@@ -3417,7 +3417,7 @@
   },
   {
     "markdown": "**foo *bar* baz**\n",
-    "html": "<p><strong>foo <em>bar</em> baz</strong></p>\n",
+    "html": "<p><strong>foo <em>bar</em> baz</strong></p>",
     "example": 428,
     "start_line": 7042,
     "end_line": 7046,
@@ -3425,7 +3425,7 @@
   },
   {
     "markdown": "**foo*bar*baz**\n",
-    "html": "<p><strong>foo<em>bar</em>baz</strong></p>\n",
+    "html": "<p><strong>foo<em>bar</em>baz</strong></p>",
     "example": 429,
     "start_line": 7049,
     "end_line": 7053,
@@ -3441,7 +3441,7 @@
   },
   {
     "markdown": "**foo *bar***\n",
-    "html": "<p><strong>foo <em>bar</em></strong></p>\n",
+    "html": "<p><strong>foo <em>bar</em></strong></p>",
     "example": 431,
     "start_line": 7063,
     "end_line": 7067,
@@ -3449,7 +3449,7 @@
   },
   {
     "markdown": "**foo *bar **baz**\nbim* bop**\n",
-    "html": "<p><strong>foo <em>bar <strong>baz</strong>\nbim</em> bop</strong></p>\n",
+    "html": "<p><strong>foo <em>bar <strong>baz</strong>\nbim</em> bop</strong></p>",
     "example": 432,
     "start_line": 7072,
     "end_line": 7078,
@@ -3457,7 +3457,7 @@
   },
   {
     "markdown": "**foo [*bar*](/url)**\n",
-    "html": "<p><strong>foo <a href=\"/url\"><em>bar</em></a></strong></p>\n",
+    "html": "<p><strong>foo <a href=\"/url\"><em>bar</em></a></strong></p>",
     "example": 433,
     "start_line": 7081,
     "end_line": 7085,
@@ -3465,7 +3465,7 @@
   },
   {
     "markdown": "__ is not an empty emphasis\n",
-    "html": "<p>__ is not an empty emphasis</p>\n",
+    "html": "<p>__ is not an empty emphasis</p>",
     "example": 434,
     "start_line": 7090,
     "end_line": 7094,
@@ -3473,7 +3473,7 @@
   },
   {
     "markdown": "____ is not an empty strong emphasis\n",
-    "html": "<p>____ is not an empty strong emphasis</p>\n",
+    "html": "<p>____ is not an empty strong emphasis</p>",
     "example": 435,
     "start_line": 7097,
     "end_line": 7101,
@@ -3481,7 +3481,7 @@
   },
   {
     "markdown": "foo ***\n",
-    "html": "<p>foo ***</p>\n",
+    "html": "<p>foo ***</p>",
     "example": 436,
     "start_line": 7107,
     "end_line": 7111,
@@ -3489,7 +3489,7 @@
   },
   {
     "markdown": "foo *\\**\n",
-    "html": "<p>foo <em>*</em></p>\n",
+    "html": "<p>foo <em>*</em></p>",
     "example": 437,
     "start_line": 7114,
     "end_line": 7118,
@@ -3497,7 +3497,7 @@
   },
   {
     "markdown": "foo *_*\n",
-    "html": "<p>foo <em>_</em></p>\n",
+    "html": "<p>foo <em>_</em></p>",
     "example": 438,
     "start_line": 7121,
     "end_line": 7125,
@@ -3505,7 +3505,7 @@
   },
   {
     "markdown": "foo *****\n",
-    "html": "<p>foo *****</p>\n",
+    "html": "<p>foo *****</p>",
     "example": 439,
     "start_line": 7128,
     "end_line": 7132,
@@ -3513,7 +3513,7 @@
   },
   {
     "markdown": "foo **\\***\n",
-    "html": "<p>foo <strong>*</strong></p>\n",
+    "html": "<p>foo <strong>*</strong></p>",
     "example": 440,
     "start_line": 7135,
     "end_line": 7139,
@@ -3521,7 +3521,7 @@
   },
   {
     "markdown": "foo **_**\n",
-    "html": "<p>foo <strong>_</strong></p>\n",
+    "html": "<p>foo <strong>_</strong></p>",
     "example": 441,
     "start_line": 7142,
     "end_line": 7146,
@@ -3529,7 +3529,7 @@
   },
   {
     "markdown": "**foo*\n",
-    "html": "<p>*<em>foo</em></p>\n",
+    "html": "<p>*<em>foo</em></p>",
     "example": 442,
     "start_line": 7153,
     "end_line": 7157,
@@ -3545,7 +3545,7 @@
   },
   {
     "markdown": "***foo**\n",
-    "html": "<p>*<strong>foo</strong></p>\n",
+    "html": "<p>*<strong>foo</strong></p>",
     "example": 444,
     "start_line": 7167,
     "end_line": 7171,
@@ -3553,7 +3553,7 @@
   },
   {
     "markdown": "****foo*\n",
-    "html": "<p>***<em>foo</em></p>\n",
+    "html": "<p>***<em>foo</em></p>",
     "example": 445,
     "start_line": 7174,
     "end_line": 7178,
@@ -3577,7 +3577,7 @@
   },
   {
     "markdown": "foo ___\n",
-    "html": "<p>foo ___</p>\n",
+    "html": "<p>foo ___</p>",
     "example": 448,
     "start_line": 7198,
     "end_line": 7202,
@@ -3585,7 +3585,7 @@
   },
   {
     "markdown": "foo _\\__\n",
-    "html": "<p>foo <em>_</em></p>\n",
+    "html": "<p>foo <em>_</em></p>",
     "example": 449,
     "start_line": 7205,
     "end_line": 7209,
@@ -3593,7 +3593,7 @@
   },
   {
     "markdown": "foo _*_\n",
-    "html": "<p>foo <em>*</em></p>\n",
+    "html": "<p>foo <em>*</em></p>",
     "example": 450,
     "start_line": 7212,
     "end_line": 7216,
@@ -3601,7 +3601,7 @@
   },
   {
     "markdown": "foo _____\n",
-    "html": "<p>foo _____</p>\n",
+    "html": "<p>foo _____</p>",
     "example": 451,
     "start_line": 7219,
     "end_line": 7223,
@@ -3609,7 +3609,7 @@
   },
   {
     "markdown": "foo __\\___\n",
-    "html": "<p>foo <strong>_</strong></p>\n",
+    "html": "<p>foo <strong>_</strong></p>",
     "example": 452,
     "start_line": 7226,
     "end_line": 7230,
@@ -3617,7 +3617,7 @@
   },
   {
     "markdown": "foo __*__\n",
-    "html": "<p>foo <strong>*</strong></p>\n",
+    "html": "<p>foo <strong>*</strong></p>",
     "example": 453,
     "start_line": 7233,
     "end_line": 7237,
@@ -3625,7 +3625,7 @@
   },
   {
     "markdown": "__foo_\n",
-    "html": "<p>_<em>foo</em></p>\n",
+    "html": "<p>_<em>foo</em></p>",
     "example": 454,
     "start_line": 7240,
     "end_line": 7244,
@@ -3641,7 +3641,7 @@
   },
   {
     "markdown": "___foo__\n",
-    "html": "<p>_<strong>foo</strong></p>\n",
+    "html": "<p>_<strong>foo</strong></p>",
     "example": 456,
     "start_line": 7258,
     "end_line": 7262,
@@ -3649,7 +3649,7 @@
   },
   {
     "markdown": "____foo_\n",
-    "html": "<p>___<em>foo</em></p>\n",
+    "html": "<p>___<em>foo</em></p>",
     "example": 457,
     "start_line": 7265,
     "end_line": 7269,
@@ -3673,7 +3673,7 @@
   },
   {
     "markdown": "**foo**\n",
-    "html": "<p><strong>foo</strong></p>\n",
+    "html": "<p><strong>foo</strong></p>",
     "example": 460,
     "start_line": 7289,
     "end_line": 7293,
@@ -3681,7 +3681,7 @@
   },
   {
     "markdown": "*_foo_*\n",
-    "html": "<p><em><em>foo</em></em></p>\n",
+    "html": "<p><em><em>foo</em></em></p>",
     "example": 461,
     "start_line": 7296,
     "end_line": 7300,
@@ -3689,7 +3689,7 @@
   },
   {
     "markdown": "__foo__\n",
-    "html": "<p><strong>foo</strong></p>\n",
+    "html": "<p><strong>foo</strong></p>",
     "example": 462,
     "start_line": 7303,
     "end_line": 7307,
@@ -3697,7 +3697,7 @@
   },
   {
     "markdown": "_*foo*_\n",
-    "html": "<p><em><em>foo</em></em></p>\n",
+    "html": "<p><em><em>foo</em></em></p>",
     "example": 463,
     "start_line": 7310,
     "end_line": 7314,
@@ -3745,7 +3745,7 @@
   },
   {
     "markdown": "*foo _bar* baz_\n",
-    "html": "<p><em>foo _bar</em> baz_</p>\n",
+    "html": "<p><em>foo _bar</em> baz_</p>",
     "example": 469,
     "start_line": 7363,
     "end_line": 7367,
@@ -3753,7 +3753,7 @@
   },
   {
     "markdown": "*foo __bar *baz bim__ bam*\n",
-    "html": "<p><em>foo <strong>bar *baz bim</strong> bam</em></p>\n",
+    "html": "<p><em>foo <strong>bar *baz bim</strong> bam</em></p>",
     "example": 470,
     "start_line": 7370,
     "end_line": 7374,
@@ -3793,7 +3793,7 @@
   },
   {
     "markdown": "*<img src=\"foo\" title=\"*\"/>\n",
-    "html": "<p>*<img src=\"foo\" title=\"*\"/></p>\n",
+    "html": "<p>*<img src=\"foo\" title=\"*\"></p>",
     "example": 475,
     "start_line": 7409,
     "end_line": 7413,
@@ -3801,7 +3801,7 @@
   },
   {
     "markdown": "**<a href=\"**\">\n",
-    "html": "<p>**<a href=\"**\"></p>\n",
+    "html": "<p>**<a href=\"**\"></a></p>",
     "example": 476,
     "start_line": 7416,
     "end_line": 7420,
@@ -3809,7 +3809,7 @@
   },
   {
     "markdown": "__<a href=\"__\">\n",
-    "html": "<p>__<a href=\"__\"></p>\n",
+    "html": "<p>__<a href=\"__\"></a></p>",
     "example": 477,
     "start_line": 7423,
     "end_line": 7427,
