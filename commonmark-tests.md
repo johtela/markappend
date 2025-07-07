@@ -1710,5 +1710,178 @@ Rule 17:
 
 ### Links
 
+A link contains link text (the visible text), a link destination (the URI that 
+is the link destination), and optionally a link title. There are two basic kinds 
+of links in Markdown. In inline links the destination and title are given 
+immediately after the link text. In reference links the destination and title 
+are defined elsewhere in the document.
+
+A link text consists of a sequence of zero or more inline elements enclosed by 
+square brackets (`[` and `]`). The following rules apply:
+
+-   Links may not contain other links, at any level of nesting. If multiple 
+    otherwise valid link definitions appear nested inside each other, the 
+    inner-most definition is used.
+
+-   Brackets are allowed in the link text only if (a) they are backslash-escaped 
+    or (b) they appear as a matched pair of brackets, with an open bracket `[`, 
+    a sequence of zero or more inlines, and a close bracket `]`.
+
+-   Backtick code spans, autolinks, and raw HTML tags bind more tightly than the
+    brackets in link text. Thus, for example, `` [foo`]` `` could not be a link 
+    text, since the second ] is part of a code span.
+
+-   The brackets in link text bind more tightly than markers for emphasis and 
+    strong emphasis. Thus, for example, `*[foo*](url)` is a link.
+
+A link destination consists of either
+
+-   a sequence of zero or more characters between an opening `<` and a closing 
+    `>` that contains no line endings or unescaped `<` or `>` characters, or
+
+-   a nonempty sequence of characters that does not start with `<`, does not 
+    include ASCII control characters or space character, and includes 
+    parentheses only if (a) they are backslash-escaped or (b) they are part of 
+    a balanced pair of unescaped parentheses. (Implementations may impose limits 
+    on parentheses nesting to avoid performance issues, but at least three 
+    levels of nesting should be supported.)
+
+A link title consists of either
+
+-   a sequence of zero or more characters between straight double-quote 
+    characters (`"`), including a `"` character only if it is backslash-escaped, 
+    or
+
+-   a sequence of zero or more characters between straight single-quote 
+    characters (`'`), including a `'` character only if it is backslash-escaped, 
+    or
+
+-   a sequence of zero or more characters between matching parentheses 
+    (`(...)`), including a `(` or `)` character only if it is backslash-escaped.
+
+Although link titles may span multiple lines, they may not contain a blank line.
+
+An inline link consists of a link text followed immediately by a left 
+parenthesis `(`, an optional link destination, an optional link title, and a 
+right parenthesis `)`. These four components may be separated by spaces, tabs, 
+and up to one line ending. If both link destination and link title are present, 
+they must be separated by spaces, tabs, and up to one line ending.
+
+The link’s text consists of the inlines contained in the link text (excluding 
+the enclosing square brackets). The link’s URI consists of the link destination, 
+excluding enclosing `<...>` if present, with backslash-escapes in effect as 
+described above. The link’s title consists of the link title, excluding its 
+enclosing delimiters, with backslash-escapes in effect as described above.
+
+Here is a simple inline link:
+
 <commonmark-runner examples="482"></commonmark-runner>
 
+The title, the link text and even the destination may be omitted:
+
+<commonmark-runner examples="483-487"></commonmark-runner>
+
+The destination can only contain spaces if it is enclosed in pointy brackets:
+
+<commonmark-runner examples="488-489"></commonmark-runner>
+
+The destination cannot contain line endings, even if enclosed in pointy 
+brackets:
+
+<commonmark-runner examples="490-491"></commonmark-runner>
+
+The destination can contain `)` if it is enclosed in pointy brackets:
+
+<commonmark-runner examples="492"></commonmark-runner>
+
+Pointy brackets that enclose links must be unescaped:
+
+<commonmark-runner examples="493"></commonmark-runner>
+
+These are not links, because the opening pointy bracket is not matched properly:
+
+<commonmark-runner examples="494"></commonmark-runner>
+
+Parentheses inside the link destination may be escaped:
+
+<commonmark-runner examples="495"></commonmark-runner>
+
+However, if you have unbalanced parentheses, you need to escape or use the 
+`<...>` form:
+
+<commonmark-runner examples="497-499"></commonmark-runner>
+
+Parentheses and other symbols can also be escaped, as usual in Markdown:
+
+<commonmark-runner examples="500"></commonmark-runner>
+
+A link can contain fragment identifiers and queries:
+
+<commonmark-runner examples="501"></commonmark-runner>
+
+Note that a backslash before a non-escapable character is just a backslash:
+
+<commonmark-runner examples="502"></commonmark-runner>
+
+URL-escaping should be left alone inside the destination, as all URL-escaped 
+characters are also valid URL characters. Entity and numerical character 
+references in the destination will be parsed into the corresponding Unicode code 
+points, as usual. These may be optionally URL-escaped when written as HTML, but 
+this spec does not enforce any particular policy for rendering URLs in HTML or 
+other formats. Renderers may make different decisions about how to escape or 
+normalize URLs in the output.
+
+<commonmark-runner examples="503"></commonmark-runner>
+
+Note that, because titles can often be parsed as destinations, if you try to 
+omit the destination and keep the title, you’ll get unexpected results:
+
+<commonmark-runner examples="504"></commonmark-runner>
+
+Titles may be in single quotes, double quotes, or parentheses:
+
+<commonmark-runner examples="505"></commonmark-runner>
+
+Titles must be separated from the link using spaces, tabs, and up to one line 
+ending. Other Unicode whitespace like non-breaking space doesn’t work.
+
+<commonmark-runner examples="507"></commonmark-runner>
+
+Nested balanced quotes are not allowed without escaping:
+
+<commonmark-runner examples="508"></commonmark-runner>
+
+But it is easy to work around this by using a different quote type:
+
+<commonmark-runner examples="509"></commonmark-runner>
+
+(Note: `Markdown.pl` did allow double quotes inside a double-quoted title, and 
+its test suite included a test demonstrating this. But it is hard to see a good 
+rationale for the extra complexity this brings, since there are already many 
+ways—backslash escaping, entity and numeric character references, or using a 
+different quote type for the enclosing title—to write titles containing double 
+quotes. Markdown.pl’s handling of titles has a number of other strange features. 
+For example, it allows single-quoted titles in inline links, but not reference 
+links. And, in reference links but not inline links, it allows a title to begin 
+with " and end with ). Markdown.pl 1.0.1 even allows titles with no closing 
+quotation mark, though 1.0.2b8 does not. It seems preferable to adopt a simple, 
+rational rule that works the same way in inline links and link reference 
+definitions.)
+
+Spaces, tabs, and up to one line ending is allowed around the destination and 
+title:
+
+<commonmark-runner examples="510"></commonmark-runner>
+
+But it is not allowed between the link text and the following parenthesis:
+
+<commonmark-runner examples="511"></commonmark-runner>
+
+The link text may contain balanced brackets, but not unbalanced ones, unless 
+they are escaped:
+
+<commonmark-runner examples="513-515"></commonmark-runner>
+
+The link text may contain inline content:
+
+<commonmark-runner examples="516-517"></commonmark-runner>

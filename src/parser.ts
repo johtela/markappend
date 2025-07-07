@@ -313,9 +313,9 @@ const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
-const linkDest = /(?:<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])+)(?<!\\)>|(?<linkdest>(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])+))/.source
+const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
-const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])+)(?<!\\)\]/.source
+const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])*)(?<!\\)\]/.source
 const inlineLink = `${linkText}\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`
 const fullReferenceLink = `${linkText}${linkLabel}`
 const collapsedReferenceLink = `${linkLabel}(?![(:])(?:\\[\\])?`
@@ -389,10 +389,8 @@ function emOrStrong(regexp: string) {
 function outputLink(state: ParserState, linktext: string, linkdest?: string, 
     linktitle?: string): HTMLAnchorElement {
     let anchor = elem('a')
-    if (linkdest) {
-        linkdest = linkdest.replaceAll(/\\\(|\\\)/g, str => str[1])
-        anchor.href = linkdest
-    }
+    if (linkdest)
+        anchor.href = replaceEscapes(linkdest)!
     if (linktitle)
         anchor.title = linktitle
     openBlock(state, anchor, BlockType.Inline)
@@ -533,8 +531,8 @@ const inlineParsers = [
          */
         (state, match) => {
             let { imgalt, imgsrc } = match.groups!
-            imgalt = imgsrc.replaceAll(/\\\[|\\\]/, str => str[1])
-            imgsrc = imgsrc.replaceAll(/\\\(|\\\)/, str => str[1])
+            imgalt = replaceEscapes(imgalt)!
+            imgsrc = replaceEscapes(imgsrc)!
             let img = elem('img')
             img.src = imgsrc
             img.alt = imgalt

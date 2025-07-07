@@ -3857,7 +3857,7 @@
   },
   {
     "markdown": "[link](/uri)\n",
-    "html": "<p><a href=\"/uri\">link</a></p>\n",
+    "html": "<p><a href=\"/uri\">link</a></p>",
     "example": 483,
     "start_line": 7549,
     "end_line": 7553,
@@ -3865,7 +3865,7 @@
   },
   {
     "markdown": "[](./target.md)\n",
-    "html": "<p><a href=\"./target.md\"></a></p>\n",
+    "html": "<p><a href=\"./target.md\"></a></p>",
     "example": 484,
     "start_line": 7555,
     "end_line": 7559,
@@ -3873,7 +3873,7 @@
   },
   {
     "markdown": "[link]()\n",
-    "html": "<p><a href=\"\">link</a></p>\n",
+    "html": "<p><a>link</a></p>",
     "example": 485,
     "start_line": 7562,
     "end_line": 7566,
@@ -3881,7 +3881,7 @@
   },
   {
     "markdown": "[link](<>)\n",
-    "html": "<p><a href=\"\">link</a></p>\n",
+    "html": "<p><a>link</a></p>",
     "example": 486,
     "start_line": 7569,
     "end_line": 7573,
@@ -3889,7 +3889,7 @@
   },
   {
     "markdown": "[]()\n",
-    "html": "<p><a href=\"\"></a></p>\n",
+    "html": "<p><a></a></p>",
     "example": 487,
     "start_line": 7576,
     "end_line": 7580,
@@ -3897,7 +3897,7 @@
   },
   {
     "markdown": "[link](/my uri)\n",
-    "html": "<p>[link](/my uri)</p>\n",
+    "html": "<p>[link](/my uri)</p>",
     "example": 488,
     "start_line": 7585,
     "end_line": 7589,
@@ -3905,7 +3905,7 @@
   },
   {
     "markdown": "[link](</my uri>)\n",
-    "html": "<p><a href=\"/my%20uri\">link</a></p>\n",
+    "html": "<p><a href=\"/my uri\">link</a></p>",
     "example": 489,
     "start_line": 7591,
     "end_line": 7595,
@@ -3913,7 +3913,7 @@
   },
   {
     "markdown": "[link](foo\nbar)\n",
-    "html": "<p>[link](foo\nbar)</p>\n",
+    "html": "<p>[link](foo\nbar)</p>",
     "example": 490,
     "start_line": 7600,
     "end_line": 7606,
@@ -3921,7 +3921,7 @@
   },
   {
     "markdown": "[link](<foo\nbar>)\n",
-    "html": "<p>[link](<foo\nbar>)</p>\n",
+    "html": "<p>[link](<foo bar=\"\"></foo>)</p>",
     "example": 491,
     "start_line": 7608,
     "end_line": 7614,
@@ -3929,7 +3929,7 @@
   },
   {
     "markdown": "[a](<b)c>)\n",
-    "html": "<p><a href=\"b)c\">a</a></p>\n",
+    "html": "<p><a href=\"b)c\">a</a></p>",
     "example": 492,
     "start_line": 7619,
     "end_line": 7623,
@@ -3937,7 +3937,7 @@
   },
   {
     "markdown": "[link](<foo\\>)\n",
-    "html": "<p>[link](&lt;foo&gt;)</p>\n",
+    "html": "<p>[link](&lt;foo&gt;)</p>",
     "example": 493,
     "start_line": 7627,
     "end_line": 7631,
@@ -3945,7 +3945,7 @@
   },
   {
     "markdown": "[a](<b)c\n[a](<b)c>\n[a](<b>c)\n",
-    "html": "<p>[a](&lt;b)c\n[a](&lt;b)c&gt;\n[a](<b>c)</p>\n",
+    "html": "<p>[a](&lt;b)c\n[a](&lt;b)c&gt;\n[a](<b></b>c)</p>",
     "example": 494,
     "start_line": 7636,
     "end_line": 7644,
@@ -3953,7 +3953,7 @@
   },
   {
     "markdown": "[link](\\(foo\\))\n",
-    "html": "<p><a href=\"(foo)\">link</a></p>\n",
+    "html": "<p><a href=\"(foo)\">link</a></p>",
     "example": 495,
     "start_line": 7648,
     "end_line": 7652,
@@ -3969,7 +3969,7 @@
   },
   {
     "markdown": "[link](foo(and(bar))\n",
-    "html": "<p>[link](foo(and(bar))</p>\n",
+    "html": "<p>[link](foo(and(bar))</p>",
     "example": 497,
     "start_line": 7666,
     "end_line": 7670,
@@ -3977,7 +3977,7 @@
   },
   {
     "markdown": "[link](foo\\(and\\(bar\\))\n",
-    "html": "<p><a href=\"foo(and(bar)\">link</a></p>\n",
+    "html": "<p><a href=\"foo(and(bar)\">link</a></p>",
     "example": 498,
     "start_line": 7673,
     "end_line": 7677,
@@ -3985,7 +3985,7 @@
   },
   {
     "markdown": "[link](<foo(and(bar)>)\n",
-    "html": "<p><a href=\"foo(and(bar)\">link</a></p>\n",
+    "html": "<p><a href=\"foo(and(bar)\">link</a></p>",
     "example": 499,
     "start_line": 7680,
     "end_line": 7684,
@@ -3993,7 +3993,7 @@
   },
   {
     "markdown": "[link](foo\\)\\:)\n",
-    "html": "<p><a href=\"foo):\">link</a></p>\n",
+    "html": "<p><a href=\"foo):\">link</a></p>",
     "example": 500,
     "start_line": 7690,
     "end_line": 7694,
@@ -4001,7 +4001,7 @@
   },
   {
     "markdown": "[link](#fragment)\n\n[link](https://example.com#fragment)\n\n[link](https://example.com?foo=3#frag)\n",
-    "html": "<p><a href=\"#fragment\">link</a></p>\n<p><a href=\"https://example.com#fragment\">link</a></p>\n<p><a href=\"https://example.com?foo=3#frag\">link</a></p>\n",
+    "html": "<p><a href=\"#fragment\">link</a></p><p><a href=\"https://example.com#fragment\">link</a></p><p><a href=\"https://example.com?foo=3#frag\">link</a></p>",
     "example": 501,
     "start_line": 7699,
     "end_line": 7709,
@@ -4009,7 +4009,7 @@
   },
   {
     "markdown": "[link](foo\\bar)\n",
-    "html": "<p><a href=\"foo%5Cbar\">link</a></p>\n",
+    "html": "<p><a href=\"foo\\bar\">link</a></p>",
     "example": 502,
     "start_line": 7715,
     "end_line": 7719,
@@ -4017,7 +4017,7 @@
   },
   {
     "markdown": "[link](foo%20b&auml;)\n",
-    "html": "<p><a href=\"foo%20b%C3%A4\">link</a></p>\n",
+    "html": "<p><a href=\"foo%20b&amp;auml;\">link</a></p>",
     "example": 503,
     "start_line": 7731,
     "end_line": 7735,
@@ -4025,7 +4025,7 @@
   },
   {
     "markdown": "[link](\"title\")\n",
-    "html": "<p><a href=\"%22title%22\">link</a></p>\n",
+    "html": "<p><a href=\"&quot;title&quot;\">link</a></p>",
     "example": 504,
     "start_line": 7742,
     "end_line": 7746,
@@ -4033,7 +4033,7 @@
   },
   {
     "markdown": "[link](/url \"title\")\n[link](/url 'title')\n[link](/url (title))\n",
-    "html": "<p><a href=\"/url\" title=\"title\">link</a>\n<a href=\"/url\" title=\"title\">link</a>\n<a href=\"/url\" title=\"title\">link</a></p>\n",
+    "html": "<p><a href=\"/url\" title=\"title\">link</a>\n<a href=\"/url\" title=\"title\">link</a>\n<a href=\"/url\" title=\"title\">link</a></p>",
     "example": 505,
     "start_line": 7751,
     "end_line": 7759,
@@ -4049,7 +4049,7 @@
   },
   {
     "markdown": "[link](/url \"title\")\n",
-    "html": "<p><a href=\"/url%C2%A0%22title%22\">link</a></p>\n",
+    "html": "<p><a href=\"/url&nbsp;&quot;title&quot;\">link</a></p>",
     "example": 507,
     "start_line": 7776,
     "end_line": 7780,
@@ -4057,7 +4057,7 @@
   },
   {
     "markdown": "[link](/url \"title \"and\" title\")\n",
-    "html": "<p>[link](/url &quot;title &quot;and&quot; title&quot;)</p>\n",
+    "html": "<p>[link](/url \"title \"and\" title\")</p>",
     "example": 508,
     "start_line": 7785,
     "end_line": 7789,
@@ -4065,7 +4065,7 @@
   },
   {
     "markdown": "[link](/url 'title \"and\" title')\n",
-    "html": "<p><a href=\"/url\" title=\"title &quot;and&quot; title\">link</a></p>\n",
+    "html": "<p><a href=\"/url\" title=\"title &quot;and&quot; title\">link</a></p>",
     "example": 509,
     "start_line": 7794,
     "end_line": 7798,
@@ -4073,7 +4073,7 @@
   },
   {
     "markdown": "[link](   /uri\n  \"title\"  )\n",
-    "html": "<p><a href=\"/uri\" title=\"title\">link</a></p>\n",
+    "html": "<p><a href=\"/uri\" title=\"title\">link</a></p>",
     "example": 510,
     "start_line": 7819,
     "end_line": 7824,
@@ -4081,7 +4081,7 @@
   },
   {
     "markdown": "[link] (/uri)\n",
-    "html": "<p>[link] (/uri)</p>\n",
+    "html": "<p><a>link</a> (/uri)</p>",
     "example": 511,
     "start_line": 7830,
     "end_line": 7834,
@@ -4097,7 +4097,7 @@
   },
   {
     "markdown": "[link] bar](/uri)\n",
-    "html": "<p>[link] bar](/uri)</p>\n",
+    "html": "<p><a>link</a> bar](/uri)</p>",
     "example": 513,
     "start_line": 7847,
     "end_line": 7851,
@@ -4105,7 +4105,7 @@
   },
   {
     "markdown": "[link [bar](/uri)\n",
-    "html": "<p>[link <a href=\"/uri\">bar</a></p>\n",
+    "html": "<p>[link <a href=\"/uri\">bar</a></p>",
     "example": 514,
     "start_line": 7854,
     "end_line": 7858,
@@ -4113,7 +4113,7 @@
   },
   {
     "markdown": "[link \\[bar](/uri)\n",
-    "html": "<p><a href=\"/uri\">link [bar</a></p>\n",
+    "html": "<p><a href=\"/uri\">link [bar</a></p>",
     "example": 515,
     "start_line": 7861,
     "end_line": 7865,
@@ -4121,7 +4121,7 @@
   },
   {
     "markdown": "[link *foo **bar** `#`*](/uri)\n",
-    "html": "<p><a href=\"/uri\">link <em>foo <strong>bar</strong> <code>#</code></em></a></p>\n",
+    "html": "<p><a href=\"/uri\">link <em>foo <strong>bar</strong> <code>#</code></em></a></p>",
     "example": 516,
     "start_line": 7870,
     "end_line": 7874,
