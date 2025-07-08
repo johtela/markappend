@@ -4129,7 +4129,7 @@
   },
   {
     "markdown": "[![moon](moon.jpg)](/uri)\n",
-    "html": "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\" /></a></p>\n",
+    "html": "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\"></a></p>",
     "example": 517,
     "start_line": 7877,
     "end_line": 7881,

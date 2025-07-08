@@ -262,6 +262,26 @@ function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
     return new RegExp(re, sticky ? "yuis" : "guis")
 }
 /**
+ * Construct an "open-close" regexp for a pair of input regexps. The result is a 
+ * regexp that matches the `open` regexp with the same named group, and 
+ * similarily the `close` regexp.
+ */
+function openCloseRegexp(open: string, close: string): RegExp {
+    return new RegExp(`(?<open>${open})|(?<close>${close})`, "guis")
+}
+/**
+ * Execute the given regexp and return its groups, if it matches the current
+ * state.
+ */
+function parseRegExp(state: ParserState, regexp: RegExp): 
+    RegExpExecArray | null {
+    regexp.lastIndex = state.nextIndex
+    let res = regexp.exec(state.input)
+    if (res)
+        state.nextIndex = res.index + res[0].length
+    return res
+}
+/**
  * The `parseNext` function attempts to match the next token in the input using 
  * the combined regular expression and the list of parsers. It takes the regexp, 
  * the parser array, the current parser state, and a flag indicating whether we 
@@ -316,9 +336,12 @@ const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])*)(?<!\\)\]/.source
-const inlineLink = `${linkText}\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`
-const fullReferenceLink = `${linkText}${linkLabel}`
-const collapsedReferenceLink = `${linkLabel}(?![(:])(?:\\[\\])?`
+const linkTextOpen = /(?<!\\)\[/.source
+const linkTextClose = /(?<!\\)\]/.source
+const linkTextOpenClose = openCloseRegexp(linkTextOpen, linkTextClose)
+const inlineLink = new RegExp(`\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`, "yuis")
+const fullReferenceLink = new RegExp(linkLabel, "yuis")
+const collapsedReferenceLink = /(?![(:])(?:\\[\\])?/yuis
 
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
@@ -360,6 +383,37 @@ function flushInline(state: ParserState, index?: number) {
         let inp = state.input.substring(state.nextIndex, index)
         if (inp)
             append(state, text(inp))
+    }
+}
+/**
+ * Finds the end of an inline element based on regexps that open and close the
+ * element. This is similar to a matching paren algorithm which find the closing
+ * parenthesis for when an open parenthesis is located. The state given as 
+ * argument is pointing past of the opening string. The function returns a tuple
+ * whose first item is the index of the closing string and second item is the 
+ * index after the closing string. If the closing string is not found, 
+ * `undefined` is returned.
+ */
+function findClosingIndex(input: string, index: number, openClose: RegExp): 
+    RegExpExecArray | undefined {
+    while (index < input.length) {
+        openClose.lastIndex = index
+        let match = openClose.exec(input)
+        if (match) {
+            let { open, close } = match.groups!
+            if (open) {
+                let next = findClosingIndex(input, 
+                    match.index + match[0].length, openClose)
+                if (next)
+                    index = next.index + next[0].length
+                else 
+                    return next
+            }
+            else if (close)
+                return match
+        }
+        else
+            return undefined
     }
 }
 /**
@@ -498,28 +552,40 @@ const inlineParsers = [
          * the link text and destination.
          */
         (state, match) => {
-            let { linktext, linkdest, linktitle } = match.groups!
-            outputLink(state, linktext, linkdest, linktitle)
+            let close = findClosingIndex(state.input, state.nextIndex,
+                linkTextOpenClose)
+            if (close) {
+                let linktext = state.input.substring(state.nextIndex, 
+                    close.index)
+                state.nextIndex = close.index + close[0].length
+                switch (state.input[state.nextIndex]) {
+                    case "(":
+                        let dest = parseRegExp(state, inlineLink)
+                        if (dest) {
+                            let { linkdest, linktitle } = dest.groups!
+                            return outputLink(state, linktext, linkdest, 
+                                linktitle)
+                        }
+                        break
+                    case "[":
+                        let fullref  = parseRegExp(state, fullReferenceLink)
+                        if (fullref) {
+                            let { linklabel } = fullref.groups!
+                            return outputReferenceLink(state, linklabel, 
+                                linktext)
+                        }
+                        break
+                    default:
+                        let collap = parseRegExp(state, collapsedReferenceLink)
+                        if (collap)
+                            return outputReferenceLink(state, linktext, 
+                                linktext)
+                }
+                state.nextIndex = match.index + match[0].length
+            }
+            append(state, text(match[0]))
         },
-        inlineLink),
-    parser(
-        /**
-         * Full reference links.
-         */
-        (state, match) => {
-            let { linktext, linklabel } = match.groups!
-            outputReferenceLink(state, linklabel, linktext)
-        },
-        fullReferenceLink),
-    parser(
-        /**
-         * Collapsed & shortcut reference links.
-         */
-        (state, match) => {
-            let { linklabel } = match.groups!
-            outputReferenceLink(state, linklabel, linklabel)
-        },
-        collapsedReferenceLink),
+        linkTextOpen),
     parser(
         /**
          * ### Images
