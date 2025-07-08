@@ -267,7 +267,7 @@ function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
  * similarily the `close` regexp.
  */
 function openCloseRegexp(open: string, close: string): RegExp {
-    return new RegExp(`(?<open>${open})|(?<close>${close})`, "guis")
+    return new RegExp(`(?<close>${close})|(?<open>${open})`, "guis")
 }
 /**
  * Execute the given regexp and return its groups, if it matches the current
@@ -314,16 +314,7 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
 /**
  * ## Reusable Regular Expressions
  *
- * Common RegExp fragments used throughout the parser:
- *
- * - `wsOrPunct`: Matches whitespace, punctuation, or symbol characters 
- *   (Unicode-aware).
- * - `emOrStrong`: Matches one or two consecutive `_` or `*` characters, for 
- *   emphasis and strong emphasis.
- * - `indentedCode`: Matches lines that begin with at least four spaces and/or
- *   a tab, used for indented code blocks.
- * - `nonBlank`: Matches any line containing at least one non-whitespace 
- *   character.
+ * Common RegExp fragments used throughout the parser.
  */
 const escapes = /\\(?<esc>[!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~\n])/guis
 const indentedCode = / {4}| {0,3}\t/yuis
@@ -332,10 +323,21 @@ const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
 const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
+const emAsteriskOpen = /(?:(?<![\\\*])|(?<=\\\\))(?:\*(?![\s\p{P}\p{S}\*]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*(?![\P{P}\*]|$))/u.source
+const emAsteriskClose = /(?:(?<![\s\p{P}\p{S}\\\*])\*|(?<![\P{P}\\\*])\*(?=[\s\p{P}\p{S}]|$))/u.source
+const emAsteriskOpenClose = openCloseRegexp(emAsteriskOpen, emAsteriskClose)
+const strongAsteriskOpen = /(?:(?<!\\\*)|(?<=\\\\))(?:\*\*(?![\s\p{P}\p{S}\*]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*(?![\P{P}\*]|$))/u.source
+const strongAsteriskClose = /(?:(?<![\s\p{P}\p{S}\\\*])\*\*|(?<![\P{P}\\\*])\*\*(?=[\s\p{P}\p{S}]|$))/u.source
+const strongAsteriskOpenClose = openCloseRegexp(strongAsteriskOpen, strongAsteriskClose)
+const emUnderscoreOpen = /(?:(?<!\\)|(?<=\\\\))(?:_(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)_(?![\P{P}_]))/u.source
+const emUnderscoreClose = /(?:(?<![\s\p{P}\p{S}\\])_|(?<![\P{P}\\])_(?=[\s\p{P}\p{S}]|$))/u.source
+const emUnderscoreOpenClose = openCloseRegexp(emUnderscoreOpen, emUnderscoreClose)
+const strongUnderscoreOpen = /(?:(?<!\\)|(?<=\\\\))(?:__(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__(?![\P{P}_]))/u.source
+const strongUnderscoreClose = /(?:(?<![\s\p{P}\p{S}\\])__|(?<![\P{P}\\])__(?=[\s\p{P}\p{S}]|$))/u.source
+const strongUnderscoreOpenClose = openCloseRegexp(strongUnderscoreOpen, strongUnderscoreClose)
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
-const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])*)(?<!\\)\]/.source
 const linkTextOpen = /(?<!\\)\[/.source
 const linkTextClose = /(?<!\\)\]/.source
 const linkTextOpenClose = openCloseRegexp(linkTextOpen, linkTextClose)
@@ -396,25 +398,27 @@ function flushInline(state: ParserState, index?: number) {
  */
 function findClosingIndex(input: string, index: number, openClose: RegExp): 
     RegExpExecArray | undefined {
+    let res: RegExpExecArray | undefined = undefined
     while (index < input.length) {
         openClose.lastIndex = index
         let match = openClose.exec(input)
         if (match) {
             let { open, close } = match.groups!
+            index = match.index + match[0].length
             if (open) {
-                let next = findClosingIndex(input, 
-                    match.index + match[0].length, openClose)
+                let next = findClosingIndex(input, index, openClose)
                 if (next)
                     index = next.index + next[0].length
                 else 
-                    return next
+                    return undefined
             }
             else if (close)
-                return match
+                res = match
         }
         else
-            return undefined
+            break
     }
+    return res
 }
 /**
  * ### Emphasis and Strong
@@ -424,16 +428,23 @@ function findClosingIndex(input: string, index: number, openClose: RegExp):
  * and returns a parser that wraps the matched content in the appropriate tag.
  * The content between delimiters is parsed recursively for inline elements.
  */
-function emOrStrong(regexp: string) {
+function emOrStrong(open: string, openClose: RegExp) {
     return parser(
         (state, match) => {
-            let { emdelim, em } = match.groups!
-            openBlock(state, elem(emdelim.length == 1 ? 'em' : 'strong'), 
-                BlockType.Inline)
-            inlines(stateFrom(state, em))
-            closeLastBlock(state)
+            let close = findClosingIndex(state.input, state.nextIndex,
+                openClose)
+            if (close) {
+                let em = state.input.substring(state.nextIndex, close.index)
+                state.nextIndex = close.index + close[0].length
+                openBlock(state, elem(match[0].length == 1 ? 'em' : 'strong'), 
+                    BlockType.Inline)
+                inlines(stateFrom(state, em))
+                closeLastBlock(state)
+            }
+            else
+                append(state, text(match[0]))
         },
-        regexp)
+        open)
 }
 /**
  * ### Links
@@ -605,8 +616,10 @@ const inlineParsers = [
             append(state, img)
         },
         /!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<imgsrc>(?:\\\(|\\\)|[^\s()])+)\)/.source),
-    emOrStrong(emAsterisk),
-    emOrStrong(emUnderscore),
+    emOrStrong(strongAsteriskOpen, strongAsteriskOpenClose),
+    emOrStrong(strongUnderscoreOpen, strongUnderscoreOpenClose),
+    emOrStrong(emAsteriskOpen, emAsteriskOpenClose),
+    emOrStrong(emUnderscoreOpen, emUnderscoreOpenClose),
     parser(
         /**
          * ### Raw HTML
