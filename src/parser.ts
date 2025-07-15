@@ -330,8 +330,8 @@ const indentedCode = / {4}| {0,3}\t/yuis
 const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
-const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
-const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}]|$))/u.source
+const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
+const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
@@ -396,24 +396,18 @@ function flushInline(state: ParserState, index?: number) {
  */
 function findClosingIndex(input: string, index: number, openClose: RegExp): 
     RegExpExecArray | undefined {
-    while (index < input.length) {
-        openClose.lastIndex = index
-        let match = openClose.exec(input)
-        if (match) {
-            let { open, close } = match.groups!
-            if (open) {
-                let next = findClosingIndex(input, 
-                    match.index + match[0].length, openClose)
-                if (next)
-                    index = next.index + next[0].length
-                else 
-                    return next
-            }
-            else if (close)
-                return match
+    openClose.lastIndex = index
+    let match = openClose.exec(input)
+    if (match) {
+        let { open, close } = match.groups!
+        index = match.index + match[0].length
+        if (open) {
+            let next = findClosingIndex(input, index, openClose)
+            return !next ? undefined :
+                 findClosingIndex(input, next.index + next[0].length, openClose)
         }
-        else
-            return undefined
+        else if (close)
+            return match
     }
 }
 /**
