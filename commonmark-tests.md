@@ -1885,3 +1885,7 @@ they are escaped:
 The link text may contain inline content:
 
 <commonmark-runner examples="516-517"></commonmark-runner>
+
+However, links may not contain other links, at any level of nesting.
+
+<commonmark-runner examples="518-520"></commonmark-runner>

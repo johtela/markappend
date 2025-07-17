@@ -337,8 +337,10 @@ const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<li
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])*)(?<!\\)\]/.source
 const linkTextOpen = /(?<!\\)\[/.source
-const linkTextClose = /(?<!\\)\]/.source
-const linkTextOpenClose = openCloseRegexp(linkTextOpen, linkTextClose)
+const linkOrImageTextOpen = /(?<!\\)!?\[/.source
+const linkOrImageTextClose = /(?<!\\)\]/.source
+const linkTextOpenClose = openCloseRegexp(linkOrImageTextOpen, 
+    linkOrImageTextClose)
 const inlineLink = new RegExp(`\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`, "yuis")
 const fullReferenceLink = new RegExp(linkLabel, "yuis")
 const collapsedReferenceLink = /(?![(:])(?:\\[\\])?/yuis
@@ -394,17 +396,18 @@ function flushInline(state: ParserState, index?: number) {
  * index after the closing string. If the closing string is not found, 
  * `undefined` is returned.
  */
-function findClosingIndex(input: string, index: number, openClose: RegExp): 
-    RegExpExecArray | undefined {
+function findClosingIndex(input: string, index: number, openClose: RegExp,
+    allowedOpen: string): RegExpExecArray | undefined {
     openClose.lastIndex = index
     let match = openClose.exec(input)
     if (match) {
         let { open, close } = match.groups!
         index = match.index + match[0].length
-        if (open) {
-            let next = findClosingIndex(input, index, openClose)
+        if (open && open == allowedOpen) {
+            let next = findClosingIndex(input, index, openClose, allowedOpen)
             return !next ? undefined :
-                 findClosingIndex(input, next.index + next[0].length, openClose)
+                 findClosingIndex(input, next.index + next[0].length, openClose,
+                    allowedOpen)
         }
         else if (close)
             return match
@@ -547,7 +550,7 @@ const inlineParsers = [
          */
         (state, match) => {
             let close = findClosingIndex(state.input, state.nextIndex,
-                linkTextOpenClose)
+                linkTextOpenClose, "![")
             if (close) {
                 let linktext = state.input.substring(state.nextIndex, 
                     close.index)

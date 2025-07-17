@@ -4137,7 +4137,7 @@
   },
   {
     "markdown": "[foo [bar](/uri)](/uri)\n",
-    "html": "<p>[foo <a href=\"/uri\">bar</a>](/uri)</p>\n",
+    "html": "<p>[foo <a href=\"/uri\">bar</a>](/uri)</p>",
     "example": 518,
     "start_line": 7886,
     "end_line": 7890,
@@ -4145,7 +4145,7 @@
   },
   {
     "markdown": "[foo *[bar [baz](/uri)](/uri)*](/uri)\n",
-    "html": "<p>[foo <em>[bar <a href=\"/uri\">baz</a>](/uri)</em>](/uri)</p>\n",
+    "html": "<p>[foo <em>[bar <a href=\"/uri\">baz</a>](/uri)</em>](/uri)</p>",
     "example": 519,
     "start_line": 7893,
     "end_line": 7897,
