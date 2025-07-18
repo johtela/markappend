@@ -4169,7 +4169,7 @@
   },
   {
     "markdown": "[foo *bar](baz*)\n",
-    "html": "<p><a href=\"baz*\">foo *bar</a></p>\n",
+    "html": "<p><a href=\"baz*\">foo *bar</a></p>",
     "example": 522,
     "start_line": 7917,
     "end_line": 7921,
@@ -4177,7 +4177,7 @@
   },
   {
     "markdown": "*foo [bar* baz]\n",
-    "html": "<p><em>foo [bar</em> baz]</p>\n",
+    "html": "<p><em>foo [bar</em> baz]</p>",
     "example": 523,
     "start_line": 7927,
     "end_line": 7931,
@@ -4209,7 +4209,7 @@
   },
   {
     "markdown": "[foo][bar]\n\n[bar]: /url \"title\"\n",
-    "html": "<p><a href=\"/url\" title=\"title\">foo</a></p>\n",
+    "html": "<p><a href=\"/url\" title=\"title\">foo</a></p>",
     "example": 527,
     "start_line": 7989,
     "end_line": 7995,
@@ -4225,7 +4225,7 @@
   },
   {
     "markdown": "[link \\[bar][ref]\n\n[ref]: /uri\n",
-    "html": "<p><a href=\"/uri\">link [bar</a></p>\n",
+    "html": "<p><a href=\"/uri\">link [bar</a></p>",
     "example": 529,
     "start_line": 8013,
     "end_line": 8019,
@@ -4233,7 +4233,7 @@
   },
   {
     "markdown": "[link *foo **bar** `#`*][ref]\n\n[ref]: /uri\n",
-    "html": "<p><a href=\"/uri\">link <em>foo <strong>bar</strong> <code>#</code></em></a></p>\n",
+    "html": "<p><a href=\"/uri\">link <em>foo <strong>bar</strong> <code>#</code></em></a></p>",
     "example": 530,
     "start_line": 8024,
     "end_line": 8030,
@@ -4241,7 +4241,7 @@
   },
   {
     "markdown": "[![moon](moon.jpg)][ref]\n\n[ref]: /uri\n",
-    "html": "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\" /></a></p>\n",
+    "html": "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\"></a></p>",
     "example": 531,
     "start_line": 8033,
     "end_line": 8039,
@@ -4249,7 +4249,7 @@
   },
   {
     "markdown": "[foo [bar](/uri)][ref]\n\n[ref]: /uri\n",
-    "html": "<p>[foo <a href=\"/uri\">bar</a>]<a href=\"/uri\">ref</a></p>\n",
+    "html": "<p>[foo <a href=\"/uri\">bar</a>]<a href=\"/uri\">ref</a></p>",
     "example": 532,
     "start_line": 8044,
     "end_line": 8050,
@@ -4257,7 +4257,7 @@
   },
   {
     "markdown": "[foo *bar [baz][ref]*][ref]\n\n[ref]: /uri\n",
-    "html": "<p>[foo <em>bar <a href=\"/uri\">baz</a></em>]<a href=\"/uri\">ref</a></p>\n",
+    "html": "<p>[foo <em>bar <a href=\"/uri\">baz</a></em>]<a href=\"/uri\">ref</a></p>",
     "example": 533,
     "start_line": 8053,
     "end_line": 8059,
@@ -4273,7 +4273,7 @@
   },
   {
     "markdown": "[foo *bar][ref]*\n\n[ref]: /uri\n",
-    "html": "<p><a href=\"/uri\">foo *bar</a>*</p>\n",
+    "html": "<p><a href=\"/uri\">foo *bar</a>*</p>",
     "example": 535,
     "start_line": 8077,
     "end_line": 8083,
@@ -4305,7 +4305,7 @@
   },
   {
     "markdown": "[foo][BaR]\n\n[bar]: /url \"title\"\n",
-    "html": "<p><a href=\"/url\" title=\"title\">foo</a></p>\n",
+    "html": "<p><a href=\"/url\" title=\"title\">foo</a></p>",
     "example": 539,
     "start_line": 8118,
     "end_line": 8124,
@@ -4329,7 +4329,7 @@
   },
   {
     "markdown": "[foo] [bar]\n\n[bar]: /url \"title\"\n",
-    "html": "<p>[foo] <a href=\"/url\" title=\"title\">bar</a></p>\n",
+    "html": "<p><a>foo</a> <a href=\"/url\" title=\"title\">bar</a></p>",
     "example": 542,
     "start_line": 8154,
     "end_line": 8160,
@@ -4337,7 +4337,7 @@
   },
   {
     "markdown": "[foo]\n[bar]\n\n[bar]: /url \"title\"\n",
-    "html": "<p>[foo]\n<a href=\"/url\" title=\"title\">bar</a></p>\n",
+    "html": "<p><a>foo</a>\n<a href=\"/url\" title=\"title\">bar</a></p>",
     "example": 543,
     "start_line": 8163,
     "end_line": 8171,
@@ -4345,7 +4345,7 @@
   },
   {
     "markdown": "[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]\n",
-    "html": "<p><a href=\"/url1\">bar</a></p>\n",
+    "html": "<p><a href=\"/url1\">bar</a></p>",
     "example": 544,
     "start_line": 8204,
     "end_line": 8212,
@@ -4361,7 +4361,7 @@
   },
   {
     "markdown": "[foo][ref[]\n\n[ref[]: /uri\n",
-    "html": "<p>[foo][ref[]</p>\n<p>[ref[]: /uri</p>\n",
+    "html": "<p>[foo][ref<a></a></p><p>[ref[]: /uri</p>",
     "example": 546,
     "start_line": 8231,
     "end_line": 8238,

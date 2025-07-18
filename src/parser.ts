@@ -126,7 +126,7 @@ export interface LinkRef {
  * resolved yet.
  */
 type LinkRefs = Record<string, LinkRef>
-type Links = Record<string, HTMLAnchorElement[]>
+type Links = Record<string, (HTMLAnchorElement | HTMLImageElement)[]>
 /**
  * ## Parser State
  *
@@ -332,14 +332,15 @@ const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
 const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
-const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\]\s]|(?<=\\)\])+\s*)+)\]/.source
+const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\[\]\s]|(?<=\\)[\[\]])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
 const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])*)(?<!\\)\]/.source
 const linkTextOpen = /(?<!\\)\[/.source
+const imageTextOpen = /(?<!\\)!\[/.source
 const linkOrImageTextOpen = /(?<!\\)!?\[/.source
 const linkOrImageTextClose = /(?<!\\)\]/.source
-const linkTextOpenClose = openCloseRegexp(linkOrImageTextOpen, 
+const linkOrImageTextOpenClose = openCloseRegexp(linkOrImageTextOpen, 
     linkOrImageTextClose)
 const inlineLink = new RegExp(`\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`, "yuis")
 const fullReferenceLink = new RegExp(linkLabel, "yuis")
@@ -348,7 +349,7 @@ const collapsedReferenceLink = /(?![(:])(?:\\[\\])?/yuis
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
         [start, / {0,3}\[/, label],
-        [label, /\s*(?:[^\]\s]|(?<=\\)\])+/, label, "label"],
+        [label, /\s*(?:[^\[\]\s]|(?<=\\)[\[\]])+/, label, "label"],
         [label, /\s*(?<!\\)\]:\s*/, accept]
     ])
 const linkDestAuto = ExpAuto.create(0,
@@ -465,6 +466,37 @@ function outputReferenceLink(state: ParserState, linklabel: string,
     }
 }
 /**
+ * ### Images
+ * 
+ * Output link.
+ */
+function outputImage(state: ParserState, description: string, imgsrc?: string, 
+    imgtitle?: string): HTMLImageElement {
+    let image = elem('img')
+    if (imgsrc)
+        image.src = replaceEscapes(imgsrc)!
+    if (imgtitle)
+        image.title = imgtitle
+    image.alt = description
+    append(state, image)
+    return image
+}
+/**
+ * Output reference link.
+ */
+function outputReferenceImage(state: ParserState, imglabel: string, 
+    description: string) {
+    imglabel = imglabel.toUpperCase()
+    let linkRef = state.linkRefs[imglabel]
+    if (linkRef)
+        outputImage(state, description, linkRef.destination, linkRef.title)
+    else {
+        let anchors = state.links[imglabel] || []
+        anchors.push(outputImage(state, description))
+        state.links[imglabel] = anchors
+    }
+}
+/**
  * Escape all bacslash characters in a string.
  */
 function replaceEscapes(text?: string): string | undefined {
@@ -550,7 +582,7 @@ const inlineParsers = [
          */
         (state, match) => {
             let close = findClosingIndex(state.input, state.nextIndex,
-                linkTextOpenClose, "![")
+                linkOrImageTextOpenClose, "![")
             if (close) {
                 let linktext = state.input.substring(state.nextIndex, 
                     close.index)
@@ -593,15 +625,40 @@ const inlineParsers = [
          * appropriate `alt` and `src` attributes.
          */
         (state, match) => {
-            let { imgalt, imgsrc } = match.groups!
-            imgalt = replaceEscapes(imgalt)!
-            imgsrc = replaceEscapes(imgsrc)!
-            let img = elem('img')
-            img.src = imgsrc
-            img.alt = imgalt
-            append(state, img)
+            let close = findClosingIndex(state.input, state.nextIndex,
+                linkOrImageTextOpenClose, "[")
+            if (close) {
+                let description = state.input.substring(state.nextIndex, 
+                    close.index)
+                state.nextIndex = close.index + close[0].length
+                switch (state.input[state.nextIndex]) {
+                    case "(":
+                        let dest = parseRegExp(state, inlineLink)
+                        if (dest) {
+                            let { linkdest, linktitle } = dest.groups!
+                            return outputImage(state, description, linkdest, 
+                                linktitle)
+                        }
+                        break
+                    case "[":
+                        let fullref  = parseRegExp(state, fullReferenceLink)
+                        if (fullref) {
+                            let { linklabel } = fullref.groups!
+                            return outputReferenceImage(state, linklabel, 
+                                description)
+                        }
+                        break
+                    default:
+                        let collap = parseRegExp(state, collapsedReferenceLink)
+                        if (collap)
+                            return outputReferenceImage(state, description, 
+                                description)
+                }
+                state.nextIndex = match.index + match[0].length
+            }
+            append(state, text(match[0]))
         },
-        /!\[(?<imgalt>(?:\\\[|\\\]|[^\[\]])+)\]\((?<imgsrc>(?:\\\(|\\\)|[^\s()])+)\)/.source),
+        imageTextOpen),
     emOrStrong(emAsterisk),
     emOrStrong(emUnderscore),
     parser(
@@ -766,16 +823,22 @@ function terminateLinkRef(state: ParserState, block: DocumentBlock) {
         let destination = replaceEscapes(linkRef.groups["dest"]?.trim())
         let title = replaceEscapes(linkRef.groups["title"])
         if (label && destination) {
-            if (/^<.*>$/.test(destination))
-                destination = destination.slice(1, destination.length - 1)
-            state.linkRefs[label] = { destination, title }
-            state.links[label]?.forEach(aelem => {
-                if (destination)
-                    aelem.href = destination
-                if (title)
-                    aelem.title = title
-            })
-            delete state.links[label]
+            if (!state.linkRefs[label]) {
+                if (/^<.*>$/.test(destination))
+                    destination = destination.slice(1, destination.length - 1)
+                state.linkRefs[label] = { destination, title }
+                state.links[label]?.forEach(aelem => {
+                    if (destination) {
+                        if(aelem instanceof HTMLAnchorElement)
+                            aelem.href = destination
+                        else
+                            aelem.src = destination
+                    }
+                    if (title)
+                        aelem.title = title
+                })
+                delete state.links[label]
+            }
             closeLastBlock(state)
             return
         }

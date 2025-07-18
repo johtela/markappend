@@ -1888,4 +1888,78 @@ The link text may contain inline content:
 
 However, links may not contain other links, at any level of nesting.
 
-<commonmark-runner examples="518-520"></commonmark-runner>
+<commonmark-runner examples="518-519"></commonmark-runner>
+
+These cases illustrate the precedence of link text grouping over emphasis grouping:
+
+<commonmark-runner examples="522"></commonmark-runner>
+
+Note that brackets that aren’t part of links do not take precedence:
+
+<commonmark-runner examples="523"></commonmark-runner>
+
+There are three kinds of reference links: full, collapsed, and shortcut.
+
+A full reference link consists of a link text immediately followed by a link 
+label that matches a link reference definition elsewhere in the document.
+
+A link label begins with a left bracket (`[`) and ends with the first right 
+bracket (`]`) that is not backslash-escaped. Between these brackets there must 
+be at least one character that is not a space, tab, or line ending. Unescaped 
+square bracket characters are not allowed inside the opening and closing square 
+brackets of link labels. A link label can have at most 999 characters inside the 
+square brackets.
+
+One label matches another just in case their normalized forms are equal. To 
+normalize a label, strip off the opening and closing brackets, perform the 
+Unicode case fold, strip leading and trailing spaces, tabs, and line endings, 
+and collapse consecutive internal spaces, tabs, and line endings to a single 
+space. If there are multiple matching reference link definitions, the one that 
+comes first in the document is used. (It is desirable in such cases to emit a 
+warning.)
+
+The link’s URI and title are provided by the matching link reference definition.
+
+Here is a simple example:
+
+<commonmark-runner examples="527"></commonmark-runner>
+
+The rules for the link text are the same as with inline links. Thus:
+
+The link text may contain balanced brackets, but not unbalanced ones, unless 
+they are escaped:
+
+<commonmark-runner examples="529"></commonmark-runner>
+
+The link text may contain inline content:
+
+<commonmark-runner examples="530-531"></commonmark-runner>
+
+However, links may not contain other links, at any level of nesting.
+
+<commonmark-runner examples="532-533"></commonmark-runner>
+
+(In the examples above, we have two shortcut reference links instead of one full 
+reference link.)
+
+The following cases illustrate the precedence of link text grouping over 
+emphasis grouping:
+
+<commonmark-runner examples="535"></commonmark-runner>
+
+Matching is case-insensitive:
+
+<commonmark-runner examples="539"></commonmark-runner>
+
+No spaces, tabs, or line endings are allowed between the link text and the link 
+label:
+
+<commonmark-runner examples="542-543"></commonmark-runner>
+
+When there are multiple matching link reference definitions, the first is used:
+
+<commonmark-runner examples="544"></commonmark-runner>
+
+Link labels cannot contain brackets, unless they are backslash-escaped:
+
+<commonmark-runner examples="546"></commonmark-runner>
