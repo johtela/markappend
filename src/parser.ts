@@ -326,15 +326,17 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
  *   character.
  */
 const escapes = /\\(?<esc>[!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~\n])/guis
+const entities = /(?<entity>&(?:[a-z]\w*|#\d{1,7}|#[Xx][\da-f]{1,6});)/.source
 const indentedCode = / {4}| {0,3}\t/yuis
 const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
+const codeSpan = /(?<codedelim>`+)(?<code>\s.+\s|(?:[^`]|(?!\k<codedelim>)`)+)\k<codedelim>/.source
 const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
 const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\[\]\s]|(?<=\\)(?<!\\\\)[\[\]])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
-const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
+const linkTitle = /(?:"(?<linktitle>(?:[^"]|(?<=\\)")+)"|'(?<linktitle>(?:[^']|(?<=\\)')+)'|\((?<linktitle>(?:[^()]|(?<=\\)[()])+)\))/.source
 const linkTextOpen = /(?<!\\)\[/.source
 const imageTextOpen = /(?<!\\)!\[/.source
 const linkOrImageTextOpen = /(?<!\\)!?\[/.source
@@ -345,6 +347,7 @@ const fullReferenceLink = new RegExp(linkLabel, "yuis")
 const collapsedReferenceLink = /(?![(:])(?:\[\])?/yuis
 const autoLink = /<(?<autolink>[a-z][\w\-+.]{1,31}:[^\x00-\x1F\x7F <>]*)>/.source
 const emailAutoLink = /<(?<email>[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/.source
+const rawHtml = /(?<tagstart><(?<tag>[a-z][a-z0-9\-]*)(?:\s+[a-z:_][\w.:\-]*\s*(?:=\s*"[^"]*"|=\s*'[^']*'|=[^\s"'=<>`]+)?)*\s*)(?<tagend>\/?>)(?:(?<innerhtml>.*)<\/\k<tag>\s*>)?/.source
 
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
@@ -545,8 +548,7 @@ const inlineParsers = [
         (state, match) => {
             let { entity } = match.groups!
             appendHtml(state, entity)
-        },
-        /(?<entity>&(?:[a-z]\w*|#\d{1,7}|#[Xx][\da-f]{1,6});)/.source),
+        }, entities),
     parser(
         /**
          * ### Code Spans
@@ -568,8 +570,7 @@ const inlineParsers = [
             if (trim)
                 code = trim[1]
             append(state, elem('code', text(code)))
-        },
-        /(?<codedelim>`+)(?<code>\s.+\s|(?:[^`]|(?!\k<codedelim>)`)+)\k<codedelim>/.source),
+        }, codeSpan),
     parser(
         /**
          * ### Links
@@ -612,8 +613,7 @@ const inlineParsers = [
                 state.nextIndex = match.index + match[0].length
             }
             append(state, text(match[0]))
-        },
-        linkTextOpen),
+        }, linkTextOpen),
     parser(
         /**
          * ### Images
@@ -655,8 +655,7 @@ const inlineParsers = [
                 state.nextIndex = match.index + match[0].length
             }
             append(state, text(match[0]))
-        },
-        imageTextOpen),
+        }, imageTextOpen),
     parser(
         /**
          * ### Autolinks
@@ -668,8 +667,7 @@ const inlineParsers = [
             let link = elem('a', text(autolink))
             link.href = autolink
             append(state, link)
-        },
-        autoLink),
+        }, autoLink),
     parser(
         /**
          * Email autolink.
@@ -679,8 +677,7 @@ const inlineParsers = [
             let link = elem('a', text(email))
             link.href = "mailto:" + email
             append(state, link)
-        },
-        emailAutoLink),
+        }, emailAutoLink),
     emOrStrong(emAsterisk),
     emOrStrong(emUnderscore),
     parser(
@@ -702,8 +699,7 @@ const inlineParsers = [
                 inlines(stateFrom(state, innerhtml))
                 closeLastBlock(state)
             }
-        },
-        /(?<tagstart><(?<tag>[a-z][a-z0-9\-]*)(?:\s+[a-z:_][\w.:-]*\s*(?:=\s*"[^"]*"|\s*='[^']*'|=[^\s"'=<>`]+)?)*\s*)(?<tagend>\/?>)(?:(?<innerhtml>.*)<\/\k<tag>\s*>)?/.source)
+        }, rawHtml)
 ]
 /**
  * We initialize the combined regexp when it is first used. Thus we can register 

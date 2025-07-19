@@ -4897,7 +4897,7 @@
   },
   {
     "markdown": "<a><bab><c2c>\n",
-    "html": "<p><a><bab><c2c></p>\n",
+    "html": "<p><a></a><bab></bab><c2c></c2c></p>",
     "example": 613,
     "start_line": 9016,
     "end_line": 9020,
@@ -4905,7 +4905,7 @@
   },
   {
     "markdown": "<a/><b2/>\n",
-    "html": "<p><a/><b2/></p>\n",
+    "html": "<p><a></a><b2></b2></p>",
     "example": 614,
     "start_line": 9025,
     "end_line": 9029,
@@ -4913,7 +4913,7 @@
   },
   {
     "markdown": "<a  /><b2\ndata=\"foo\" >\n",
-    "html": "<p><a  /><b2\ndata=\"foo\" ></p>\n",
+    "html": "<p><a></a><b2 data=\"foo\"></b2></p>",
     "example": 615,
     "start_line": 9034,
     "end_line": 9040,
@@ -4921,7 +4921,7 @@
   },
   {
     "markdown": "<a foo=\"bar\" bam = 'baz <em>\"</em>'\n_boolean zoop:33=zoop:33 />\n",
-    "html": "<p><a foo=\"bar\" bam = 'baz <em>\"</em>'\n_boolean zoop:33=zoop:33 /></p>\n",
+    "html": "<p><a foo=\"bar\" bam=\"baz <em>&quot;</em>\" _boolean=\"\" zoop:33=\"zoop:33\"></a></p>",
     "example": 616,
     "start_line": 9045,
     "end_line": 9051,
@@ -4929,7 +4929,7 @@
   },
   {
     "markdown": "Foo <responsive-image src=\"foo.jpg\" />\n",
-    "html": "<p>Foo <responsive-image src=\"foo.jpg\" /></p>\n",
+    "html": "<p>Foo <responsive-image src=\"foo.jpg\"></responsive-image></p>",
     "example": 617,
     "start_line": 9056,
     "end_line": 9060,
@@ -4937,7 +4937,7 @@
   },
   {
     "markdown": "<33> <__>\n",
-    "html": "<p>&lt;33&gt; &lt;__&gt;</p>\n",
+    "html": "<p>&lt;33&gt; &lt;__&gt;</p>",
     "example": 618,
     "start_line": 9065,
     "end_line": 9069,
@@ -4945,7 +4945,7 @@
   },
   {
     "markdown": "<a h*#ref=\"hi\">\n",
-    "html": "<p>&lt;a h*#ref=&quot;hi&quot;&gt;</p>\n",
+    "html": "<p>&lt;a h*#ref=\"hi\"&gt;</p>",
     "example": 619,
     "start_line": 9074,
     "end_line": 9078,
@@ -4953,7 +4953,7 @@
   },
   {
     "markdown": "<a href=\"hi'> <a href=hi'>\n",
-    "html": "<p>&lt;a href=&quot;hi'&gt; &lt;a href=hi'&gt;</p>\n",
+    "html": "<p>&lt;a href=\"hi'&gt; &lt;a href=hi'&gt;</p>",
     "example": 620,
     "start_line": 9083,
     "end_line": 9087,
@@ -4961,7 +4961,7 @@
   },
   {
     "markdown": "< a><\nfoo><bar/ >\n<foo bar=baz\nbim!bop />\n",
-    "html": "<p>&lt; a&gt;&lt;\nfoo&gt;&lt;bar/ &gt;\n&lt;foo bar=baz\nbim!bop /&gt;</p>\n",
+    "html": "<p>&lt; a&gt;&lt;\nfoo&gt;&lt;bar/ &gt;\n&lt;foo bar=baz\nbim!bop /&gt;</p>",
     "example": 621,
     "start_line": 9092,
     "end_line": 9102,
@@ -4969,7 +4969,7 @@
   },
   {
     "markdown": "<a href='bar'title=title>\n",
-    "html": "<p>&lt;a href='bar'title=title&gt;</p>\n",
+    "html": "<p>&lt;a href='bar'title=title&gt;</p>",
     "example": 622,
     "start_line": 9107,
     "end_line": 9111,
@@ -4977,7 +4977,7 @@
   },
   {
     "markdown": "</a></foo >\n",
-    "html": "<p></a></foo ></p>\n",
+    "html": "<p>&lt;/a&gt;&lt;/foo &gt;</p>",
     "example": 623,
     "start_line": 9116,
     "end_line": 9120,
@@ -4985,7 +4985,7 @@
   },
   {
     "markdown": "</a href=\"foo\">\n",
-    "html": "<p>&lt;/a href=&quot;foo&quot;&gt;</p>\n",
+    "html": "<p>&lt;/a href=\"foo\"&gt;</p>",
     "example": 624,
     "start_line": 9125,
     "end_line": 9129,
@@ -5033,7 +5033,7 @@
   },
   {
     "markdown": "foo <a href=\"&ouml;\">\n",
-    "html": "<p>foo <a href=\"&ouml;\"></p>\n",
+    "html": "<p>foo <a href=\"ö\"></a></p>",
     "example": 630,
     "start_line": 9182,
     "end_line": 9186,
@@ -5041,7 +5041,7 @@
   },
   {
     "markdown": "foo <a href=\"\\*\">\n",
-    "html": "<p>foo <a href=\"\\*\"></p>\n",
+    "html": "<p>foo <a href=\"\\*\"></a></p>",
     "example": 631,
     "start_line": 9191,
     "end_line": 9195,
@@ -5049,7 +5049,7 @@
   },
   {
     "markdown": "<a href=\"\\\"\">\n",
-    "html": "<p>&lt;a href=&quot;&quot;&quot;&gt;</p>\n",
+    "html": "<p>&lt;a href=\"\"\"&gt;</p>",
     "example": 632,
     "start_line": 9198,
     "end_line": 9202,

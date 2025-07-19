@@ -2138,3 +2138,103 @@ Backslash-escapes do not work inside email autolinks:
 These are not autolinks:
 
 <commonmark-runner examples="607-612"></commonmark-runner>
+
+### Raw HTML
+
+Text between `<` and `>` that looks like an HTML tag is parsed as a raw HTML tag 
+and will be rendered in HTML without escaping. Tag and attribute names are not 
+limited to current HTML tags, so custom tags (and even, say, DocBook tags) may 
+be used.
+
+Here is the grammar for tags:
+
+A tag name consists of an ASCII letter followed by zero or more ASCII letters, 
+digits, or hyphens (-).
+
+An attribute consists of spaces, tabs, and up to one line ending, an attribute 
+name, and an optional attribute value specification.
+
+An attribute name consists of an ASCII letter, `_`, or `:`, followed by zero or 
+more ASCII letters, digits, `_`, `.`, `:`, or `-`. (Note: This is the XML 
+specification restricted to ASCII. HTML5 is laxer.)
+
+An attribute value specification consists of optional spaces, tabs, and up to 
+one line ending, a `=` character, optional spaces, tabs, and up to one line 
+ending, and an attribute value.
+
+An attribute value consists of an unquoted attribute value, a single-quoted 
+attribute value, or a double-quoted attribute value.
+
+An unquoted attribute value is a nonempty string of characters not including 
+spaces, tabs, line endings, `"`, `'`, `=`, `<`, `>`, or `` ` ``.
+
+A single-quoted attribute value consists of `'`, zero or more characters not 
+including `'`, and a final `'`.
+
+A double-quoted attribute value consists of `"`, zero or more characters not 
+including `"`, and a final `"`.
+
+An open tag consists of a `<` character, a tag name, zero or more attributes, 
+optional spaces, tabs, and up to one line ending, an optional `/` character, 
+and a `>` character.
+
+A closing tag consists of the string `</`, a tag name, optional spaces, tabs, 
+and up to one line ending, and the character `>`.
+
+An HTML tag consists of an open tag, and a closing tag.
+
+Here are some simple open tags:
+
+<commonmark-runner examples="613"></commonmark-runner>
+
+Empty elements:
+
+<commonmark-runner examples="614"></commonmark-runner>
+
+Whitespace is allowed:
+
+<commonmark-runner examples="615"></commonmark-runner>
+
+With attributes:
+
+<commonmark-runner examples="616"></commonmark-runner>
+
+Custom tag names can be used:
+
+<commonmark-runner examples="617"></commonmark-runner>
+
+Illegal tag names, not parsed as HTML:
+
+<commonmark-runner examples="618"></commonmark-runner>
+
+Illegal attribute names:
+
+<commonmark-runner examples="619"></commonmark-runner>
+
+Illegal attribute values:
+
+<commonmark-runner examples="620"></commonmark-runner>
+
+Illegal whitespace:
+
+<commonmark-runner examples="621"></commonmark-runner>
+
+Missing whitespace:
+
+<commonmark-runner examples="622"></commonmark-runner>
+
+Closing tags:
+
+<commonmark-runner examples="623"></commonmark-runner>
+
+Illegal attributes in closing tag:
+
+<commonmark-runner examples="624"></commonmark-runner>
+
+Entity and numeric character references are preserved in HTML attributes:
+
+<commonmark-runner examples="630"></commonmark-runner>
+
+Backslash escapes do not work in HTML attributes:
+
+<commonmark-runner examples="631-632"></commonmark-runner>
