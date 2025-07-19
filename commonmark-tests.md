@@ -1962,4 +1962,72 @@ When there are multiple matching link reference definitions, the first is used:
 
 Link labels cannot contain brackets, unless they are backslash-escaped:
 
-<commonmark-runner examples="546"></commonmark-runner>
+<commonmark-runner examples="546-549"></commonmark-runner>
+
+Note that in this example `]` is not backslash-escaped:
+
+<commonmark-runner examples="550"></commonmark-runner>
+
+A link label must contain at least one character that is not a space, tab, or 
+line ending:
+
+<commonmark-runner examples="551"></commonmark-runner>
+
+A collapsed reference link consists of a link label that matches a link 
+reference definition elsewhere in the document, followed by the string `[]`. The 
+contents of the link label are parsed as inlines, which are used as the link’s 
+text. The link’s URI and title are provided by the matching reference link 
+definition. Thus, `[foo][]` is equivalent to `[foo][foo]`.
+
+<commonmark-runner examples="553-554"></commonmark-runner>
+
+The link labels are case-insensitive:
+
+<commonmark-runner examples="555"></commonmark-runner>
+
+As with full reference links, spaces, tabs, or line endings are not allowed 
+between the two sets of brackets:
+
+<commonmark-runner examples="556"></commonmark-runner>
+
+A shortcut reference link consists of a link label that matches a link reference 
+definition elsewhere in the document and is not followed by `[]` or a link 
+label. The contents of the link label are parsed as inlines, which are used as 
+the link’s text. The link’s URI and title are provided by the matching link 
+reference definition. Thus, `[foo]` is equivalent to `[foo][]`.
+
+<commonmark-runner examples="557-560"></commonmark-runner>
+
+The link labels are case-insensitive:
+
+<commonmark-runner examples="561"></commonmark-runner>
+
+A space after the link text should be preserved:
+
+<commonmark-runner examples="562"></commonmark-runner>
+
+If you just want bracketed text, you can backslash-escape the opening bracket to 
+avoid links:
+
+<commonmark-runner examples="563"></commonmark-runner>
+
+Full and collapsed references take precedence over shortcut references:
+
+<commonmark-runner examples="565-566"></commonmark-runner>
+
+Inline links also take precedence:
+
+<commonmark-runner examples="567"></commonmark-runner>
+
+Here, though, `[foo][bar]` is parsed as a reference, since `[bar]` is defined:
+
+<commonmark-runner examples="570"></commonmark-runner>
+
+### Images
+
+Syntax for images is like the syntax for links, with one difference. Instead of 
+link text, we have an image description. The rules for this are the same as for 
+link text, except that (a) an image description starts with `![` rather than 
+`[`, and (b) an image description may contain links. An image description has 
+inline elements as its contents. When an image is rendered to HTML, this is 
+standardly used as the image’s alt attribute.

@@ -332,25 +332,24 @@ const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
 const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
-const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\[\]\s]|(?<=\\)[\[\]])+\s*)+)\]/.source
+const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\[\]\s]|(?<=\\)(?<!\\\\)[\[\]])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"\n]|(?<=\\)"|(?<!\n[ \t]*)\n)+)"|'(?<linktitle>(?:[^'\n]|(?<=\\)'|(?<!\n[ \t]*)\n)+)'|\((?<linktitle>(?:[^()\n]|(?<=\\)[()]|(?<!\n[ \t]*)\n)+)\))/.source
-const linkText = /(?<!\\)\[(?<linktext>(?:[^\[\]]|(?<=\\)[\[\]])*)(?<!\\)\]/.source
 const linkTextOpen = /(?<!\\)\[/.source
 const imageTextOpen = /(?<!\\)!\[/.source
 const linkOrImageTextOpen = /(?<!\\)!?\[/.source
-const linkOrImageTextClose = /(?<!\\)\]/.source
+const linkOrImageTextClose = /(?:(?<!\\)|(?<=\\\\))\]/.source
 const linkOrImageTextOpenClose = openCloseRegexp(linkOrImageTextOpen, 
     linkOrImageTextClose)
 const inlineLink = new RegExp(`\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`, "yuis")
 const fullReferenceLink = new RegExp(linkLabel, "yuis")
-const collapsedReferenceLink = /(?![(:])(?:\\[\\])?/yuis
+const collapsedReferenceLink = /(?![(:])(?:\[\])?/yuis
 
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
         [start, / {0,3}\[/, label],
-        [label, /\s*(?:[^\[\]\s]|(?<=\\)[\[\]])+/, label, "label"],
-        [label, /\s*(?<!\\)\]:\s*/, accept]
+        [label, /\s*(?:[^\[\]\s]|(?<=\\)(?<!\\\\)[\[\]])+/, label, "label"],
+        [label, /\s*(?:(?<!\\)|(?<=\\\\))\]:\s*/, accept]
     ])
 const linkDestAuto = ExpAuto.create(0,
     (start, accept) => [
@@ -603,7 +602,6 @@ const inlineParsers = [
                             return outputReferenceLink(state, linklabel, 
                                 linktext)
                         }
-                        break
                     default:
                         let collap = parseRegExp(state, collapsedReferenceLink)
                         if (collap)
@@ -647,7 +645,6 @@ const inlineParsers = [
                             return outputReferenceImage(state, linklabel, 
                                 description)
                         }
-                        break
                     default:
                         let collap = parseRegExp(state, collapsedReferenceLink)
                         if (collap)
@@ -819,20 +816,21 @@ function closeLinkRef(state: ParserState, block: DocumentBlock) {
  */
 function terminateLinkRef(state: ParserState, block: DocumentBlock) {
     if (linkRef.accepted) {
-        let label = linkRef.groups["label"].trim().toUpperCase()
-        let destination = replaceEscapes(linkRef.groups["dest"]?.trim())
-        let title = replaceEscapes(linkRef.groups["title"])
-        if (label && destination) {
+        let { label, dest, title } = linkRef.groups
+        if (label && dest) {
+            label = label.trim().toUpperCase()
+            dest = replaceEscapes(dest.trim())!
+            title = replaceEscapes(title)!
             if (!state.linkRefs[label]) {
-                if (/^<.*>$/.test(destination))
-                    destination = destination.slice(1, destination.length - 1)
-                state.linkRefs[label] = { destination, title }
+                if (/^<.*>$/.test(dest))
+                    dest = dest.slice(1, dest.length - 1)
+                state.linkRefs[label] = { destination: dest, title }
                 state.links[label]?.forEach(aelem => {
-                    if (destination) {
+                    if (dest) {
                         if(aelem instanceof HTMLAnchorElement)
-                            aelem.href = destination
+                            aelem.href = dest
                         else
-                            aelem.src = destination
+                            aelem.src = dest
                     }
                     if (title)
                         aelem.title = title
