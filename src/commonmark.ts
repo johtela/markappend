@@ -126,7 +126,7 @@ export class CommonMarkSummary extends StyledElement {
     }
     
     protected override connect() {
-        document.addEventListener('DOMContentLoaded', () => this.render())
+        window.requestIdleCallback(() => this.render())
     }
 
     private render() {
