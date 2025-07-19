@@ -339,11 +339,12 @@ const linkTextOpen = /(?<!\\)\[/.source
 const imageTextOpen = /(?<!\\)!\[/.source
 const linkOrImageTextOpen = /(?<!\\)!?\[/.source
 const linkOrImageTextClose = /(?:(?<!\\)|(?<=\\\\))\]/.source
-const linkOrImageTextOpenClose = openCloseRegexp(linkOrImageTextOpen, 
-    linkOrImageTextClose)
+const linkOrImageTextOpenClose = openCloseRegexp(linkOrImageTextOpen, linkOrImageTextClose)
 const inlineLink = new RegExp(`\\(\\s*${linkDest}(?:\\s+${linkTitle})?\\s*\\)`, "yuis")
 const fullReferenceLink = new RegExp(linkLabel, "yuis")
 const collapsedReferenceLink = /(?![(:])(?:\[\])?/yuis
+const autoLink = /<(?<autolink>[a-z][\w\-+.]{1,31}:[^\x00-\x1F\x7F <>]*)>/.source
+const emailAutoLink = /<(?<email>[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/.source
 
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
@@ -474,9 +475,9 @@ function outputImage(state: ParserState, description: string, imgsrc?: string,
     let image = elem('img')
     if (imgsrc)
         image.src = replaceEscapes(imgsrc)!
+    image.alt = description
     if (imgtitle)
         image.title = imgtitle
-    image.alt = description
     append(state, image)
     return image
 }
@@ -656,6 +657,30 @@ const inlineParsers = [
             append(state, text(match[0]))
         },
         imageTextOpen),
+    parser(
+        /**
+         * ### Autolinks
+         * 
+         * TODO: Explain.
+         */
+        (state, match) => {
+            let { autolink } = match.groups!
+            let link = elem('a', text(autolink))
+            link.href = autolink
+            append(state, link)
+        },
+        autoLink),
+    parser(
+        /**
+         * Email autolink.
+         */
+        (state, match) => {
+            let { email } = match.groups!
+            let link = elem('a', text(email))
+            link.href = "mailto:" + email
+            append(state, link)
+        },
+        emailAutoLink),
     emOrStrong(emAsterisk),
     emOrStrong(emUnderscore),
     parser(

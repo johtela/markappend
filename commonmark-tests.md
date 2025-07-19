@@ -2031,3 +2031,110 @@ link text, except that (a) an image description starts with `![` rather than
 `[`, and (b) an image description may contain links. An image description has 
 inline elements as its contents. When an image is rendered to HTML, this is 
 standardly used as the image’s alt attribute.
+
+<commonmark-runner examples="572-573"></commonmark-runner>
+
+<commonmark-runner examples="575"></commonmark-runner>
+
+Though this spec is concerned with parsing, not rendering, it is recommended 
+that in rendering to HTML, only the plain string content of the image 
+description be used. Note that in the above example, the alt attribute’s value 
+is foo bar, not foo `[bar](/url)` or foo `<a href="/url">bar</a>`. Only the 
+plain string content is rendered, without formatting.
+
+<commonmark-runner examples="576-581"></commonmark-runner>
+
+Reference-style:
+
+<commonmark-runner examples="582-583"></commonmark-runner>
+
+Collapsed:
+
+<commonmark-runner examples="584-585"></commonmark-runner>
+
+The labels are case-insensitive:
+
+<commonmark-runner examples="586"></commonmark-runner>
+
+As with reference links, spaces, tabs, and line endings, are not allowed 
+between the two sets of brackets:
+
+<commonmark-runner examples="587"></commonmark-runner>
+
+Shortcut:
+
+<commonmark-runner examples="588-589"></commonmark-runner>
+
+The link labels are case-insensitive:
+
+<commonmark-runner examples="591"></commonmark-runner>
+
+If you just want a literal ! followed by bracketed text, you can 
+backslash-escape the opening `[`:
+
+<commonmark-runner examples="592"></commonmark-runner>
+
+If you want a link after a literal `!`, backslash-escape the `!`:
+
+<commonmark-runner examples="593"></commonmark-runner>
+
+### Autolinks
+
+Autolinks are absolute URIs and email addresses inside `<` and `>`. They are 
+parsed as links, with the URL or email address as the link label.
+
+A URI autolink consists of `<`, followed by an absolute URI followed by `>`. It 
+is parsed as a link to the URI, with the URI as the link’s label.
+
+An absolute URI, for these purposes, consists of a scheme followed by a colon 
+(`:`) followed by zero or more characters other than ASCII control characters, 
+space, `<`, and `>`. If the URI includes these characters, they must be 
+percent-encoded (e.g. `%20` for a space).
+
+For purposes of this spec, a scheme is any sequence of 2–32 characters beginning 
+with an ASCII letter and followed by any combination of ASCII letters, digits, 
+or the symbols plus (“+”), period (“.”), or hyphen (“-”).
+
+Here are some valid autolinks:
+
+<commonmark-runner examples="594-596"></commonmark-runner>
+
+Uppercase is also fine:
+
+<commonmark-runner examples="597"></commonmark-runner>
+
+Note that many strings that count as absolute URIs for purposes of this spec are 
+not valid URIs, because their schemes are not registered or because of other 
+problems with their syntax:
+
+<commonmark-runner examples="598-601"></commonmark-runner>
+
+Spaces are not allowed in autolinks:
+
+<commonmark-runner examples="602"></commonmark-runner>
+
+Backslash-escapes do not work inside autolinks:
+
+<commonmark-runner examples="603"></commonmark-runner>
+
+An email autolink consists of `<`, followed by an email address, followed by 
+`>`. The link’s label is the email address, and the URL is `mailto:` followed by 
+the email address.
+
+An email address, for these purposes, is anything that matches the non-normative 
+regex from the HTML5 spec:
+
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
+    (?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+
+Examples of email autolinks:
+
+<commonmark-runner examples="604-605"></commonmark-runner>
+
+Backslash-escapes do not work inside email autolinks:
+
+<commonmark-runner examples="606"></commonmark-runner>
+
+These are not autolinks:
+
+<commonmark-runner examples="607-612"></commonmark-runner>

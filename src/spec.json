@@ -153,7 +153,7 @@
   },
   {
     "markdown": "<https://example.com?find=\\*>\n",
-    "html": "<p><a href=\"https://example.com?find=%5C*\">https://example.com?find=\\*</a></p>\n",
+    "html": "<p><a href=\"https://example.com?find=\\*\">https://example.com?find=\\*</a></p>",
     "example": 20,
     "start_line": 580,
     "end_line": 584,
@@ -2761,7 +2761,7 @@
   },
   {
     "markdown": "<https://foo.bar.`baz>`\n",
-    "html": "<p><a href=\"https://foo.bar.%60baz\">https://foo.bar.`baz</a>`</p>",
+    "html": "<p><a href=\"https://foo.bar.`baz\">https://foo.bar.`baz</a>`</p>",
     "example": 346,
     "start_line": 6065,
     "end_line": 6069,
@@ -4569,7 +4569,7 @@
   },
   {
     "markdown": "![foo](/url \"title\")\n",
-    "html": "<p><img src=\"/url\" alt=\"foo\" title=\"title\" /></p>\n",
+    "html": "<p><img src=\"/url\" alt=\"foo\" title=\"title\"></p>",
     "example": 572,
     "start_line": 8541,
     "end_line": 8545,
@@ -4577,7 +4577,7 @@
   },
   {
     "markdown": "![foo *bar*]\n\n[foo *bar*]: train.jpg \"train & tracks\"\n",
-    "html": "<p><img src=\"train.jpg\" alt=\"foo bar\" title=\"train &amp; tracks\" /></p>\n",
+    "html": "<p><img alt=\"foo *bar*\" src=\"train.jpg\" title=\"train &amp; tracks\"></p>",
     "example": 573,
     "start_line": 8548,
     "end_line": 8554,
@@ -4593,7 +4593,7 @@
   },
   {
     "markdown": "![foo [bar](/url)](/url2)\n",
-    "html": "<p><img src=\"/url2\" alt=\"foo bar\" /></p>\n",
+    "html": "<p><img src=\"/url2\" alt=\"foo [bar](/url)\"></p>",
     "example": 575,
     "start_line": 8564,
     "end_line": 8568,
@@ -4601,7 +4601,7 @@
   },
   {
     "markdown": "![foo *bar*][]\n\n[foo *bar*]: train.jpg \"train & tracks\"\n",
-    "html": "<p><img src=\"train.jpg\" alt=\"foo bar\" title=\"train &amp; tracks\" /></p>\n",
+    "html": "<p><img alt=\"foo *bar*\" src=\"train.jpg\" title=\"train &amp; tracks\"></p>",
     "example": 576,
     "start_line": 8578,
     "end_line": 8584,
@@ -4609,7 +4609,7 @@
   },
   {
     "markdown": "![foo *bar*][foobar]\n\n[FOOBAR]: train.jpg \"train & tracks\"\n",
-    "html": "<p><img src=\"train.jpg\" alt=\"foo bar\" title=\"train &amp; tracks\" /></p>\n",
+    "html": "<p><img alt=\"foo *bar*\" src=\"train.jpg\" title=\"train &amp; tracks\"></p>",
     "example": 577,
     "start_line": 8587,
     "end_line": 8593,
@@ -4617,7 +4617,7 @@
   },
   {
     "markdown": "![foo](train.jpg)\n",
-    "html": "<p><img src=\"train.jpg\" alt=\"foo\" /></p>\n",
+    "html": "<p><img src=\"train.jpg\" alt=\"foo\"></p>",
     "example": 578,
     "start_line": 8596,
     "end_line": 8600,
@@ -4625,7 +4625,7 @@
   },
   {
     "markdown": "My ![foo bar](/path/to/train.jpg  \"title\"   )\n",
-    "html": "<p>My <img src=\"/path/to/train.jpg\" alt=\"foo bar\" title=\"title\" /></p>\n",
+    "html": "<p>My <img src=\"/path/to/train.jpg\" alt=\"foo bar\" title=\"title\"></p>",
     "example": 579,
     "start_line": 8603,
     "end_line": 8607,
@@ -4633,7 +4633,7 @@
   },
   {
     "markdown": "![foo](<url>)\n",
-    "html": "<p><img src=\"url\" alt=\"foo\" /></p>\n",
+    "html": "<p><img src=\"url\" alt=\"foo\"></p>",
     "example": 580,
     "start_line": 8610,
     "end_line": 8614,
@@ -4641,7 +4641,7 @@
   },
   {
     "markdown": "![](/url)\n",
-    "html": "<p><img src=\"/url\" alt=\"\" /></p>\n",
+    "html": "<p><img src=\"/url\" alt=\"\"></p>",
     "example": 581,
     "start_line": 8617,
     "end_line": 8621,
@@ -4649,7 +4649,7 @@
   },
   {
     "markdown": "![foo][bar]\n\n[bar]: /url\n",
-    "html": "<p><img src=\"/url\" alt=\"foo\" /></p>\n",
+    "html": "<p><img alt=\"foo\" src=\"/url\"></p>",
     "example": 582,
     "start_line": 8626,
     "end_line": 8632,
@@ -4657,7 +4657,7 @@
   },
   {
     "markdown": "![foo][bar]\n\n[BAR]: /url\n",
-    "html": "<p><img src=\"/url\" alt=\"foo\" /></p>\n",
+    "html": "<p><img alt=\"foo\" src=\"/url\"></p>",
     "example": 583,
     "start_line": 8635,
     "end_line": 8641,
@@ -4665,7 +4665,7 @@
   },
   {
     "markdown": "![foo][]\n\n[foo]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"foo\" title=\"title\" /></p>\n",
+    "html": "<p><img alt=\"foo\" src=\"/url\" title=\"title\"></p>",
     "example": 584,
     "start_line": 8646,
     "end_line": 8652,
@@ -4673,7 +4673,7 @@
   },
   {
     "markdown": "![*foo* bar][]\n\n[*foo* bar]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"foo bar\" title=\"title\" /></p>\n",
+    "html": "<p><img alt=\"*foo* bar\" src=\"/url\" title=\"title\"></p>",
     "example": 585,
     "start_line": 8655,
     "end_line": 8661,
@@ -4681,7 +4681,7 @@
   },
   {
     "markdown": "![Foo][]\n\n[foo]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"Foo\" title=\"title\" /></p>\n",
+    "html": "<p><img alt=\"Foo\" src=\"/url\" title=\"title\"></p>",
     "example": 586,
     "start_line": 8666,
     "end_line": 8672,
@@ -4689,7 +4689,7 @@
   },
   {
     "markdown": "![foo] \n[]\n\n[foo]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"foo\" title=\"title\" />\n[]</p>\n",
+    "html": "<p><img alt=\"foo\" src=\"/url\" title=\"title\">\n<a></a></p>",
     "example": 587,
     "start_line": 8678,
     "end_line": 8686,
@@ -4697,7 +4697,7 @@
   },
   {
     "markdown": "![foo]\n\n[foo]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"foo\" title=\"title\" /></p>\n",
+    "html": "<p><img alt=\"foo\" src=\"/url\" title=\"title\"></p>",
     "example": 588,
     "start_line": 8691,
     "end_line": 8697,
@@ -4705,7 +4705,7 @@
   },
   {
     "markdown": "![*foo* bar]\n\n[*foo* bar]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"foo bar\" title=\"title\" /></p>\n",
+    "html": "<p><img alt=\"*foo* bar\" src=\"/url\" title=\"title\"></p>",
     "example": 589,
     "start_line": 8700,
     "end_line": 8706,
@@ -4721,7 +4721,7 @@
   },
   {
     "markdown": "![Foo]\n\n[foo]: /url \"title\"\n",
-    "html": "<p><img src=\"/url\" alt=\"Foo\" title=\"title\" /></p>\n",
+    "html": "<p><img alt=\"Foo\" src=\"/url\" title=\"title\"></p>",
     "example": 591,
     "start_line": 8723,
     "end_line": 8729,
@@ -4729,7 +4729,7 @@
   },
   {
     "markdown": "!\\[foo]\n\n[foo]: /url \"title\"\n",
-    "html": "<p>![foo]</p>\n",
+    "html": "<p>![foo]</p>",
     "example": 592,
     "start_line": 8735,
     "end_line": 8741,
@@ -4737,7 +4737,7 @@
   },
   {
     "markdown": "\\![foo]\n\n[foo]: /url \"title\"\n",
-    "html": "<p>!<a href=\"/url\" title=\"title\">foo</a></p>\n",
+    "html": "<p>!<a href=\"/url\" title=\"title\">foo</a></p>",
     "example": 593,
     "start_line": 8747,
     "end_line": 8753,
@@ -4745,7 +4745,7 @@
   },
   {
     "markdown": "<http://foo.bar.baz>\n",
-    "html": "<p><a href=\"http://foo.bar.baz\">http://foo.bar.baz</a></p>\n",
+    "html": "<p><a href=\"http://foo.bar.baz\">http://foo.bar.baz</a></p>",
     "example": 594,
     "start_line": 8780,
     "end_line": 8784,
@@ -4753,7 +4753,7 @@
   },
   {
     "markdown": "<https://foo.bar.baz/test?q=hello&id=22&boolean>\n",
-    "html": "<p><a href=\"https://foo.bar.baz/test?q=hello&amp;id=22&amp;boolean\">https://foo.bar.baz/test?q=hello&amp;id=22&amp;boolean</a></p>\n",
+    "html": "<p><a href=\"https://foo.bar.baz/test?q=hello&amp;id=22&amp;boolean\">https://foo.bar.baz/test?q=hello&amp;id=22&amp;boolean</a></p>",
     "example": 595,
     "start_line": 8787,
     "end_line": 8791,
@@ -4761,7 +4761,7 @@
   },
   {
     "markdown": "<irc://foo.bar:2233/baz>\n",
-    "html": "<p><a href=\"irc://foo.bar:2233/baz\">irc://foo.bar:2233/baz</a></p>\n",
+    "html": "<p><a href=\"irc://foo.bar:2233/baz\">irc://foo.bar:2233/baz</a></p>",
     "example": 596,
     "start_line": 8794,
     "end_line": 8798,
@@ -4769,7 +4769,7 @@
   },
   {
     "markdown": "<MAILTO:FOO@BAR.BAZ>\n",
-    "html": "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>\n",
+    "html": "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>",
     "example": 597,
     "start_line": 8803,
     "end_line": 8807,
@@ -4777,7 +4777,7 @@
   },
   {
     "markdown": "<a+b+c:d>\n",
-    "html": "<p><a href=\"a+b+c:d\">a+b+c:d</a></p>\n",
+    "html": "<p><a href=\"a+b+c:d\">a+b+c:d</a></p>",
     "example": 598,
     "start_line": 8815,
     "end_line": 8819,
@@ -4785,7 +4785,7 @@
   },
   {
     "markdown": "<made-up-scheme://foo,bar>\n",
-    "html": "<p><a href=\"made-up-scheme://foo,bar\">made-up-scheme://foo,bar</a></p>\n",
+    "html": "<p><a href=\"made-up-scheme://foo,bar\">made-up-scheme://foo,bar</a></p>",
     "example": 599,
     "start_line": 8822,
     "end_line": 8826,
@@ -4793,7 +4793,7 @@
   },
   {
     "markdown": "<https://../>\n",
-    "html": "<p><a href=\"https://../\">https://../</a></p>\n",
+    "html": "<p><a href=\"https://../\">https://../</a></p>",
     "example": 600,
     "start_line": 8829,
     "end_line": 8833,
@@ -4801,7 +4801,7 @@
   },
   {
     "markdown": "<localhost:5001/foo>\n",
-    "html": "<p><a href=\"localhost:5001/foo\">localhost:5001/foo</a></p>\n",
+    "html": "<p><a href=\"localhost:5001/foo\">localhost:5001/foo</a></p>",
     "example": 601,
     "start_line": 8836,
     "end_line": 8840,
@@ -4809,7 +4809,7 @@
   },
   {
     "markdown": "<https://foo.bar/baz bim>\n",
-    "html": "<p>&lt;https://foo.bar/baz bim&gt;</p>\n",
+    "html": "<p>&lt;https://foo.bar/baz bim&gt;</p>",
     "example": 602,
     "start_line": 8845,
     "end_line": 8849,
@@ -4817,7 +4817,7 @@
   },
   {
     "markdown": "<https://example.com/\\[\\>\n",
-    "html": "<p><a href=\"https://example.com/%5C%5B%5C\">https://example.com/\\[\\</a></p>\n",
+    "html": "<p><a href=\"https://example.com/\\[\\\">https://example.com/\\[\\</a></p>",
     "example": 603,
     "start_line": 8854,
     "end_line": 8858,
@@ -4825,7 +4825,7 @@
   },
   {
     "markdown": "<foo@bar.example.com>\n",
-    "html": "<p><a href=\"mailto:foo@bar.example.com\">foo@bar.example.com</a></p>\n",
+    "html": "<p><a href=\"mailto:foo@bar.example.com\">foo@bar.example.com</a></p>",
     "example": 604,
     "start_line": 8876,
     "end_line": 8880,
@@ -4833,7 +4833,7 @@
   },
   {
     "markdown": "<foo+special@Bar.baz-bar0.com>\n",
-    "html": "<p><a href=\"mailto:foo+special@Bar.baz-bar0.com\">foo+special@Bar.baz-bar0.com</a></p>\n",
+    "html": "<p><a href=\"mailto:foo+special@Bar.baz-bar0.com\">foo+special@Bar.baz-bar0.com</a></p>",
     "example": 605,
     "start_line": 8883,
     "end_line": 8887,
@@ -4841,7 +4841,7 @@
   },
   {
     "markdown": "<foo\\+@bar.example.com>\n",
-    "html": "<p>&lt;foo+@bar.example.com&gt;</p>\n",
+    "html": "<p>&lt;foo+@bar.example.com&gt;</p>",
     "example": 606,
     "start_line": 8892,
     "end_line": 8896,
@@ -4849,7 +4849,7 @@
   },
   {
     "markdown": "<>\n",
-    "html": "<p>&lt;&gt;</p>\n",
+    "html": "<p>&lt;&gt;</p>",
     "example": 607,
     "start_line": 8901,
     "end_line": 8905,
@@ -4857,7 +4857,7 @@
   },
   {
     "markdown": "< https://foo.bar >\n",
-    "html": "<p>&lt; https://foo.bar &gt;</p>\n",
+    "html": "<p>&lt; https://foo.bar &gt;</p>",
     "example": 608,
     "start_line": 8908,
     "end_line": 8912,
@@ -4865,7 +4865,7 @@
   },
   {
     "markdown": "<m:abc>\n",
-    "html": "<p>&lt;m:abc&gt;</p>\n",
+    "html": "<p>&lt;m:abc&gt;</p>",
     "example": 609,
     "start_line": 8915,
     "end_line": 8919,
@@ -4873,7 +4873,7 @@
   },
   {
     "markdown": "<foo.bar.baz>\n",
-    "html": "<p>&lt;foo.bar.baz&gt;</p>\n",
+    "html": "<p>&lt;foo.bar.baz&gt;</p>",
     "example": 610,
     "start_line": 8922,
     "end_line": 8926,
@@ -4881,7 +4881,7 @@
   },
   {
     "markdown": "https://example.com\n",
-    "html": "<p>https://example.com</p>\n",
+    "html": "<p>https://example.com</p>",
     "example": 611,
     "start_line": 8929,
     "end_line": 8933,
@@ -4889,7 +4889,7 @@
   },
   {
     "markdown": "foo@bar.example.com\n",
-    "html": "<p>foo@bar.example.com</p>\n",
+    "html": "<p>foo@bar.example.com</p>",
     "example": 612,
     "start_line": 8936,
     "end_line": 8940,
