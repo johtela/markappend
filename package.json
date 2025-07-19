@@ -1,7 +1,7 @@
 {
-  "name": "sparkdown",
+  "name": "markappend",
   "version": "1.0.0",
-  "description": "Very fast and compact Markdown parser",
+  "description": "Append markdown directly to DOM",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",

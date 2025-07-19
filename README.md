@@ -1,4 +1,4 @@
-# ✨ Sparkling Fast Markdown Parser
+# ✨ Append Markdown Directly in DOM
 
 A single-file Markdown parser optimized for clarity and speed. The parser 
 modifies the DOM directly instead of generating HTML strings. It is mostly 

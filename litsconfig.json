@@ -6,10 +6,10 @@
     ],
     "updateToc": true,
     "frontMatter": {
-        "projectName": "Sparkdown",
-        "repository": "https://github.com/johtela/sparkdown",
-        "download": "https://www.npmjs.com/package/sparkdown",
+        "projectName": "MarkAppend",
+        "repository": "https://github.com/johtela/markappend",
+        "download": "https://www.npmjs.com/package/markappend",
         "footer": "Copyright © 2025 Tommi Johtela",
-        "logo": "images/sparkdown.svg"
+        "logo": "images/favicon.svg"
     }
 }
