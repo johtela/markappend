@@ -24,6 +24,9 @@ interface CommonMarkTest {
     section: string
 }
 let tests: CommonMarkTest[]
+let succeeded = 0
+let failed = 0
+let totalDuration = 0
 /**
  * ## CommonMark Test Runner
  * 
@@ -85,7 +88,13 @@ export class CommonMarkRunner extends StyledElement {
             if (e instanceof Error)
                 result = e.message + "\n" + e.stack
         }
-        this.renderTest(test, result, result == test.html, duration)
+        let pass = result == test.html
+        if (pass)
+            succeeded++
+        else
+            failed++
+        totalDuration += duration
+        this.renderTest(test, result, pass, duration)
     }
 
     private renderTest(test: CommonMarkTest, result: string, pass: boolean,
@@ -110,4 +119,34 @@ export class CommonMarkRunner extends StyledElement {
                 elem('td', text(`In ${duration.toFixed(1)}ms`)))))
     }
 }
+
+export class CommonMarkSummary extends StyledElement {
+    constructor() {
+        super('commonmark')
+    }
+    
+    protected override connect() {
+        document.addEventListener('DOMContentLoaded', () => this.render())
+    }
+
+    private render() {
+        let count = succeeded + failed
+        this.body.append(elem('table', 
+            elem('tr',
+                elem('th', text("Tests Run")),
+                elem('th', text("Succeeded")),
+                elem('th', text("Failed")),
+                elem('th', text("CommonMark Coverage"))),
+            elem('tr',
+                elem('td', text(count.toString())),
+                elem('td', text(succeeded.toString())),
+                elem('td', text(failed ? failed.toString() : "-")),
+                elem('td', text((count * 100 / 652).toFixed(1) + "%"))),
+            elem('tr', 
+                elem('td', text(`In ${totalDuration.toFixed(1)}ms`)))))
+
+    }
+}
+
 customElements.define("commonmark-runner", CommonMarkRunner)
+customElements.define("commonmark-summary", CommonMarkSummary)
