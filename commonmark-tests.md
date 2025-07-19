@@ -2238,3 +2238,67 @@ Entity and numeric character references are preserved in HTML attributes:
 Backslash escapes do not work in HTML attributes:
 
 <commonmark-runner examples="631-632"></commonmark-runner>
+
+### Hard Line Breaks
+
+A line ending (not in a code span or HTML tag) that is preceded by two or more 
+spaces and does not occur at the end of a block is parsed as a hard line break 
+(rendered in HTML as a `<br>` tag):
+
+For a more visible alternative, a backslash before the line ending may be used 
+instead of two or more spaces:
+
+<commonmark-runner examples="634"></commonmark-runner>
+
+Leading spaces at the beginning of the next line are ignored:
+
+<commonmark-runner examples="637"></commonmark-runner>
+
+Hard line breaks can occur inside emphasis, links, and other constructs that 
+allow inline content:
+
+<commonmark-runner examples="639"></commonmark-runner>
+
+Hard line breaks do not occur inside code spans
+
+<commonmark-runner examples="641"></commonmark-runner>
+
+or HTML tags:
+
+<commonmark-runner examples="643"></commonmark-runner>
+
+Hard line breaks are for separating inline content within a block. Neither 
+syntax for hard line breaks works at the end of a paragraph or other block 
+element:
+
+<commonmark-runner examples="644,646"></commonmark-runner>
+
+### Soft Line Breaks
+
+A regular line ending (not in a code span or HTML tag) that is not preceded by 
+two or more spaces or a backslash is parsed as a softbreak. (A soft line break 
+may be rendered in HTML either as a line ending or as a space. The result will 
+be the same in browsers. In the examples here, a line ending will be used.)
+
+<commonmark-runner examples="648"></commonmark-runner>
+
+Spaces at the end of the line and beginning of the next line are removed:
+
+<commonmark-runner examples="649"></commonmark-runner>
+
+A conforming parser may render a soft line break in HTML either as a line ending 
+or as a space.
+
+A renderer may also provide an option to render soft line breaks as hard line 
+breaks.
+
+### Textual Content
+
+Any characters not given an interpretation by the above rules will be parsed as 
+plain textual content.
+
+<commonmark-runner examples="650-651"></commonmark-runner>
+
+Internal spaces are preserved verbatim:
+
+<commonmark-runner examples="652"></commonmark-runner>

@@ -5065,7 +5065,7 @@
   },
   {
     "markdown": "foo\\\nbaz\n",
-    "html": "<p>foo<br />\nbaz</p>\n",
+    "html": "<p>foo<br>\nbaz</p>",
     "example": 634,
     "start_line": 9224,
     "end_line": 9230,
@@ -5089,7 +5089,7 @@
   },
   {
     "markdown": "foo\\\n     bar\n",
-    "html": "<p>foo<br />\nbar</p>\n",
+    "html": "<p>foo<br>\nbar</p>",
     "example": 637,
     "start_line": 9255,
     "end_line": 9261,
@@ -5105,7 +5105,7 @@
   },
   {
     "markdown": "*foo\\\nbar*\n",
-    "html": "<p><em>foo<br />\nbar</em></p>\n",
+    "html": "<p><em>foo<br>\nbar</em></p>",
     "example": 639,
     "start_line": 9276,
     "end_line": 9282,
@@ -5121,7 +5121,7 @@
   },
   {
     "markdown": "`code\\\nspan`\n",
-    "html": "<p><code>code\\ span</code></p>\n",
+    "html": "<p><code>code\\ span</code></p>",
     "example": 641,
     "start_line": 9295,
     "end_line": 9300,
@@ -5137,7 +5137,7 @@
   },
   {
     "markdown": "<a href=\"foo\\\nbar\">\n",
-    "html": "<p><a href=\"foo\\\nbar\"></p>\n",
+    "html": "<p><a href=\"foo\\\nbar\"></a></p>",
     "example": 643,
     "start_line": 9314,
     "end_line": 9320,
@@ -5145,7 +5145,7 @@
   },
   {
     "markdown": "foo\\\n",
-    "html": "<p>foo\\</p>\n",
+    "html": "<p>foo\\</p>",
     "example": 644,
     "start_line": 9327,
     "end_line": 9331,
@@ -5161,7 +5161,7 @@
   },
   {
     "markdown": "### foo\\\n",
-    "html": "<h3>foo\\</h3>\n",
+    "html": "<h3>foo\\</h3>",
     "example": 646,
     "start_line": 9341,
     "end_line": 9345,
@@ -5177,7 +5177,7 @@
   },
   {
     "markdown": "foo\nbaz\n",
-    "html": "<p>foo\nbaz</p>\n",
+    "html": "<p>foo\nbaz</p>",
     "example": 648,
     "start_line": 9363,
     "end_line": 9369,
@@ -5185,7 +5185,7 @@
   },
   {
     "markdown": "foo \n baz\n",
-    "html": "<p>foo\nbaz</p>\n",
+    "html": "<p>foo\nbaz</p>",
     "example": 649,
     "start_line": 9375,
     "end_line": 9381,
@@ -5193,7 +5193,7 @@
   },
   {
     "markdown": "hello $.;'there\n",
-    "html": "<p>hello $.;'there</p>\n",
+    "html": "<p>hello $.;'there</p>",
     "example": 650,
     "start_line": 9395,
     "end_line": 9399,
@@ -5201,7 +5201,7 @@
   },
   {
     "markdown": "Foo χρῆν\n",
-    "html": "<p>Foo χρῆν</p>\n",
+    "html": "<p>Foo χρῆν</p>",
     "example": 651,
     "start_line": 9402,
     "end_line": 9406,
@@ -5209,7 +5209,7 @@
   },
   {
     "markdown": "Multiple     spaces\n",
-    "html": "<p>Multiple     spaces</p>\n",
+    "html": "<p>Multiple     spaces</p>",
     "example": 652,
     "start_line": 9411,
     "end_line": 9415,
