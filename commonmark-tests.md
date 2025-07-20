@@ -47,6 +47,11 @@ HTML:
 
 <commonmark-runner examples="17-21"></commonmark-runner>
 
+But they work in all other contexts, including URLs and link titles, link 
+references, and info strings in fenced code blocks:
+
+<commonmark-runner examples="22-24"></commonmark-runner>
+
 ## Entity and numeric character references
 
 Valid HTML entity references and numeric character references can be used in place of the corresponding Unicode character, with the following exceptions:
@@ -97,6 +102,12 @@ Strings that are not on the list of HTML5 named entities are not recognized as
 entity references either:
 
 <commonmark-runner examples="30"></commonmark-runner>
+
+Entity and numeric character references are recognized in any context besides 
+code spans or code blocks, including URLs, link titles, and fenced code block 
+info strings:
+
+<commonmark-runner examples="31"></commonmark-runner>
 
 Entity and numeric character references are treated as literal text in code 
 spans and code blocks:

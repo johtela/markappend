@@ -169,7 +169,7 @@
   },
   {
     "markdown": "[foo](/bar\\* \"ti\\*tle\")\n",
-    "html": "<p><a href=\"/bar*\" title=\"ti*tle\">foo</a></p>\n",
+    "html": "<p><a href=\"/bar*\" title=\"ti*tle\">foo</a></p>",
     "example": 22,
     "start_line": 597,
     "end_line": 601,
@@ -177,7 +177,7 @@
   },
   {
     "markdown": "[foo]\n\n[foo]: /bar\\* \"ti\\*tle\"\n",
-    "html": "<p><a href=\"/bar*\" title=\"ti*tle\">foo</a></p>\n",
+    "html": "<p><a href=\"/bar*\" title=\"ti*tle\">foo</a></p>",
     "example": 23,
     "start_line": 604,
     "end_line": 610,
@@ -185,7 +185,7 @@
   },
   {
     "markdown": "``` foo\\+bar\nfoo\n```\n",
-    "html": "<pre><code class=\"language-foo+bar\">foo\n</code></pre>\n",
+    "html": "<pre><code class=\"language-foo+bar\">foo</code></pre>",
     "example": 24,
     "start_line": 613,
     "end_line": 620,
@@ -241,7 +241,7 @@
   },
   {
     "markdown": "<a href=\"&ouml;&ouml;.html\">\n",
-    "html": "<a href=\"&ouml;&ouml;.html\">\n",
+    "html": "<a href=\"öö.html\">\n</a>",
     "example": 31,
     "start_line": 728,
     "end_line": 732,

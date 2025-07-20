@@ -447,7 +447,7 @@ function outputLink(state: ParserState, linktext: string, linkdest?: string,
     if (linkdest)
         anchor.href = replaceEscapes(linkdest)!
     if (linktitle)
-        anchor.title = linktitle
+        anchor.title = replaceEscapes(linktitle)!
     openBlock(state, anchor, BlockType.Inline)
     inlines(stateFrom(state, linktext))
     closeLastBlock(state)
@@ -978,7 +978,7 @@ const blockParsers = [
             let cont = new RegExp(`(?! {0,3}${codefence}+\\s*$)`, "yui")
             let code = elem('code')
             if (codelang)
-                code.className = `language-${codelang}`
+                code.className = `language-${replaceEscapes(codelang)}`
             openBlock(state, elem('pre', code), BlockType.Text, true, code, 
                 cont, closeFencedCodeBlock)
         },
