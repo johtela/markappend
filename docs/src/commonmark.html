@@ -1,0 +1,504 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            MarkAppend - Testers
+        </title>
+        <link rel="icon" type="image/icon" href="../images/favicon.svg" />
+        <link rel="stylesheet" href="../dist/normal.css" />
+        
+    </head>
+    <body data-syntax-highlight="monokai"
+        data-theme="purple-rain">
+        
+        <div id="navbar">
+            
+    <div class="navmenu ">
+        
+    <div class="navitem " >
+        <a class="title enabled" href="../index.html" >
+            <img src="../images/favicon.svg" />
+            <span>MarkAppend</span>
+        </a>
+        
+    </div>
+    <div class="navitem " >
+        <a class="enabled" href="https://www.npmjs.com/package/markappend" >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-npm" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M1 8h22v7h-12v2h-4v-2h-6z" />
+            <path d="M7 8v7" />
+            <path d="M14 8v7" />
+            <path d="M17 11v4" />
+            <path d="M4 11v4" />
+            <path d="M11 11v1" />
+            <path d="M20 11v4" />
+        </svg>
+            <span>Download</span>
+        </a>
+        
+    </div>
+    <div class="navitem " >
+        <a class="enabled" href="https://github.com/johtela/markappend" >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+        </svg>
+            <span>GitHub</span>
+        </a>
+        
+    </div>
+    <div class="navitem " >
+        <a   >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-caret-down" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M6 10l6 6l6 -6h-12" />
+        </svg>
+            <span>Syntax Highlight</span>
+        </a>
+        
+    <div class="navmenu toggle">
+        
+    <div class="navitem " id="coding-horror">
+        <a   onclick="document.body.syntaxHighlight('coding-horror')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Coding Horror</span>
+        </a>
+        
+    </div>
+    <div class="navitem active" id="monokai">
+        <a   onclick="document.body.syntaxHighlight('monokai')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Monokai</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="solarized-light">
+        <a   onclick="document.body.syntaxHighlight('solarized-light')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Solarized Light</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="son-of-obsidian">
+        <a   onclick="document.body.syntaxHighlight('son-of-obsidian')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Son of Obsidian</span>
+        </a>
+        
+    </div>
+    </div>
+    </div>
+    <div class="navitem " >
+        <a   >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-caret-down" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M6 10l6 6l6 -6h-12" />
+        </svg>
+            <span>Theme</span>
+        </a>
+        
+    <div class="navmenu toggle">
+        
+    <div class="navitem " id="blueberry">
+        <a   onclick="document.body.theme('blueberry')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Blueberry</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="book-cover">
+        <a   onclick="document.body.theme('book-cover')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Book Cover</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="brownie">
+        <a   onclick="document.body.theme('brownie')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Brownie</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="camouflage">
+        <a   onclick="document.body.theme('camouflage')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Camouflage</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="chocolate">
+        <a   onclick="document.body.theme('chocolate')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Chocolate</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="greyhound">
+        <a   onclick="document.body.theme('greyhound')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Greyhound</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="ice-age">
+        <a   onclick="document.body.theme('ice-age')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Ice Age</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="mustard">
+        <a   onclick="document.body.theme('mustard')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Mustard</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="peachy">
+        <a   onclick="document.body.theme('peachy')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Peachy</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="red-alert">
+        <a   onclick="document.body.theme('red-alert')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Red Alert</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="ultra-violet">
+        <a   onclick="document.body.theme('ultra-violet')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Ultra Violet</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="vintage">
+        <a   onclick="document.body.theme('vintage')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Vintage</span>
+        </a>
+        
+    </div>
+    </div>
+    </div>
+    </div>
+            
+    <a class="hamburger">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </a>
+        </div>
+        
+        <div class="layout">
+            <div class="sidepane narrow-scrollbars">
+                
+        <div class="tocmenu">
+            <h3>Table of Contents</h3>
+            
+    <ul>
+        
+    <li>
+        <a href="../README.html"><span>🏠</span><span data-toggle="tooltip" data-title="Start here">
+            Home
+        </span></a>
+    </li>
+    <li>
+        <a href="parser.html"><span>👀</span><span data-toggle="tooltip" data-title="Parser implementation">
+            Parser
+        </span></a>
+    </li>
+    <li>
+        <a href="helpers.html"><span>🧰</span><span data-toggle="tooltip" data-title="Helper code">
+            Helpers
+        </span></a>
+    </li>
+    <li>
+        <a href="commonmark.html" class="highlight"><span>🧪</span><span data-toggle="tooltip" data-title="CommonMark tester components">
+            Testers
+        </span></a>
+    </li>
+    <li>
+        <a href="../commonmark-tests.html"><span>M⇩</span><span data-toggle="tooltip" data-title="CommonMark test suite">
+            CommonMark Tests
+        </span></a>
+    </li>
+    </ul>
+        </div>
+                <div class="toc-button"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevrons-right" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M7 7l5 5l-5 5" />
+            <path d="M13 7l5 5l-5 5" />
+        </svg></div>
+            </div>
+            
+        <div class="contentarea closepopups">
+            <h1 id="common-mark-tests">CommonMark Tests</h1>
+<p>This module contains tests from <a href="https://spec.commonmark.org/0.31.2/">CommonMark</a> test suite to verify that
+the parser is working correctly.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">import</span> <span class="punctuation">{</span> <span id="219" data-toggle="tooltip" data-title="typeof StyledElement">StyledElement</span> <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">&#039;litscript/lib/src/custom-elem&#039;</span>
+<span class="keyword">import</span> <span class="punctuation">{</span> <span id="282" data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span><span class="punctuation">,</span> <span id="288" data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span><span class="punctuation">,</span> <span id="294" data-toggle="tooltip" data-title="(value: string) =&gt; Node[]">highlightWs</span>  <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">&#039;./helpers&#039;</span>
+<span class="keyword">import</span> <span class="punctuation">{</span> <span id="336" data-toggle="tooltip" data-title="(input: string, root: Element) =&gt; void">appendMarkdown</span> <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">&#039;./parser&#039;</span>
+<span class="keyword">import</span> <span class="string">&#039;./commonmark.css&#039;</span>
+<span class="keyword">let</span> <span id="401" data-toggle="tooltip" data-title="Promise&lt;{ markdown: string; html: string; example: number; start_line: number; end_line: number; section: string; }[]&gt;">loaded</span> <span class="punctuation">=</span> <span class="keyword">import</span><span class="punctuation">(</span><span class="string">&#039;./spec.json&#039;</span><span class="punctuation">)</span>
+</code></pre>
+<h2 id="common-mark-test-cases">CommonMark Test Cases</h2>
+<p>We read the CommonMark test cases from a JSON file. Its structure is defined
+below (unused properties are omitted).</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">interface</span> <span id="432" class="typename" data-toggle="tooltip" data-title="CommonMarkTest">CommonMarkTest</span> <span class="punctuation">{</span>
+    <span id="629" data-toggle="tooltip" data-title="string">markdown</span><span class="punctuation">:</span> <span class="keyword">string</span>
+    <span id="651" data-toggle="tooltip" data-title="string">html</span><span class="punctuation">:</span> <span class="keyword">string</span>
+    <span id="669" data-toggle="tooltip" data-title="number">example</span><span class="punctuation">:</span> <span class="keyword">number</span>
+    <span id="690" data-toggle="tooltip" data-title="string">section</span><span class="punctuation">:</span> <span class="keyword">string</span>
+<span class="punctuation">}</span>
+<span class="keyword">let</span> <span id="719" data-toggle="tooltip" data-title="CommonMarkTest[]">tests</span><span class="punctuation">:</span> <a href="commonmark.html#432"><span class="typename" data-toggle="tooltip" data-title="CommonMarkTest">CommonMarkTest</span></a><span class="punctuation">[</span><span class="punctuation">]</span>
+<span class="keyword">let</span> <span id="748" data-toggle="tooltip" data-title="number">succeeded</span> <span class="punctuation">=</span> <span class="number">0</span>
+<span class="keyword">let</span> <span id="767" data-toggle="tooltip" data-title="number">failed</span> <span class="punctuation">=</span> <span class="number">0</span>
+<span class="keyword">let</span> <span id="783" data-toggle="tooltip" data-title="number">totalDuration</span> <span class="punctuation">=</span> <span class="number">0</span>
+</code></pre>
+<h2 id="common-mark-test-runner">CommonMark Test Runner</h2>
+<p>We define a custom element that can be used run tests specified in the
+<code>examples</code> attribute. It has format <code>1,3-5</code> where you can specify individual
+tests separated by commas, or range of tests separated by dash.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">class</span> <span id="801" class="typename" data-toggle="tooltip" data-title="CommonMarkRunner">CommonMarkRunner</span> <span class="keyword">extends</span> <a href="commonmark.html#219"><span data-toggle="tooltip" data-title="typeof StyledElement">StyledElement</span></a> <span class="punctuation">{</span>
+    
+    <span class="keyword">static</span> <span class="keyword">get</span> <span id="1126" class="member" data-toggle="tooltip" data-title="string[]">observedAttributes</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">[</span><span class="punctuation">]</span> <span class="punctuation">{</span>
+        <span class="keyword">return</span>  <span class="punctuation">[</span><span class="string">&quot;examples&quot;</span><span class="punctuation">]</span>
+    <span class="punctuation">}</span>
+
+    <span class="keyword">constructor</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">super</span><span class="punctuation">(</span><span class="string">&#039;commonmark&#039;</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+    
+    <span class="keyword">protected</span> <span class="keyword">override</span> <span id="1277" class="member" data-toggle="tooltip" data-title="() =&gt; void">connect</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="commonmark.html#2072"><span class="member" data-toggle="tooltip" data-title="() =&gt; Promise&lt;void&gt;">runExamples</span></a><span class="punctuation">(</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+
+    <span class="keyword">private</span> <span class="keyword">get</span> <span id="1354" class="member" data-toggle="tooltip" data-title="number[]">examples</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="keyword">number</span><span class="punctuation">[</span><span class="punctuation">]</span>  <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="1410" data-toggle="tooltip" data-title="number[]">res</span><span class="punctuation">:</span> <span class="keyword">number</span><span class="punctuation">[</span><span class="punctuation">]</span> <span class="punctuation">=</span> <span class="punctuation">[</span><span class="punctuation">]</span>
+        <span class="keyword">let</span> <span id="1442" data-toggle="tooltip" data-title="string | null">examples</span> <span class="punctuation">=</span> <span class="keyword">this</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(qualifiedName: string) =&gt; string | null">getAttribute</span><span class="punctuation">(</span><span class="string">&quot;examples&quot;</span><span class="punctuation">)</span>
+        <span class="keyword">if</span> <span class="punctuation">(</span><a href="commonmark.html#1442"><span data-toggle="tooltip" data-title="string | null">examples</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+            <span class="keyword">let</span> <span id="1525" data-toggle="tooltip" data-title="RegExp">splitter</span> <span class="punctuation">=</span> <span class="string">/\s*(?&lt;sep&gt;[,\-])?\s*(?&lt;num&gt;\d+)/g</span>
+            <span class="keyword">let</span> <span id="1588" data-toggle="tooltip" data-title="number | undefined">prev</span><span class="punctuation">:</span> <span class="keyword">number</span> <span class="punctuation">|</span> <span class="keyword">undefined</span>
+            <span class="keyword">let</span> <span id="1630" data-toggle="tooltip" data-title="RegExpExecArray | null">match</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="RegExpExecArray">RegExpExecArray</span> <span class="punctuation">|</span> <span class="keyword">null</span>
+            <span class="keyword">while</span> <span class="punctuation">(</span><a href="commonmark.html#1630"><span data-toggle="tooltip" data-title="RegExpExecArray | null">match</span></a> <span class="punctuation">=</span> <a href="commonmark.html#1525"><span data-toggle="tooltip" data-title="RegExp">splitter</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(string: string) =&gt; RegExpExecArray | null">exec</span><span class="punctuation">(</span><a href="commonmark.html#1442"><span data-toggle="tooltip" data-title="string">examples</span></a><span class="punctuation">)</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+                <span class="keyword">let</span> <span class="punctuation">{</span> <span id="1738" data-toggle="tooltip" data-title="string">sep</span><span class="punctuation">,</span> <span id="1743" data-toggle="tooltip" data-title="string">num</span> <span class="punctuation">}</span> <span class="punctuation">=</span> <a href="commonmark.html#1630"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="{ [key: string]: string; } | undefined">groups</span><span class="punctuation">!</span>
+                <span class="keyword">let</span> <span id="1786" data-toggle="tooltip" data-title="number">curr</span> <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" data-title="NumberConstructor">Number</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(string: string, radix?: number) =&gt; number">parseInt</span><span class="punctuation">(</span><a href="commonmark.html#1743"><span data-toggle="tooltip" data-title="string">num</span></a><span class="punctuation">)</span>
+                <span class="keyword">if</span> <span class="punctuation">(</span><a href="commonmark.html#1588"><span data-toggle="tooltip" data-title="number | undefined">prev</span></a> <span class="punctuation">&amp;&amp;</span> <a href="commonmark.html#1738"><span data-toggle="tooltip" data-title="string">sep</span></a> <span class="punctuation">==</span> <span class="string">&quot;-&quot;</span><span class="punctuation">)</span>
+                    <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="1885" data-toggle="tooltip" data-title="number">i</span> <span class="punctuation">=</span> <a href="commonmark.html#1588"><span data-toggle="tooltip" data-title="number">prev</span></a> <span class="punctuation">+</span> <span class="number">1</span><span class="punctuation">;</span> <a href="commonmark.html#1885"><span data-toggle="tooltip" data-title="number">i</span></a> <span class="punctuation">&lt;</span> <a href="commonmark.html#1786"><span data-toggle="tooltip" data-title="number">curr</span></a><span class="punctuation">;</span> <span class="punctuation">++</span><a href="commonmark.html#1885"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">)</span>
+                        <a href="commonmark.html#1410"><span data-toggle="tooltip" data-title="number[]">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: number[]) =&gt; number">push</span><span class="punctuation">(</span><a href="commonmark.html#1885"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">)</span>
+                <a href="commonmark.html#1410"><span data-toggle="tooltip" data-title="number[]">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: number[]) =&gt; number">push</span><span class="punctuation">(</span><a href="commonmark.html#1786"><span data-toggle="tooltip" data-title="number">curr</span></a><span class="punctuation">)</span>       
+                <a href="commonmark.html#1588"><span data-toggle="tooltip" data-title="number | undefined">prev</span></a> <span class="punctuation">=</span> <a href="commonmark.html#1786"><span data-toggle="tooltip" data-title="number">curr</span></a>
+            <span class="punctuation">}</span>
+        <span class="punctuation">}</span>
+        <span class="keyword">return</span> <a href="commonmark.html#1410"><span data-toggle="tooltip" data-title="number[]">res</span></a>
+    <span class="punctuation">}</span>
+
+    <span class="keyword">private</span> <span class="keyword">async</span> <span id="2072" class="member" data-toggle="tooltip" data-title="() =&gt; Promise&lt;void&gt;">runExamples</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation">!</span><a href="commonmark.html#719"><span data-toggle="tooltip" data-title="CommonMarkTest[]">tests</span></a><span class="punctuation">)</span>
+            <a href="commonmark.html#719"><span data-toggle="tooltip" data-title="CommonMarkTest[]">tests</span></a> <span class="punctuation">=</span> <span class="keyword">await</span> <a href="commonmark.html#401"><span data-toggle="tooltip" data-title="Promise&lt;{ markdown: string; html: string; example: number; start_line: number; end_line: number; section: string; }[]&gt;">loaded</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="commonmark.html#1354"><span class="member" data-toggle="tooltip" data-title="number[]">examples</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(callbackfn: (value: number, index: number, array: number[]) =&gt; void, thisArg?: any) =&gt; void">forEach</span><span class="punctuation">(</span><span id="2196" data-toggle="tooltip" data-title="number">num</span> <span class="punctuation">=&gt;</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="commonmark.html#2239"><span class="member" data-toggle="tooltip" data-title="(test: CommonMarkTest) =&gt; void">runTest</span></a><span class="punctuation">(</span><a href="commonmark.html#719"><span data-toggle="tooltip" data-title="CommonMarkTest[]">tests</span></a><span class="punctuation">[</span><a href="commonmark.html#2196"><span data-toggle="tooltip" data-title="number">num</span></a> <span class="punctuation">-</span> <span class="number">1</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+
+    <span class="keyword">private</span> <span id="2239" class="member" data-toggle="tooltip" data-title="(test: CommonMarkTest) =&gt; void">runTest</span><span class="punctuation">(</span><span id="2263" data-toggle="tooltip" data-title="CommonMarkTest">test</span><span class="punctuation">:</span> <a href="commonmark.html#432"><span class="typename" data-toggle="tooltip" data-title="CommonMarkTest">CommonMarkTest</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="2299" data-toggle="tooltip" data-title="number">duration</span> <span class="punctuation">=</span> <span class="number">0</span>
+        <span class="keyword">let</span> <span id="2325" data-toggle="tooltip" data-title="string">result</span> <span class="punctuation">=</span> <span class="string">&quot;&lt;&lt;Not run&gt;&gt;&quot;</span>
+        <span class="keyword">try</span> <span class="punctuation">{</span>
+            <span class="keyword">let</span> <span id="2380" data-toggle="tooltip" data-title="HTMLDivElement">root</span> <span class="punctuation">=</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;div&#039;</span><span class="punctuation">)</span>
+            <span class="keyword">let</span> <span id="2416" data-toggle="tooltip" data-title="number">start</span> <span class="punctuation">=</span> <span data-toggle="tooltip" data-title="Window &amp; typeof globalThis">window</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="Performance">performance</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="() =&gt; DOMHighResTimeStamp">now</span><span class="punctuation">(</span><span class="punctuation">)</span>
+            <a href="commonmark.html#336"><span data-toggle="tooltip" data-title="(input: string, root: Element) =&gt; void">appendMarkdown</span></a><span class="punctuation">(</span><a href="commonmark.html#2263"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">.</span><a href="commonmark.html#629"><span data-toggle="tooltip" data-title="string">markdown</span></a><span class="punctuation">,</span> <a href="commonmark.html#2380"><span data-toggle="tooltip" data-title="HTMLDivElement">root</span></a><span class="punctuation">)</span>
+            <a href="commonmark.html#2299"><span data-toggle="tooltip" data-title="number">duration</span></a> <span class="punctuation">=</span> <span data-toggle="tooltip" data-title="Window &amp; typeof globalThis">window</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="Performance">performance</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="() =&gt; DOMHighResTimeStamp">now</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">-</span> <a href="commonmark.html#2416"><span data-toggle="tooltip" data-title="number">start</span></a>
+            <a href="commonmark.html#2325"><span data-toggle="tooltip" data-title="string">result</span></a> <span class="punctuation">=</span> <a href="commonmark.html#2380"><span data-toggle="tooltip" data-title="HTMLDivElement">root</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">innerHTML</span>
+        <span class="punctuation">}</span>
+        <span class="keyword">catch</span> <span class="punctuation">(</span><span id="2620" data-toggle="tooltip" data-title="unknown">e</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+            <span class="keyword">if</span> <span class="punctuation">(</span><a href="commonmark.html#2620"><span data-toggle="tooltip" data-title="unknown">e</span></a> <span class="keyword">instanceof</span> <span class="typename" data-toggle="tooltip" data-title="ErrorConstructor">Error</span><span class="punctuation">)</span>
+                <a href="commonmark.html#2325"><span data-toggle="tooltip" data-title="string">result</span></a> <span class="punctuation">=</span> <a href="commonmark.html#2620"><span data-toggle="tooltip" data-title="Error">e</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">message</span> <span class="punctuation">+</span> <span class="string">&quot;\n&quot;</span> <span class="punctuation">+</span> <a href="commonmark.html#2620"><span data-toggle="tooltip" data-title="Error">e</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string | undefined">stack</span>
+        <span class="punctuation">}</span>
+        <span class="keyword">let</span> <span id="2738" data-toggle="tooltip" data-title="boolean">pass</span> <span class="punctuation">=</span> <a href="commonmark.html#2325"><span data-toggle="tooltip" data-title="string">result</span></a> <span class="punctuation">==</span> <a href="commonmark.html#2263"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">.</span><a href="commonmark.html#651"><span data-toggle="tooltip" data-title="string">html</span></a>
+        <span class="keyword">if</span> <span class="punctuation">(</span><a href="commonmark.html#2738"><span data-toggle="tooltip" data-title="boolean">pass</span></a><span class="punctuation">)</span>
+            <a href="commonmark.html#748"><span data-toggle="tooltip" data-title="number">succeeded</span></a><span class="punctuation">++</span>
+        <span class="keyword">else</span>
+            <a href="commonmark.html#767"><span data-toggle="tooltip" data-title="number">failed</span></a><span class="punctuation">++</span>
+        <a href="commonmark.html#783"><span data-toggle="tooltip" data-title="number">totalDuration</span></a> <span class="punctuation">+=</span> <a href="commonmark.html#2299"><span data-toggle="tooltip" data-title="number">duration</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="commonmark.html#2942"><span class="member" data-toggle="tooltip" data-title="(test: CommonMarkTest, result: string, pass: boolean, duration: number) =&gt; void">renderTest</span></a><span class="punctuation">(</span><a href="commonmark.html#2263"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">,</span> <a href="commonmark.html#2325"><span data-toggle="tooltip" data-title="string">result</span></a><span class="punctuation">,</span> <a href="commonmark.html#2738"><span data-toggle="tooltip" data-title="boolean">pass</span></a><span class="punctuation">,</span> <a href="commonmark.html#2299"><span data-toggle="tooltip" data-title="number">duration</span></a><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+
+    <span class="keyword">private</span> <span id="2942" class="member" data-toggle="tooltip" data-title="(test: CommonMarkTest, result: string, pass: boolean, duration: number) =&gt; void">renderTest</span><span class="punctuation">(</span><span id="2969" data-toggle="tooltip" data-title="CommonMarkTest">test</span><span class="punctuation">:</span> <a href="commonmark.html#432"><span class="typename" data-toggle="tooltip" data-title="CommonMarkTest">CommonMarkTest</span></a><span class="punctuation">,</span> <span id="2990" data-toggle="tooltip" data-title="string">result</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">,</span> <span id="3006" data-toggle="tooltip" data-title="boolean">pass</span><span class="punctuation">:</span> <span class="keyword">boolean</span><span class="punctuation">,</span>
+        <span id="3021" data-toggle="tooltip" data-title="number">duration</span><span class="punctuation">:</span> <span class="keyword">number</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="3063" data-toggle="tooltip" data-title="HTMLTableCellElement">passcell</span> <span class="punctuation">=</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="commonmark.html#3006"><span data-toggle="tooltip" data-title="boolean">pass</span></a> <span class="punctuation">?</span> <span class="string">&quot;PASS&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;FAIL&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span>
+        <a href="commonmark.html#3063"><span data-toggle="tooltip" data-title="HTMLTableCellElement">passcell</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">className</span> <span class="punctuation">=</span> <a href="commonmark.html#3006"><span data-toggle="tooltip" data-title="boolean">pass</span></a> <span class="punctuation">?</span> <span class="string">&quot;pass&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;fail&quot;</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="HTMLElement">body</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...nodes: (Node | string)[]) =&gt; void">append</span><span class="punctuation">(</span><a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;table&#039;</span><span class="punctuation">,</span> 
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">`Example: ${</span><a href="commonmark.html#2969"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">.</span><a href="commonmark.html#669"><span data-toggle="tooltip" data-title="number">example</span></a><span class="string">}`</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="commonmark.html#2969"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">.</span><a href="commonmark.html#690"><span data-toggle="tooltip" data-title="string">section</span></a><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#3063"><span data-toggle="tooltip" data-title="HTMLTableCellElement">passcell</span></a><span class="punctuation">)</span><span class="punctuation">,</span>
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;Input&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;Expected&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;Actual&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;pre&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;code&#039;</span><span class="punctuation">,</span> 
+                    <span class="punctuation">...</span><a href="commonmark.html#294"><span data-toggle="tooltip" data-title="(value: string) =&gt; Node[]">highlightWs</span></a><span class="punctuation">(</span><a href="commonmark.html#2969"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">.</span><a href="commonmark.html#629"><span data-toggle="tooltip" data-title="string">markdown</span></a><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;pre&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;code&#039;</span><span class="punctuation">,</span> <span class="punctuation">...</span><a href="commonmark.html#294"><span data-toggle="tooltip" data-title="(value: string) =&gt; Node[]">highlightWs</span></a><span class="punctuation">(</span><a href="commonmark.html#2969"><span data-toggle="tooltip" data-title="CommonMarkTest">test</span></a><span class="punctuation">.</span><a href="commonmark.html#651"><span data-toggle="tooltip" data-title="string">html</span></a><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;pre&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;code&#039;</span><span class="punctuation">,</span> <span class="punctuation">...</span><a href="commonmark.html#294"><span data-toggle="tooltip" data-title="(value: string) =&gt; Node[]">highlightWs</span></a><span class="punctuation">(</span><a href="commonmark.html#2990"><span data-toggle="tooltip" data-title="string">result</span></a><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span> 
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">`In ${</span><a href="commonmark.html#3021"><span data-toggle="tooltip" data-title="number">duration</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(fractionDigits?: number) =&gt; string">toFixed</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">)</span><span class="string">}ms`</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+<span class="punctuation">}</span>
+
+<span class="keyword">export</span> <span class="keyword">class</span> <span id="3934" class="typename" data-toggle="tooltip" data-title="CommonMarkSummary">CommonMarkSummary</span> <span class="keyword">extends</span> <a href="commonmark.html#219"><span data-toggle="tooltip" data-title="typeof StyledElement">StyledElement</span></a> <span class="punctuation">{</span>
+    <span class="keyword">constructor</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">super</span><span class="punctuation">(</span><span class="string">&#039;commonmark&#039;</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+    
+    <span class="keyword">protected</span> <span class="keyword">override</span> <span id="4049" class="member" data-toggle="tooltip" data-title="() =&gt; void">connect</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span data-toggle="tooltip" data-title="Window &amp; typeof globalThis">window</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="((callback: IdleRequestCallback, options?: IdleRequestOptions) =&gt; number) &amp; ((callback: IdleRequestCallback, options?: IdleRequestOptions) =&gt; number)">requestIdleCallback</span><span class="punctuation">(</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="commonmark.html#4155"><span class="member" data-toggle="tooltip" data-title="() =&gt; void">render</span></a><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+
+    <span class="keyword">private</span> <span id="4155" class="member" data-toggle="tooltip" data-title="() =&gt; void">render</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="4194" data-toggle="tooltip" data-title="number">count</span> <span class="punctuation">=</span> <a href="commonmark.html#748"><span data-toggle="tooltip" data-title="number">succeeded</span></a> <span class="punctuation">+</span> <a href="commonmark.html#767"><span data-toggle="tooltip" data-title="number">failed</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="HTMLElement">body</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...nodes: (Node | string)[]) =&gt; void">append</span><span class="punctuation">(</span><a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;table&#039;</span><span class="punctuation">,</span> 
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;Tests Run&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;Succeeded&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;Failed&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;th&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">&quot;CommonMark Coverage&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="commonmark.html#4194"><span data-toggle="tooltip" data-title="number">count</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(radix?: number) =&gt; string">toString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="commonmark.html#748"><span data-toggle="tooltip" data-title="number">succeeded</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(radix?: number) =&gt; string">toString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="commonmark.html#767"><span data-toggle="tooltip" data-title="number">failed</span></a> <span class="punctuation">?</span> <a href="commonmark.html#767"><span data-toggle="tooltip" data-title="number">failed</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(radix?: number) =&gt; string">toString</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">:</span> <span class="string">&quot;-&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="punctuation">(</span><a href="commonmark.html#4194"><span data-toggle="tooltip" data-title="number">count</span></a> <span class="punctuation">*</span> <span class="number">100</span> <span class="punctuation">/</span> <span class="number">652</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(fractionDigits?: number) =&gt; string">toFixed</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">)</span> <span class="punctuation">+</span> <span class="string">&quot;%&quot;</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">,</span>
+            <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;tr&#039;</span><span class="punctuation">,</span> 
+                <a href="commonmark.html#282"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;td&#039;</span><span class="punctuation">,</span> <a href="commonmark.html#288"><span data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><span class="string">`In ${</span><a href="commonmark.html#783"><span data-toggle="tooltip" data-title="number">totalDuration</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(fractionDigits?: number) =&gt; string">toFixed</span><span class="punctuation">(</span><span class="number">1</span><span class="punctuation">)</span><span class="string">}ms`</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span>
+
+    <span class="punctuation">}</span>
+<span class="punctuation">}</span>
+
+<span data-toggle="tooltip" data-title="CustomElementRegistry">customElements</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) =&gt; void">define</span><span class="punctuation">(</span><span class="string">&quot;commonmark-runner&quot;</span><span class="punctuation">,</span> <a href="commonmark.html#801"><span class="typename" data-toggle="tooltip" data-title="typeof CommonMarkRunner">CommonMarkRunner</span></a><span class="punctuation">)</span>
+<span data-toggle="tooltip" data-title="CustomElementRegistry">customElements</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) =&gt; void">define</span><span class="punctuation">(</span><span class="string">&quot;commonmark-summary&quot;</span><span class="punctuation">,</span> <a href="commonmark.html#3934"><span class="typename" data-toggle="tooltip" data-title="typeof CommonMarkSummary">CommonMarkSummary</span></a><span class="punctuation">)</span>
+</code></pre>
+
+        </div>
+            <div class="sidepane narrow-scrollbars">
+                
+        <div class="pagemenu">
+            <h3>On This Page</h3>
+                <ul class="pagetree">
+                </ul>
+        </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <a class="footer-button" href="helpers.html">
+            <p>Previous</p>
+            <p>« Helpers</p>
+        </a>
+            <div class="footer-text">
+                <p>Copyright © 2025 Tommi Johtela</p>
+                <p>Generated by 
+                    <a href="https://johtela.github.io/litscript">LiTScript</a>
+                </p>
+            </div>
+            <a class="footer-button" href="../commonmark-tests.html">
+            <p>Next</p>
+            <p>CommonMark Tests »</p>
+        </a>
+        </div>
+    
+        <script src="../dist/normal.js"></script>
+    </body>
+    </html>

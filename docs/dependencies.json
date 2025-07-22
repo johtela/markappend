@@ -1,0 +1,27 @@
+{
+    "src/helpers": {
+        "url": "src/helpers.html",
+        "dependencies": []
+    },
+    "src/parser": {
+        "url": "src/parser.html",
+        "dependencies": [
+            "src/helpers"
+        ]
+    },
+    "src/commonmark": {
+        "url": "src/commonmark.html",
+        "dependencies": [
+            "litscript/lib/src/custom-elem",
+            "src/helpers",
+            "src/parser",
+            "src/commonmark.css"
+        ]
+    },
+    "litscript/lib/src/custom-elem": {
+        "dependencies": []
+    },
+    "src/commonmark.css": {
+        "dependencies": []
+    }
+}

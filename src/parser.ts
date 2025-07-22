@@ -262,16 +262,17 @@ function regexpFor(parsers: Parser[], sticky: boolean): RegExp {
     return new RegExp(re, sticky ? "yuis" : "guis")
 }
 /**
- * Construct an "open-close" regexp for a pair of input regexps. The result is a 
- * regexp that matches the `open` regexp with the same named group, and 
- * similarily the `close` regexp.
+ * Constructs a regular expression that matches either an "open" or "close" 
+ * pattern. The resulting RegExp has two named groups: "open" and "close", 
+ * corresponding to the provided patterns. This is useful for finding matching 
+ * pairs (e.g., brackets or delimiters).
  */
 function openCloseRegexp(open: string, close: string): RegExp {
     return new RegExp(`(?<open>${open})|(?<close>${close})`, "guis")
 }
 /**
- * Execute the given regexp and return its groups, if it matches the current
- * state.
+ * Execute the given regexp and return its match groups, if it matches the 
+ * current input. Advance the `nextIndex` if match is found.
  */
 function parseRegExp(state: ParserState, regexp: RegExp): 
     RegExpExecArray | null {
@@ -314,16 +315,26 @@ function parseNext(regexp: RegExp, parsers: Parser[], state: ParserState,
 /**
  * ## Reusable Regular Expressions
  *
- * Common RegExp fragments used throughout the parser:
+ * Here are RegExp fragments used throughout the parser:
  *
- * - `wsOrPunct`: Matches whitespace, punctuation, or symbol characters 
- *   (Unicode-aware).
- * - `emOrStrong`: Matches one or two consecutive `_` or `*` characters, for 
- *   emphasis and strong emphasis.
- * - `indentedCode`: Matches lines that begin with at least four spaces and/or
- *   a tab, used for indented code blocks.
+ * - `escapes`: Matches Markdown escape sequences (backslash followed by 
+ *   punctuation or newline).
+ * - `entities`: Matches HTML entities and numeric character references.
+ * - `indentedCode`: Matches lines that begin with at least four spaces or a 
+ *   tab (for indented code blocks).
+ * - `indentedCodeOrBlank`: Matches indented code or blank lines.
+ * - `blockQuote`: Matches blockquote markers (`>`).
  * - `nonBlank`: Matches any line containing at least one non-whitespace 
- *   character.
+ *    character.
+ * - `codeSpan`: Matches inline code spans delimited by backticks.
+ * - `emAsterisk` / `emUnderscore`: Matches emphasis and strong emphasis using 
+ *   `*` or `_`.
+ * - `linkLabel`, `linkDest`, `linkTitle`: Match link label, destination, and 
+ *   title for Markdown links.
+ * - `linkTextOpen`, `imageTextOpen`, `linkOrImageTextOpen`, 
+ *    `linkOrImageTextClose`: Match opening/closing brackets for links/images.
+ * - `autoLink`, `emailAutoLink`: Match autolinks and email autolinks.
+ * - `rawHtml`: Matches raw HTML tags and their content.
  */
 const escapes = /\\(?<esc>[!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~\n])/guis
 const entities = /(?<entity>&(?:[a-z]\w*|#\d{1,7}|#[Xx][\da-f]{1,6});)/.source
@@ -348,7 +359,13 @@ const collapsedReferenceLink = /(?![(:])(?:\[\])?/yuis
 const autoLink = /<(?<autolink>[a-z][\w\-+.]{1,31}:[^\x00-\x1F\x7F <>]*)>/.source
 const emailAutoLink = /<(?<email>[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/.source
 const rawHtml = /(?<tagstart><(?<tag>[a-z][a-z0-9\-]*)(?:\s+[a-z:_][\w.:\-]*\s*(?:=\s*"[^"]*"|=\s*'[^']*'|=[^\s"'=<>`]+)?)*\s*)(?<tagend>\/?>)(?:(?<innerhtml>.*)<\/\k<tag>\s*>)?/.source
-
+/**
+ * Link references can span multiple lines. Since the block parser reads input
+ * line-by-line, we need an expression automaton to track the parser state. 
+ * There are three sub-automata that parse thelink label, link destination and 
+ * the optional title. The states and transitions of the automata are defined 
+ * below.
+ */
 const linkLabelAuto = ExpAuto.create(1,
     (start, label, accept) => [
         [start, / {0,3}\[/, label],
@@ -374,6 +391,10 @@ const linkTitleAuto = ExpAuto.create(3,
         [parens, /(?<!\\)\)\s*$/, accept],
         [start, /(?!["'(])|^/, accept]
     ])
+/**
+ * Now we can construct the combined automaton for link references by 
+ * concatenating the three automata above.
+ */
 const linkRef = ExpAuto.concat(linkLabelAuto, linkDestAuto, linkTitleAuto)
 /**
  * ## Inline Parsers
@@ -392,13 +413,11 @@ function flushInline(state: ParserState, index?: number) {
     }
 }
 /**
- * Finds the end of an inline element based on regexps that open and close the
- * element. This is similar to a matching paren algorithm which find the closing
- * parenthesis for when an open parenthesis is located. The state given as 
- * argument is pointing past of the opening string. The function returns a tuple
- * whose first item is the index of the closing string and second item is the 
- * index after the closing string. If the closing string is not found, 
- * `undefined` is returned.
+ * Finds the closing delimiter for an inline element using opening and closing 
+ * regex patterns. This works like a parenthesis-matching algorithm: starting 
+ * just after the opening delimiter, it searches for the corresponding closing 
+ * delimiter, correctly handling nested pairs. Returns the RegExpExecArray for 
+ * the closing match, or `undefined` if no closing delimiter is found.
  */
 function findClosingIndex(input: string, index: number, openClose: RegExp,
     allowedOpen: string): RegExpExecArray | undefined {
@@ -438,8 +457,9 @@ function emOrStrong(regexp: string) {
 }
 /**
  * ### Links
- * 
- * Output link.
+ *
+ * Creates an HTML anchor element for a Markdown link, sets its href and title,
+ * parses and appends the link text as inline content, and returns the anchor.
  */
 function outputLink(state: ParserState, linktext: string, linkdest?: string, 
     linktitle?: string): HTMLAnchorElement {
@@ -454,7 +474,9 @@ function outputLink(state: ParserState, linktext: string, linkdest?: string,
     return anchor
 }
 /**
- * Output reference link.
+ * Output a reference-style link. If the reference is defined, creates an anchor 
+ * with the destination and title. Otherwise, creates a placeholder anchor and 
+ * stores it for later resolution.
  */
 function outputReferenceLink(state: ParserState, linklabel: string, 
     linktext: string) {
@@ -471,7 +493,8 @@ function outputReferenceLink(state: ParserState, linklabel: string,
 /**
  * ### Images
  * 
- * Output link.
+ * Creates an `<img>` element with the given alt text, src, and optional title, 
+ * and appends it to the current block.
  */
 function outputImage(state: ParserState, description: string, imgsrc?: string, 
     imgtitle?: string): HTMLImageElement {
@@ -485,7 +508,9 @@ function outputImage(state: ParserState, description: string, imgsrc?: string,
     return image
 }
 /**
- * Output reference link.
+ * Output a reference-style image. If the reference is defined, creates an 
+ * `<img>` with src and title; otherwise, creates a placeholder image and stores 
+ * it for later resolution.
  */
 function outputReferenceImage(state: ParserState, imglabel: string, 
     description: string) {
@@ -500,25 +525,28 @@ function outputReferenceImage(state: ParserState, imglabel: string,
     }
 }
 /**
- * Escape all bacslash characters in a string.
+ * Remove backslashes from escaped characters in a string.
  */
 function replaceEscapes(text?: string): string | undefined {
     return text?.replaceAll(escapes, str => str[1])
 }
 /**
  * An array of inline Markdown parsers, each responsible for handling a specific
- * inline syntax element. Each paser is defined with a matching regular 
+ * inline syntax element. Each parser is defined with a matching regular 
  * expression and a matcher function that processes the matched content and 
  * updates the parser state accordingly.
  *
  * The supported inline elements include:
  * - Escapes: Handles backslash-escaped characters and line breaks.
+ * - Entities: Handles HTML entities and numeric character references.
  * - Code Spans: Handles inline code delimited by backticks.
- * - Links: Parses standard Markdown links of the form `[text](url)`.
- * - Images: Parses image syntax `![alt](src)`.
+ * - Links: Parses Markdown links of the form `[text](url)` and reference-style 
+ *   links.
+ * - Images: Parses image syntax `![alt](src)` and reference-style images.
+ * - Autolinks: Handles automatic links and email autolinks.
  * - Emphasis & Strong: Handles emphasis (`*` or `_`) and strong emphasis 
  *   (`**` or `__`).
- * - Raw HTML: Passes through raw HTML tags.
+ * - Raw HTML: Passes through raw HTML tags and optionally parses inner content.
  */
 const inlineParsers = [
     parser(
@@ -575,11 +603,12 @@ const inlineParsers = [
         /**
          * ### Links
          *
-         * Handles Markdown links in the format `[text](url)`. This 
-         * implementation focuses on the most common use case and does not
-         * support reference-style or nested links, in line with the goal of 
-         * simplicity. Escaped brackets and parentheses are unescaped in both 
-         * the link text and destination.
+         * Handles Markdown links in the format `[text](url)` as well as 
+         * reference-style links. This parser supports inline links, full 
+         * reference links, and collapsed reference links. Escaped brackets and 
+         * parentheses are unescaped in both the link text and destination. If a 
+         * reference is not defined, a placeholder anchor is created for later 
+         * resolution.
          */
         (state, match) => {
             let close = findClosingIndex(state.input, state.nextIndex,
@@ -618,10 +647,12 @@ const inlineParsers = [
         /**
          * ### Images
          *
-         * Handles Markdown image syntax of the form `![alt](src)`. This parser 
-         * extracts the alt text and image source, unescapes any escaped 
-         * brackets or parentheses, and creates an `<img>` element with the 
-         * appropriate `alt` and `src` attributes.
+         * Handles Markdown image syntax of the form `![alt](src)` and 
+         * reference-style images. This parser extracts the alt text and image 
+         * source, unescapes any escaped brackets or parentheses, and creates an 
+         * `<img>` element with the appropriate `alt`, `src`, and optional 
+         * `title` attributes. If a reference is not defined, a placeholder 
+         * image is created for later resolution.
          */
         (state, match) => {
             let close = findClosingIndex(state.input, state.nextIndex,
@@ -659,8 +690,10 @@ const inlineParsers = [
     parser(
         /**
          * ### Autolinks
-         * 
-         * TODO: Explain.
+         *
+         * Matches automatic links in the form `<scheme:...>`, where `scheme` is 
+         * a valid URI scheme. Creates an anchor (`<a>`) element with the 
+         * matched URL as both the href and text content.
          */
         (state, match) => {
             let { autolink } = match.groups!
@@ -670,7 +703,11 @@ const inlineParsers = [
         }, autoLink),
     parser(
         /**
-         * Email autolink.
+         * ### Email Autolinks
+         *
+         * Matches email addresses enclosed in angle brackets and creates a
+         * mailto link (`<a href="mailto:...">`). The email address is used
+         * as both the link text and the mailto target.
          */
         (state, match) => {
             let { email } = match.groups!
@@ -722,15 +759,17 @@ function inlines(state: ParserState) {
 /**
  * ## Block Parsers
  * 
- * Block parsers are defined similarly to inline parsers, each with a regular 
- * expression and a matcher function. Block-level elements are parsed 
- * line-by-line, as blocks have a nested, hierarchical structure. The combined 
- * regular expression matches block prefixes that indicate different block 
- * types.
+ * Block parsers match block-level Markdown elements using regular expressions 
+ * and associated matcher functions. Each block parser processes one line at a 
+ * time, handling elements like headings, lists, code blocks, block quotes, and 
+ * paragraphs.
  *
  * ### Lists
  * 
- * Open a list or list item.
+ * The function below opens a new list or list item block when a list marker is 
+ * detected. It determines the correct list type (`<ul>` or `<ol>`), manages 
+ * continuation and tight/loose list logic, and updates the parser state 
+ * accordingly.
  */
 function openList(state: ParserState, match: RegExpExecArray, bulletsep: string, 
     bulletno?: string) {
@@ -794,9 +833,11 @@ function closeListItem(state: ParserState, block: DocumentBlock) {
     }
 }
 /**
- * ### Closing Fenced Code block
- * 
- * Trim empty lines and skip the end marker if present.
+ * ### Closing Fenced Code Block
+ *
+ * This function trims empty lines from the fenced code block and advances the 
+ * parser past the closing fence marker (e.g., ``` or ~~~) if present at the 
+ * current position.
  */
 function closeFencedCodeBlock(state: ParserState, block: DocumentBlock) {
     trimBlock(state, block)
@@ -829,11 +870,9 @@ function closeLinkRef(state: ParserState, block: DocumentBlock) {
     terminateLinkRef(state, block)
 }
 /**
- * Closing a link reference block succesfully extracts the link label, 
- * destination, and optional title and stores them to parser state record and
- * fills them in any links with the same label, if such exist. 
- * 
- * Finally, we must remember reinitialize the automaton.
+ * Handles the closure of a link reference block. Extracts the link label, 
+ * destination, and optional title, stores them in the parser state, and updates 
+ * any unresolved links or images with the same label.
  */
 function terminateLinkRef(state: ParserState, block: DocumentBlock) {
     if (linkRef.accepted) {
@@ -870,7 +909,10 @@ function terminateLinkRef(state: ParserState, block: DocumentBlock) {
 /**
  * ### Opening a Paragraph
  * 
- * Open a paragraph if the last block is not already one.
+ * A sequence of non-blank lines that cannot be interpreted as other kinds of 
+ * blocks forms a paragraph.
+ * 
+ * The function below opens a paragraph if the last block is not already one.
  */
 function openParagraph(state: ParserState) {
     if (!lastBlockIsParagraph(state)) {
@@ -879,7 +921,11 @@ function openParagraph(state: ParserState) {
     }
 }
 /**
- * Parsers are defined here.
+ * The following array contains all block-level Markdown parsers. Each parser is 
+ * defined with a regular expression and a matcher function that processes the 
+ * matched block element. Supported block elements include headings, thematic 
+ * breaks, code blocks, HTML blocks, block quotes, lists, link references, and 
+ * paragraphs.
  */
 const blockParsers = [
     parser(
@@ -969,8 +1015,13 @@ const blockParsers = [
     parser(
         /**
          * ### Fenced Code Blocks
-         * 
-         * TODO: Explain what the function below does.
+         *
+         * Matches fenced code blocks delimited by three or more backticks 
+         * (`` ``` ``)  or tildes (`~~~`). Optionally captures the language 
+         * identifier after the opening fence. Opens a `<pre><code>` block, sets 
+         * the language class if specified, and collects all lines until a 
+         * closing fence of the same type and length is found. Trims empty lines 
+         * and advances past the closing fence when the block ends.
          */
         (state, match) => {
             let { codefence, codelang } = match.groups!
@@ -1028,8 +1079,11 @@ const blockParsers = [
     parser(
         /**
          * ### Block Quotes
-         * 
-         * TODO: Explain.
+         *
+         * Matches blockquote markers (`>`), following CommonMark rules.
+         * When a blockquote is detected, interrupts any open paragraph,
+         * then opens a new `<blockquote>` block. The continuation regexp
+         * ensures subsequent lines starting with `>` are included in the block.
          */
         (state,) => {
             interruptParagraph(state)
@@ -1056,8 +1110,11 @@ const blockParsers = [
     parser(
         /**
          * ### Link References
-         * 
-         * TODO: Explain.
+         *
+         * Matches link reference definitions, e.g. `[label]: <url> "title"`.
+         * using the expression automaton defined above. If a valid link 
+         * reference is found, it is stored in the parser state. Otherwise, the 
+         * line is treated as a paragraph.
          */
         (state, match) => {
             if (!lastBlockIsParagraph(state)) {
@@ -1079,14 +1136,7 @@ const blockParsers = [
             state.nextIndex = match.index
         },
         linkRef.startRegExp),
-    parser(
-        /**
-         * ### Paragraphs
-         * 
-         * A sequence of non-blank lines that cannot be interpreted as other 
-         * kinds of blocks forms a paragraph.
-         */
-        openParagraph, nonBlank.source)
+    parser(openParagraph, nonBlank.source)
 ]
 /**
  * The combined regexp for all block parsers.

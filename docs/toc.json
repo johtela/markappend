@@ -1,0 +1,32 @@
+[
+    {
+        "page": "Home",
+        "file": "README.html",
+        "desc": "Start here",
+        "bullet": "🏠"
+    },
+    {
+        "page": "Parser",
+        "file": "src/parser.html",
+        "desc": "Parser implementation",
+        "bullet": "👀"
+    },
+    {
+        "page": "Helpers",
+        "file": "src/helpers.html",
+        "desc": "Helper code",
+        "bullet": "🧰"
+    },
+    {
+        "page": "Testers",
+        "file": "src/commonmark.html",
+        "desc": "CommonMark tester components",
+        "bullet": "🧪"
+    },
+    {
+        "page": "CommonMark Tests",
+        "file": "commonmark-tests.html",
+        "desc": "CommonMark test suite",
+        "bullet": "M⇩"
+    }
+]

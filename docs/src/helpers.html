@@ -1,0 +1,621 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>
+            MarkAppend - Helpers
+        </title>
+        <link rel="icon" type="image/icon" href="../images/favicon.svg" />
+        <link rel="stylesheet" href="../dist/normal.css" />
+        
+    </head>
+    <body data-syntax-highlight="monokai"
+        data-theme="purple-rain">
+        
+        <div id="navbar">
+            
+    <div class="navmenu ">
+        
+    <div class="navitem " >
+        <a class="title enabled" href="../index.html" >
+            <img src="../images/favicon.svg" />
+            <span>MarkAppend</span>
+        </a>
+        
+    </div>
+    <div class="navitem " >
+        <a class="enabled" href="https://www.npmjs.com/package/markappend" >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-npm" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M1 8h22v7h-12v2h-4v-2h-6z" />
+            <path d="M7 8v7" />
+            <path d="M14 8v7" />
+            <path d="M17 11v4" />
+            <path d="M4 11v4" />
+            <path d="M11 11v1" />
+            <path d="M20 11v4" />
+        </svg>
+            <span>Download</span>
+        </a>
+        
+    </div>
+    <div class="navitem " >
+        <a class="enabled" href="https://github.com/johtela/markappend" >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+        </svg>
+            <span>GitHub</span>
+        </a>
+        
+    </div>
+    <div class="navitem " >
+        <a   >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-caret-down" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M6 10l6 6l6 -6h-12" />
+        </svg>
+            <span>Syntax Highlight</span>
+        </a>
+        
+    <div class="navmenu toggle">
+        
+    <div class="navitem " id="coding-horror">
+        <a   onclick="document.body.syntaxHighlight('coding-horror')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Coding Horror</span>
+        </a>
+        
+    </div>
+    <div class="navitem active" id="monokai">
+        <a   onclick="document.body.syntaxHighlight('monokai')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Monokai</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="solarized-light">
+        <a   onclick="document.body.syntaxHighlight('solarized-light')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Solarized Light</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="son-of-obsidian">
+        <a   onclick="document.body.syntaxHighlight('son-of-obsidian')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-palette" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+            <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+            <span>Son of Obsidian</span>
+        </a>
+        
+    </div>
+    </div>
+    </div>
+    <div class="navitem " >
+        <a   >
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-caret-down" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M6 10l6 6l6 -6h-12" />
+        </svg>
+            <span>Theme</span>
+        </a>
+        
+    <div class="navmenu toggle">
+        
+    <div class="navitem " id="blueberry">
+        <a   onclick="document.body.theme('blueberry')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Blueberry</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="book-cover">
+        <a   onclick="document.body.theme('book-cover')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Book Cover</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="brownie">
+        <a   onclick="document.body.theme('brownie')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Brownie</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="camouflage">
+        <a   onclick="document.body.theme('camouflage')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Camouflage</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="chocolate">
+        <a   onclick="document.body.theme('chocolate')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Chocolate</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="greyhound">
+        <a   onclick="document.body.theme('greyhound')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Greyhound</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="ice-age">
+        <a   onclick="document.body.theme('ice-age')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Ice Age</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="mustard">
+        <a   onclick="document.body.theme('mustard')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Mustard</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="peachy">
+        <a   onclick="document.body.theme('peachy')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Peachy</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="red-alert">
+        <a   onclick="document.body.theme('red-alert')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Red Alert</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="ultra-violet">
+        <a   onclick="document.body.theme('ultra-violet')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Ultra Violet</span>
+        </a>
+        
+    </div>
+    <div class="navitem " id="vintage">
+        <a   onclick="document.body.theme('vintage')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paint" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+            <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+            <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+        </svg>
+            <span>Vintage</span>
+        </a>
+        
+    </div>
+    </div>
+    </div>
+    </div>
+            
+    <a class="hamburger">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </a>
+        </div>
+        
+        <div class="layout">
+            <div class="sidepane narrow-scrollbars">
+                
+        <div class="tocmenu">
+            <h3>Table of Contents</h3>
+            
+    <ul>
+        
+    <li>
+        <a href="../README.html"><span>🏠</span><span data-toggle="tooltip" data-title="Start here">
+            Home
+        </span></a>
+    </li>
+    <li>
+        <a href="parser.html"><span>👀</span><span data-toggle="tooltip" data-title="Parser implementation">
+            Parser
+        </span></a>
+    </li>
+    <li>
+        <a href="helpers.html" class="highlight"><span>🧰</span><span data-toggle="tooltip" data-title="Helper code">
+            Helpers
+        </span></a>
+    </li>
+    <li>
+        <a href="commonmark.html"><span>🧪</span><span data-toggle="tooltip" data-title="CommonMark tester components">
+            Testers
+        </span></a>
+    </li>
+    <li>
+        <a href="../commonmark-tests.html"><span>M⇩</span><span data-toggle="tooltip" data-title="CommonMark test suite">
+            CommonMark Tests
+        </span></a>
+    </li>
+    </ul>
+        </div>
+                <div class="toc-button"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevrons-right" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M7 7l5 5l-5 5" />
+            <path d="M13 7l5 5l-5 5" />
+        </svg></div>
+            </div>
+            
+        <div class="contentarea closepopups">
+            <h1 id="helper-code">Helper Code</h1>
+<p>Helper functions for creating DOM elements.</p>
+<p>The <code>elem</code> function creates an HTML element of the specified <code>tag</code> type.
+Optionally, any number of child nodes can be appended to the created element.
+This provides a convenient way to construct DOM trees.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">function</span> <span id="0" class="member" data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span><span class="punctuation">&lt;</span><span id="325" class="typename" data-toggle="tooltip" data-title="K">K</span> <span class="keyword">extends</span> <span class="keyword">keyof</span> <span class="typename" data-toggle="tooltip" data-title="HTMLElementTagNameMap">HTMLElementTagNameMap</span><span class="punctuation">&gt;</span><span class="punctuation">(</span><span id="364" data-toggle="tooltip" data-title="K">tag</span><span class="punctuation">:</span> <a href="helpers.html#325"><span class="typename" data-toggle="tooltip" data-title="K">K</span></a><span class="punctuation">,</span> 
+    <span class="punctuation">...</span><span id="371" data-toggle="tooltip" data-title="Node[]">children</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="Node">Node</span><span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="HTMLElementTagNameMap">HTMLElementTagNameMap</span><span class="punctuation">[</span><a href="helpers.html#325"><span class="typename" data-toggle="tooltip" data-title="K">K</span></a><span class="punctuation">]</span> <span class="punctuation">{</span>
+    <span class="keyword">let</span> <span id="435" data-toggle="tooltip" data-title="HTMLElementTagNameMap[K]">res</span> <span class="punctuation">=</span> <span data-toggle="tooltip" data-title="Document">document</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="{ &lt;K extends keyof HTMLElementTagNameMap&gt;(tagName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K]; &lt;K extends keyof HTMLElementDeprecatedTagNameMap&gt;(tagName: K, options?: ElementCreationOptions): HTMLElementDeprecatedTagNameMap[K]; (tagName: string, options?: ElementCreationOptions): HTMLElement; }">createElement</span><span class="punctuation">(</span><a href="helpers.html#364"><span data-toggle="tooltip" data-title="K">tag</span></a><span class="punctuation">)</span>
+    <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#371"><span data-toggle="tooltip" data-title="Node[]">children</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span> <span class="punctuation">&gt;</span> <span class="number">0</span><span class="punctuation">)</span>
+        <a href="helpers.html#435"><span data-toggle="tooltip" data-title="HTMLElement | HTMLCanvasElement | HTMLImageElement | HTMLVideoElement | HTMLAnchorElement | ... 57 more ... | HTMLUListElement">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...nodes: (Node | string)[]) =&gt; void">append</span><span class="punctuation">(</span><span class="punctuation">...</span><a href="helpers.html#371"><span data-toggle="tooltip" data-title="Node[]">children</span></a><span class="punctuation">)</span>
+    <span class="keyword">return</span> <a href="helpers.html#435"><span data-toggle="tooltip" data-title="HTMLElementTagNameMap[K]">res</span></a>
+<span class="punctuation">}</span>
+</code></pre>
+<p>Creates a text node containing the specified string data.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">function</span> <span id="551" class="member" data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span><span class="punctuation">(</span><span id="646" data-toggle="tooltip" data-title="string">data</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="Text">Text</span> <span class="punctuation">{</span>
+    <span class="keyword">return</span> <span data-toggle="tooltip" data-title="Document">document</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(data: string) =&gt; Text">createTextNode</span><span class="punctuation">(</span><a href="helpers.html#646"><span data-toggle="tooltip" data-title="string">data</span></a><span class="punctuation">)</span>
+<span class="punctuation">}</span>
+</code></pre>
+<p>This function replaces all whitespace characters in the given string
+with visible Unicode symbols for easier debugging of test output.</p>
+<ul>
+<li>Tabs (&quot;\t&quot;) are replaced with &quot;⇥&quot;</li>
+<li>Newlines (&quot;\n&quot;) are replaced with &quot;↩&quot;</li>
+<li>Spaces (&quot; &quot;) are replaced with &quot;␣&quot;</li>
+</ul>
+<p>Other whitespace characters are left unchanged.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">function</span> <span id="712" class="member" data-toggle="tooltip" data-title="(value: string) =&gt; Node[]">highlightWs</span><span class="punctuation">(</span><span id="1082" data-toggle="tooltip" data-title="string">value</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="Node">Node</span><span class="punctuation">[</span><span class="punctuation">]</span> <span class="punctuation">{</span>
+    <span class="keyword">let</span> <span id="1115" data-toggle="tooltip" data-title="Node[]">res</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="Node">Node</span><span class="punctuation">[</span><span class="punctuation">]</span> <span class="punctuation">=</span> <span class="punctuation">[</span><span class="punctuation">]</span>
+    <span class="keyword">let</span> <span id="1141" data-toggle="tooltip" data-title="RegExp">ws</span> <span class="punctuation">=</span> <span class="string">/\s/g</span>
+    <span class="keyword">let</span> <span id="1161" data-toggle="tooltip" data-title="number">pos</span> <span class="punctuation">=</span> <span class="number">0</span>
+    <span class="keyword">let</span> <span id="1178" data-toggle="tooltip" data-title="RegExpExecArray | null">match</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="RegExpExecArray">RegExpExecArray</span> <span class="punctuation">|</span> <span class="keyword">null</span>
+    <span class="keyword">while</span> <span class="punctuation">(</span><a href="helpers.html#1178"><span data-toggle="tooltip" data-title="RegExpExecArray | null">match</span></a> <span class="punctuation">=</span> <a href="helpers.html#1141"><span data-toggle="tooltip" data-title="RegExp">ws</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(string: string) =&gt; RegExpExecArray | null">exec</span><span class="punctuation">(</span><a href="helpers.html#1082"><span data-toggle="tooltip" data-title="string">value</span></a><span class="punctuation">)</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#1161"><span data-toggle="tooltip" data-title="number">pos</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#1178"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">index</span><span class="punctuation">)</span>
+            <a href="helpers.html#1115"><span data-toggle="tooltip" data-title="Node[]">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: Node[]) =&gt; number">push</span><span class="punctuation">(</span><a href="helpers.html#551"><span class="member" data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="helpers.html#1082"><span data-toggle="tooltip" data-title="string">value</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(start: number, end?: number) =&gt; string">substring</span><span class="punctuation">(</span><a href="helpers.html#1161"><span data-toggle="tooltip" data-title="number">pos</span></a><span class="punctuation">,</span> <a href="helpers.html#1178"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">index</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span>
+        <a href="helpers.html#1161"><span data-toggle="tooltip" data-title="number">pos</span></a> <span class="punctuation">=</span> <a href="helpers.html#1178"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">index</span> <span class="punctuation">+</span> <a href="helpers.html#1178"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span>
+        <span class="keyword">let</span> <span id="1399" data-toggle="tooltip" data-title="HTMLSpanElement">span</span> <span class="punctuation">=</span> <a href="helpers.html#0"><span class="member" data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;span&#039;</span><span class="punctuation">,</span> <a href="helpers.html#551"><span class="member" data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="helpers.html#1595"><span class="member" data-toggle="tooltip" data-title="(ch: string) =&gt; string">wsText</span></a><span class="punctuation">(</span><a href="helpers.html#1178"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span>
+        <a href="helpers.html#1399"><span data-toggle="tooltip" data-title="HTMLSpanElement">span</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">className</span> <span class="punctuation">=</span> <span class="string">&quot;ws&quot;</span>
+        <a href="helpers.html#1115"><span data-toggle="tooltip" data-title="Node[]">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: Node[]) =&gt; number">push</span><span class="punctuation">(</span><a href="helpers.html#1399"><span data-toggle="tooltip" data-title="HTMLSpanElement">span</span></a><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+    <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#1161"><span data-toggle="tooltip" data-title="number">pos</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#1082"><span data-toggle="tooltip" data-title="string">value</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">)</span>
+        <a href="helpers.html#1115"><span data-toggle="tooltip" data-title="Node[]">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: Node[]) =&gt; number">push</span><span class="punctuation">(</span><a href="helpers.html#551"><span class="member" data-toggle="tooltip" data-title="(data: string) =&gt; Text">text</span></a><span class="punctuation">(</span><a href="helpers.html#1082"><span data-toggle="tooltip" data-title="string">value</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(start?: number, end?: number) =&gt; string">slice</span><span class="punctuation">(</span><a href="helpers.html#1161"><span data-toggle="tooltip" data-title="number">pos</span></a><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span>
+    <span class="keyword">return</span> <a href="helpers.html#1115"><span data-toggle="tooltip" data-title="Node[]">res</span></a>
+<span class="punctuation">}</span>
+
+<span class="keyword">function</span> <span id="1595" class="member" data-toggle="tooltip" data-title="(ch: string) =&gt; string">wsText</span><span class="punctuation">(</span><span id="1615" data-toggle="tooltip" data-title="string">ch</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="keyword">string</span> <span class="punctuation">{</span>
+    <span class="keyword">let</span> <span id="1645" data-toggle="tooltip" data-title="Element">res</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="Element">Element</span>
+    <span class="keyword">switch</span> <span class="punctuation">(</span><a href="helpers.html#1615"><span data-toggle="tooltip" data-title="string">ch</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">case</span> <span class="string">&quot;\t&quot;</span><span class="punctuation">:</span> <span class="keyword">return</span> <span class="string">&quot;→&quot;</span>
+        <span class="keyword">case</span> <span class="string">&quot;\n&quot;</span><span class="punctuation">:</span> <span class="keyword">return</span> <span class="string">&quot;↩\n&quot;</span>
+        <span class="keyword">case</span> <span class="string">&quot; &quot;</span><span class="punctuation">:</span> <span class="keyword">return</span> <span class="string">&quot;·&quot;</span>
+        <span class="keyword">default</span><span class="punctuation">:</span> <span class="keyword">return</span> <a href="helpers.html#1615"><span data-toggle="tooltip" data-title="string">ch</span></a>
+    <span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+<h2 id="expression-automaton">Expression Automaton</h2>
+<p>From <a href="https://en.wikipedia.org/wiki/Generalized_nondeterministic_finite_automaton">Wikipedia</a>:</p>
+<blockquote>
+<p>In the theory of computation, a <strong>generalized nondeterministic finite
+automaton</strong> (GNFA), also known as an <strong>expression automaton</strong> or a
+<strong>generalized nondeterministic finite state machine</strong>, is a variation of a
+nondeterministic finite automaton (NFA) where each transition is labeled
+with a regular expression. The GNFA reads blocks of symbols from the input
+that match the regular expression on the transition. There are several
+differences between a standard finite state machine and a generalized
+nondeterministic finite state machine. A GNFA must have only one start
+state and one accept state, and these cannot be the same state, whereas an
+NFA or DFA may have multiple accept states, and the start state can also
+be an accept state. A GNFA must have only one transition between any two
+states, whereas an NFA or DFA can have multiple transitions between states.
+In a GNFA, each state has a single transition to every other state in the
+machine, although it is common to omit transitions labeled with the empty
+set when drawing generalized nondeterministic finite state machines.</p>
+</blockquote>
+<p>For brevity, we refer to the GNFA as an &quot;expression automaton&quot; and use it to
+match complex regular expressions step-by-step, in phases. This approach
+helps us construct block parsers whose continuation regular expressions can
+change as more lines are read.</p>
+<p>States in an expression automaton is a list of outgoing transitions.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">type</span> <span id="1809" class="typename" data-toggle="tooltip" data-title="State">State</span> <span class="punctuation">=</span> <a href="helpers.html#3544"><span class="typename" data-toggle="tooltip" data-title="Transition">Transition</span></a><span class="punctuation">[</span><span class="punctuation">]</span>
+</code></pre>
+<p>A transition consist of the regexp that allows it to be taken and the next
+state.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">interface</span> <span id="3544" class="typename" data-toggle="tooltip" data-title="Transition">Transition</span> <span class="punctuation">{</span>
+    <span id="3676" data-toggle="tooltip" data-title="RegExp">regexp</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="RegExp">RegExp</span>
+    <span id="3696" data-toggle="tooltip" data-title="State">target</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a> 
+    <span id="3715" data-toggle="tooltip" data-title="string | undefined">group</span><span class="punctuation">?</span><span class="punctuation">:</span> <span class="keyword">string</span>
+<span class="punctuation">}</span>
+</code></pre>
+<p>Transitions are created in the initialization callback given as argument to
+the AutoExp constructor.</p>
+<p>The first argument is the source state, then comes the regexp that allows the
+transition, and last the target state.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">function</span> <span id="3739" class="member" data-toggle="tooltip" data-title="(source: State, regexp: string | RegExp, target: State, group?: string) =&gt; Transition">transition</span><span class="punctuation">(</span><span id="4022" data-toggle="tooltip" data-title="State">source</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">,</span> <span id="4036" data-toggle="tooltip" data-title="string | RegExp">regexp</span><span class="punctuation">:</span> <span class="keyword">string</span> <span class="punctuation">|</span> <span class="typename" data-toggle="tooltip" data-title="RegExp">RegExp</span><span class="punctuation">,</span> 
+    <span id="4061" data-toggle="tooltip" data-title="State">target</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">,</span> <span id="4082" data-toggle="tooltip" data-title="string | undefined">group</span><span class="punctuation">?</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">)</span><span class="punctuation">:</span> <a href="helpers.html#3544"><span class="typename" data-toggle="tooltip" data-title="Transition">Transition</span></a> <span class="punctuation">{</span>
+    <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#4022"><span data-toggle="tooltip" data-title="State">source</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="{ &lt;S extends Transition&gt;(predicate: (value: Transition, index: number, obj: Transition[]) =&gt; value is S, thisArg?: any): S | undefined; (predicate: (value: Transition, index: number, obj: Transition[]) =&gt; unknown, thisArg?: any): Transition | undefined; }">find</span><span class="punctuation">(</span><span id="4134" data-toggle="tooltip" data-title="Transition">tr</span> <span class="punctuation">=&gt;</span> <a href="helpers.html#4134"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3696"><span data-toggle="tooltip" data-title="State">target</span></a> <span class="punctuation">==</span> <a href="helpers.html#4061"><span data-toggle="tooltip" data-title="State">target</span></a><span class="punctuation">)</span><span class="punctuation">)</span>
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="typename" data-toggle="tooltip" data-title="ErrorConstructor">Error</span><span class="punctuation">(</span><span class="string">&quot;Transition between source and target already exist&quot;</span><span class="punctuation">)</span>
+    <span class="keyword">let</span> <span id="4249" data-toggle="tooltip" data-title="{ regexp: RegExp; target: State; group: string | undefined; }">res</span> <span class="punctuation">=</span> <span class="punctuation">{</span> <span id="4257" data-toggle="tooltip" data-title="RegExp">regexp</span><span class="punctuation">:</span> <span class="keyword">new</span> <span class="typename" data-toggle="tooltip" data-title="RegExpConstructor">RegExp</span><span class="punctuation">(</span><a href="helpers.html#4036"><span data-toggle="tooltip" data-title="string | RegExp">regexp</span></a><span class="punctuation">,</span> <span class="string">&quot;yui&quot;</span><span class="punctuation">)</span><span class="punctuation">,</span> <span id="4292" data-toggle="tooltip" data-title="State">target</span><span class="punctuation">,</span> <span id="4300" data-toggle="tooltip" data-title="string | undefined">group</span> <span class="punctuation">}</span>
+    <a href="helpers.html#4022"><span data-toggle="tooltip" data-title="State">source</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: Transition[]) =&gt; number">push</span><span class="punctuation">(</span><a href="helpers.html#4249"><span data-toggle="tooltip" data-title="{ regexp: RegExp; target: State; group: string | undefined; }">res</span></a><span class="punctuation">)</span>
+    <span class="keyword">return</span> <a href="helpers.html#4249"><span data-toggle="tooltip" data-title="{ regexp: RegExp; target: State; group: string | undefined; }">res</span></a>
+<span class="punctuation">}</span>
+</code></pre>
+<p>The expression automaton consists of states and transitions. The start and
+accept states are stored here, as well as the current state.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">class</span> <span id="4349" class="typename" data-toggle="tooltip" data-title="ExpAuto">ExpAuto</span> <span class="punctuation">{</span>
+    <span class="keyword">readonly</span> <span id="4527" data-toggle="tooltip" data-title="State[]">states</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">[</span><span class="punctuation">]</span>
+    <span id="4557" data-toggle="tooltip" data-title="State">start</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a>
+    <span id="4575" data-toggle="tooltip" data-title="State">accept</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a>
+    <span id="4594" data-toggle="tooltip" data-title="Record&lt;string, string&gt;">groups</span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" data-title="Record&lt;K, T&gt;">Record</span><span class="punctuation">&lt;</span><span class="keyword">string</span><span class="punctuation">,</span> <span class="keyword">string</span><span class="punctuation">&gt;</span>
+    <span id="4630" data-toggle="tooltip" data-title="State">current</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a>
+</code></pre>
+<h3 id="creating-an-expression-automaton">Creating an Expression Automaton</h3>
+<p>This is a private constructor that is used for initializing properties.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">private</span> <span class="keyword">constructor</span><span class="punctuation">(</span><span id="4828" data-toggle="tooltip" data-title="State[]">states</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span> <span id="4844" data-toggle="tooltip" data-title="State">start</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">,</span> 
+        <span id="4858" data-toggle="tooltip" data-title="State">accept</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a> <span class="punctuation">=</span> <a href="helpers.html#4828"><span data-toggle="tooltip" data-title="State[]">states</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4557"><span data-toggle="tooltip" data-title="State">start</span></a> <span class="punctuation">=</span> <a href="helpers.html#4844"><span data-toggle="tooltip" data-title="State">start</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a> <span class="punctuation">=</span> <a href="helpers.html#4858"><span data-toggle="tooltip" data-title="State">accept</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4594"><span data-toggle="tooltip" data-title="Record&lt;string, string&gt;">groups</span></a> <span class="punctuation">=</span> <span class="punctuation">{</span><span class="punctuation">}</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4630"><span data-toggle="tooltip" data-title="State">current</span></a> <span class="punctuation">=</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4557"><span data-toggle="tooltip" data-title="State">start</span></a>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>You can create an expression automaton with one call using the method
+below. You specify the number states in the automaton and a list of
+triplets for transitions. The first state provided is the starting state
+and the last is the accept state. You should exclude them from the
+<code>count</code> argument.</p>
+<p>The accept state can never have any outgoing transitions. This condition
+is validated in the constructor.</p>
+<p>A typical usage is shown below. We create 2 states and transitions
+between them.</p>
+
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">let</span> ea = <span class="title class_">ExpAuto</span>.<span class="title function_">create</span>(<span class="number">2</span>, <span class="function">(<span class="params">start, s1, s2, accept</span>) =&gt;</span> [
+    <span class="title function_">transition</span>(start, <span class="string">&quot;.*&quot;</span>, s1),
+    <span class="title function_">transition</span>(s1, <span class="string">&quot;\\s&quot;</span>, s2),
+    <span class="title function_">transition</span>(s2, <span class="string">&quot;$&quot;</span>, accept)])
+</code></pre>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">static</span> <span id="5041" class="member" data-toggle="tooltip" data-title="(count: number, init: (...states: State[]) =&gt; [State, RegExp | string, State, string?][]) =&gt; ExpAuto">create</span><span class="punctuation">(</span><span id="5874" data-toggle="tooltip" data-title="number">count</span><span class="punctuation">:</span> <span class="keyword">number</span><span class="punctuation">,</span> <span id="5888" data-toggle="tooltip" data-title="(...states: State[]) =&gt; [State, RegExp | string, State, string?][]">init</span><span class="punctuation">:</span> <span class="punctuation">(</span><span class="punctuation">...</span><span id="5896" data-toggle="tooltip" data-title="State[]">states</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> 
+        <span class="punctuation">[</span><a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" data-title="RegExp">RegExp</span> <span class="punctuation">|</span> <span class="keyword">string</span><span class="punctuation">,</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">,</span> <span class="keyword">string</span><span class="punctuation">?</span><span class="punctuation">]</span><span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">:</span> <a href="helpers.html#4349"><span class="typename" data-toggle="tooltip" data-title="ExpAuto">ExpAuto</span></a> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="5996" data-toggle="tooltip" data-title="never[][]">states</span> <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" data-title="ArrayConstructor">Array</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="{ &lt;T&gt;(arrayLike: ArrayLike&lt;T&gt;): T[]; &lt;T, U&gt;(arrayLike: ArrayLike&lt;T&gt;, mapfn: (v: T, k: number) =&gt; U, thisArg?: any): U[]; &lt;T&gt;(iterable: Iterable&lt;T&gt; | ArrayLike&lt;T&gt;): T[]; &lt;T, U&gt;(iterable: Iterable&lt;T&gt; | ArrayLike&lt;T&gt;, mapfn: (v: T, k: number) =&gt; U, thisArg?: any): U[]; }">from</span><span class="punctuation">(</span><span class="punctuation">{</span> <span id="6018" data-toggle="tooltip" data-title="number">length</span><span class="punctuation">:</span> <a href="helpers.html#5874"><span data-toggle="tooltip" data-title="number">count</span></a> <span class="punctuation">+</span> <span class="number">2</span> <span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">)</span>
+        <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#5888"><span data-toggle="tooltip" data-title="(...states: State[]) =&gt; [State, RegExp | string, State, string?][]">init</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span> <span class="punctuation">!=</span> <a href="helpers.html#5996"><span data-toggle="tooltip" data-title="never[][]">states</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">)</span>
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="typename" data-toggle="tooltip" data-title="ErrorConstructor">Error</span><span class="punctuation">(</span><span class="string">&quot;Wrong number of arguments for the init function&quot;</span><span class="punctuation">)</span>
+        <span class="keyword">let</span> <span id="6185" data-toggle="tooltip" data-title="[State, string | RegExp, State, (string | undefined)?][]">transitions</span> <span class="punctuation">=</span> <a href="helpers.html#5888"><span data-toggle="tooltip" data-title="(...states: State[]) =&gt; [State, RegExp | string, State, string?][]">init</span></a><span class="punctuation">(</span><span class="punctuation">...</span><a href="helpers.html#5996"><span data-toggle="tooltip" data-title="never[][]">states</span></a><span class="punctuation">)</span>
+        <span class="keyword">let</span> <span id="6228" data-toggle="tooltip" data-title="never[]">start</span> <span class="punctuation">=</span> <a href="helpers.html#5996"><span data-toggle="tooltip" data-title="never[][]">states</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span>
+        <span class="keyword">let</span> <span id="6259" data-toggle="tooltip" data-title="never[]">accept</span> <span class="punctuation">=</span> <a href="helpers.html#5996"><span data-toggle="tooltip" data-title="never[][]">states</span></a><span class="punctuation">[</span><a href="helpers.html#5996"><span data-toggle="tooltip" data-title="never[][]">states</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span> <span class="punctuation">-</span> <span class="number">1</span><span class="punctuation">]</span>
+        <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="6312" data-toggle="tooltip" data-title="number">i</span> <span class="punctuation">=</span> <span class="number">0</span><span class="punctuation">;</span> <a href="helpers.html#6312"><span data-toggle="tooltip" data-title="number">i</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#6185"><span data-toggle="tooltip" data-title="[State, string | RegExp, State, (string | undefined)?][]">transitions</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">;</span> <span class="punctuation">++</span><a href="helpers.html#6312"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+            <span class="keyword">let</span> <span class="punctuation">[</span><span id="6369" data-toggle="tooltip" data-title="State">source</span><span class="punctuation">,</span> <span id="6376" data-toggle="tooltip" data-title="string | RegExp">regexp</span><span class="punctuation">,</span> <span id="6384" data-toggle="tooltip" data-title="State">target</span><span class="punctuation">,</span> <span id="6392" data-toggle="tooltip" data-title="string | undefined">group</span><span class="punctuation">]</span> <span class="punctuation">=</span> <a href="helpers.html#6185"><span data-toggle="tooltip" data-title="[State, string | RegExp, State, (string | undefined)?][]">transitions</span></a><span class="punctuation">[</span><a href="helpers.html#6312"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">]</span>
+            <a href="helpers.html#3739"><span class="member" data-toggle="tooltip" data-title="(source: State, regexp: string | RegExp, target: State, group?: string) =&gt; Transition">transition</span></a><span class="punctuation">(</span><a href="helpers.html#6369"><span data-toggle="tooltip" data-title="State">source</span></a><span class="punctuation">,</span> <a href="helpers.html#6376"><span data-toggle="tooltip" data-title="string | RegExp">regexp</span></a><span class="punctuation">,</span> <a href="helpers.html#6384"><span data-toggle="tooltip" data-title="State">target</span></a><span class="punctuation">,</span> <a href="helpers.html#6392"><span data-toggle="tooltip" data-title="string | undefined">group</span></a><span class="punctuation">)</span>
+        <span class="punctuation">}</span>
+        <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#6259"><span data-toggle="tooltip" data-title="never[]">accept</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span> <span class="punctuation">&gt;</span> <span class="number">0</span><span class="punctuation">)</span>
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="typename" data-toggle="tooltip" data-title="ErrorConstructor">Error</span><span class="punctuation">(</span><span class="string">&quot;Accept state cannot have outgoing transitions&quot;</span><span class="punctuation">)</span>
+        <span class="keyword">return</span> <span class="keyword">new</span> <a href="helpers.html#4349"><span class="typename" data-toggle="tooltip" data-title="typeof ExpAuto">ExpAuto</span></a><span class="punctuation">(</span><a href="helpers.html#5996"><span data-toggle="tooltip" data-title="never[][]">states</span></a><span class="punctuation">,</span> <a href="helpers.html#6228"><span data-toggle="tooltip" data-title="never[]">start</span></a><span class="punctuation">,</span> <a href="helpers.html#6259"><span data-toggle="tooltip" data-title="never[]">accept</span></a><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>To (re)initialize an automaton to its starting state, you can call the
+<code>init</code> method.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span id="6650" class="member" data-toggle="tooltip" data-title="() =&gt; void">init</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4630"><span data-toggle="tooltip" data-title="State">current</span></a> <span class="punctuation">=</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4557"><span data-toggle="tooltip" data-title="State">start</span></a>
+        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4594"><span data-toggle="tooltip" data-title="Record&lt;string, string&gt;">groups</span></a> <span class="punctuation">=</span> <span class="punctuation">{</span> <span class="punctuation">}</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>Clone the automaton.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span id="6853" class="member" data-toggle="tooltip" data-title="() =&gt; ExpAuto">clone</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">:</span> <a href="helpers.html#4349"><span class="typename" data-toggle="tooltip" data-title="ExpAuto">ExpAuto</span></a> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="6937" data-toggle="tooltip" data-title="this">obj</span> <span class="punctuation">=</span> <span class="member" data-toggle="tooltip" data-title="&lt;T = any&gt;(value: T, options?: StructuredSerializeOptions) =&gt; T">structuredClone</span><span class="punctuation">(</span><span class="keyword">this</span><span class="punctuation">)</span>
+        <span class="keyword">return</span> <span class="keyword">new</span> <a href="helpers.html#4349"><span class="typename" data-toggle="tooltip" data-title="typeof ExpAuto">ExpAuto</span></a><span class="punctuation">(</span><a href="helpers.html#6937"><span data-toggle="tooltip" data-title="this">obj</span></a><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a><span class="punctuation">,</span> <a href="helpers.html#6937"><span data-toggle="tooltip" data-title="this">obj</span></a><span class="punctuation">.</span><a href="helpers.html#4557"><span data-toggle="tooltip" data-title="State">start</span></a><span class="punctuation">,</span> <a href="helpers.html#6937"><span data-toggle="tooltip" data-title="this">obj</span></a><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<h2 id="executing-the-automaton">Executing the Automaton</h2>
+<p>To advance the automaton, call the <code>exec</code> method with a string and a
+starting position. It returns a tuple: <code>[accepted, newPos]</code>, where
+<code>accepted</code> is <code>true</code> if the automaton reached the accept state or the
+whole input string was consumed. <code>newPos</code> is the position in the string
+after the match attempt. The automaton's current state is updated as it
+processes the input. Use the <code>accepted</code> property to check if the
+automaton is in the accept state after execution.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span id="7035" class="member" data-toggle="tooltip" data-title="(input: string, pos: number, lastInput?: boolean) =&gt; [boolean, number]">exec</span><span class="punctuation">(</span><span id="7633" data-toggle="tooltip" data-title="string">input</span><span class="punctuation">:</span> <span class="keyword">string</span><span class="punctuation">,</span> <span id="7647" data-toggle="tooltip" data-title="number">pos</span><span class="punctuation">:</span> <span class="keyword">number</span><span class="punctuation">,</span> <span id="7660" data-toggle="tooltip" data-title="boolean">lastInput</span> <span class="punctuation">=</span> <span class="keyword">false</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="keyword">boolean</span><span class="punctuation">,</span> <span class="keyword">number</span><span class="punctuation">]</span> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="7713" data-toggle="tooltip" data-title="State">curr</span> <span class="punctuation">=</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4630"><span data-toggle="tooltip" data-title="State">current</span></a>
+        <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#7713"><span data-toggle="tooltip" data-title="State">curr</span></a> <span class="punctuation">==</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a> <span class="punctuation">||</span> <span class="punctuation">(</span><span class="punctuation">!</span><a href="helpers.html#7660"><span data-toggle="tooltip" data-title="boolean">lastInput</span></a> <span class="punctuation">&amp;&amp;</span> <a href="helpers.html#7647"><span data-toggle="tooltip" data-title="number">pos</span></a> <span class="punctuation">&gt;=</span> <a href="helpers.html#7633"><span data-toggle="tooltip" data-title="string">input</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">)</span><span class="punctuation">)</span>
+            <span class="keyword">return</span> <span class="punctuation">[</span><span class="keyword">true</span><span class="punctuation">,</span> <a href="helpers.html#7647"><span data-toggle="tooltip" data-title="number">pos</span></a><span class="punctuation">]</span>
+        <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="7856" data-toggle="tooltip" data-title="number">i</span> <span class="punctuation">=</span> <span class="number">0</span><span class="punctuation">;</span> <a href="helpers.html#7856"><span data-toggle="tooltip" data-title="number">i</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#7713"><span data-toggle="tooltip" data-title="State">curr</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">;</span> <span class="punctuation">++</span><a href="helpers.html#7856"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+            <span class="keyword">let</span> <span id="7904" data-toggle="tooltip" data-title="Transition">tr</span> <span class="punctuation">=</span> <a href="helpers.html#7713"><span data-toggle="tooltip" data-title="State">curr</span></a><span class="punctuation">[</span><a href="helpers.html#7856"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">]</span>
+            <a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3676"><span data-toggle="tooltip" data-title="RegExp">regexp</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">lastIndex</span> <span class="punctuation">=</span> <a href="helpers.html#7647"><span data-toggle="tooltip" data-title="number">pos</span></a>
+            <span class="keyword">let</span> <span id="7973" data-toggle="tooltip" data-title="RegExpExecArray | null">match</span> <span class="punctuation">=</span> <a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3676"><span data-toggle="tooltip" data-title="RegExp">regexp</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(string: string) =&gt; RegExpExecArray | null">exec</span><span class="punctuation">(</span><a href="helpers.html#7633"><span data-toggle="tooltip" data-title="string">input</span></a><span class="punctuation">)</span>
+            <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#7973"><span data-toggle="tooltip" data-title="RegExpExecArray | null">match</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+                <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3715"><span data-toggle="tooltip" data-title="string | undefined">group</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+                    <span class="keyword">let</span> <span id="8087" data-toggle="tooltip" data-title="string">text</span> <span class="punctuation">=</span> <a href="helpers.html#7973"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span>
+                    <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#7973"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">index</span> <span class="punctuation">+</span> <a href="helpers.html#8087"><span data-toggle="tooltip" data-title="string">text</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span> <span class="punctuation">&gt;=</span> <a href="helpers.html#7633"><span data-toggle="tooltip" data-title="string">input</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">)</span>
+                        <a href="helpers.html#8087"><span data-toggle="tooltip" data-title="string">text</span></a> <span class="punctuation">+=</span> <span class="string">&quot;\n&quot;</span>
+                    <span class="keyword">if</span> <span class="punctuation">(</span><span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4594"><span data-toggle="tooltip" data-title="Record&lt;string, string&gt;">groups</span></a><span class="punctuation">[</span><a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3715"><span data-toggle="tooltip" data-title="string">group</span></a><span class="punctuation">]</span><span class="punctuation">)</span> 
+                        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4594"><span data-toggle="tooltip" data-title="Record&lt;string, string&gt;">groups</span></a><span class="punctuation">[</span><a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3715"><span data-toggle="tooltip" data-title="string">group</span></a><span class="punctuation">]</span> <span class="punctuation">+=</span> <a href="helpers.html#8087"><span data-toggle="tooltip" data-title="string">text</span></a>
+                    <span class="keyword">else</span>
+                        <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4594"><span data-toggle="tooltip" data-title="Record&lt;string, string&gt;">groups</span></a><span class="punctuation">[</span><a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3715"><span data-toggle="tooltip" data-title="string">group</span></a><span class="punctuation">]</span> <span class="punctuation">=</span> <a href="helpers.html#8087"><span data-toggle="tooltip" data-title="string">text</span></a>
+                <span class="punctuation">}</span>
+                <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4630"><span data-toggle="tooltip" data-title="State">current</span></a> <span class="punctuation">=</span> <a href="helpers.html#7904"><span data-toggle="tooltip" data-title="Transition">tr</span></a><span class="punctuation">.</span><a href="helpers.html#3696"><span data-toggle="tooltip" data-title="State">target</span></a>
+                <span class="keyword">let</span> <span id="8475" data-toggle="tooltip" data-title="[boolean, number]">res</span> <span class="punctuation">=</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#7035"><span class="member" data-toggle="tooltip" data-title="(input: string, pos: number, lastInput?: boolean) =&gt; [boolean, number]">exec</span></a><span class="punctuation">(</span><a href="helpers.html#7633"><span data-toggle="tooltip" data-title="string">input</span></a><span class="punctuation">,</span> <a href="helpers.html#7973"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">index</span> <span class="punctuation">+</span> <a href="helpers.html#7973"><span data-toggle="tooltip" data-title="RegExpExecArray">match</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">,</span> 
+                    <a href="helpers.html#7660"><span data-toggle="tooltip" data-title="boolean">lastInput</span></a><span class="punctuation">)</span>
+                <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#8475"><span data-toggle="tooltip" data-title="[boolean, number]">res</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span><span class="punctuation">)</span>
+                    <span class="keyword">return</span> <a href="helpers.html#8475"><span data-toggle="tooltip" data-title="[boolean, number]">res</span></a>
+            <span class="punctuation">}</span>
+        <span class="punctuation">}</span>
+        <span class="keyword">return</span> <span class="punctuation">[</span><span class="keyword">false</span><span class="punctuation">,</span> <a href="helpers.html#7647"><span data-toggle="tooltip" data-title="number">pos</span></a><span class="punctuation">]</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>Returns <code>true</code> if the automaton is in the accept state.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">get</span> <span id="8685" class="member" data-toggle="tooltip" data-title="boolean">accepted</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">:</span> <span class="keyword">boolean</span> <span class="punctuation">{</span>
+        <span class="keyword">return</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4630"><span data-toggle="tooltip" data-title="State">current</span></a> <span class="punctuation">==</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a>
+    <span class="punctuation">}</span>
+</code></pre>
+<h2 id="concatenating-automata">Concatenating Automata</h2>
+<p>Since expression automata always have single entry and exit points
+(start &amp; accept states), they can be chained togeter with a transition.
+This creates a new automaton that matches both source automata in
+succession.</p>
+<p>The <code>concat</code> method clones a list of automata, combines their states to
+a single result automaton, and creates an empty transition from previous
+automaton's accept state to the following automaton's start state.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">static</span> <span id="8850" class="member" data-toggle="tooltip" data-title="(...automata: ExpAuto[]) =&gt; ExpAuto">concat</span><span class="punctuation">(</span><span class="punctuation">...</span><span id="9427" data-toggle="tooltip" data-title="ExpAuto[]">automata</span><span class="punctuation">:</span> <a href="helpers.html#4349"><span class="typename" data-toggle="tooltip" data-title="ExpAuto">ExpAuto</span></a><span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">:</span> <a href="helpers.html#4349"><span class="typename" data-toggle="tooltip" data-title="ExpAuto">ExpAuto</span></a> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="9474" data-toggle="tooltip" data-title="ExpAuto">res</span> <span class="punctuation">=</span> <a href="helpers.html#9427"><span data-toggle="tooltip" data-title="ExpAuto[]">automata</span></a><span class="punctuation">[</span><span class="number">0</span><span class="punctuation">]</span><span class="punctuation">.</span><a href="helpers.html#6853"><span class="member" data-toggle="tooltip" data-title="() =&gt; ExpAuto">clone</span></a><span class="punctuation">(</span><span class="punctuation">)</span>
+        <span class="keyword">let</span> <span id="9513" data-toggle="tooltip" data-title="ExpAuto">prev</span> <span class="punctuation">=</span> <a href="helpers.html#9474"><span data-toggle="tooltip" data-title="ExpAuto">res</span></a>
+        <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="9542" data-toggle="tooltip" data-title="number">i</span> <span class="punctuation">=</span> <span class="number">1</span><span class="punctuation">;</span> <a href="helpers.html#9542"><span data-toggle="tooltip" data-title="number">i</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#9427"><span data-toggle="tooltip" data-title="ExpAuto[]">automata</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">;</span> <span class="punctuation">++</span><a href="helpers.html#9542"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+            <span class="keyword">let</span> <span id="9594" data-toggle="tooltip" data-title="ExpAuto">curr</span> <span class="punctuation">=</span> <a href="helpers.html#9542"><span data-toggle="tooltip" data-title="number">i</span></a> <span class="punctuation">==</span> <a href="helpers.html#9427"><span data-toggle="tooltip" data-title="ExpAuto[]">automata</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span> <span class="punctuation">-</span> <span class="number">1</span> <span class="punctuation">?</span> 
+                <a href="helpers.html#9427"><span data-toggle="tooltip" data-title="ExpAuto[]">automata</span></a><span class="punctuation">[</span><a href="helpers.html#9542"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">]</span> <span class="punctuation">:</span> <a href="helpers.html#9427"><span data-toggle="tooltip" data-title="ExpAuto[]">automata</span></a><span class="punctuation">[</span><a href="helpers.html#9542"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">]</span><span class="punctuation">.</span><a href="helpers.html#6853"><span class="member" data-toggle="tooltip" data-title="() =&gt; ExpAuto">clone</span></a><span class="punctuation">(</span><span class="punctuation">)</span>
+            <span class="keyword">let</span> <span id="9697" data-toggle="tooltip" data-title="Transition[]">incoming</span> <span class="punctuation">=</span> <a href="helpers.html#9513"><span data-toggle="tooltip" data-title="ExpAuto">prev</span></a><span class="punctuation">.</span><a href="helpers.html#10505"><span class="member" data-toggle="tooltip" data-title="(state: State) =&gt; Transition[]">incoming</span></a><span class="punctuation">(</span><a href="helpers.html#9513"><span data-toggle="tooltip" data-title="ExpAuto">prev</span></a><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a><span class="punctuation">)</span>
+            <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="9757" data-toggle="tooltip" data-title="number">j</span> <span class="punctuation">=</span> <span class="number">0</span><span class="punctuation">;</span> <a href="helpers.html#9757"><span data-toggle="tooltip" data-title="number">j</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#9697"><span data-toggle="tooltip" data-title="Transition[]">incoming</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">;</span> <span class="punctuation">++</span><a href="helpers.html#9757"><span data-toggle="tooltip" data-title="number">j</span></a><span class="punctuation">)</span>
+                <a href="helpers.html#9697"><span data-toggle="tooltip" data-title="Transition[]">incoming</span></a><span class="punctuation">[</span><a href="helpers.html#9757"><span data-toggle="tooltip" data-title="number">j</span></a><span class="punctuation">]</span><span class="punctuation">.</span><a href="helpers.html#3696"><span data-toggle="tooltip" data-title="State">target</span></a> <span class="punctuation">=</span> <a href="helpers.html#9594"><span data-toggle="tooltip" data-title="ExpAuto">curr</span></a><span class="punctuation">.</span><a href="helpers.html#4557"><span data-toggle="tooltip" data-title="State">start</span></a>
+            <a href="helpers.html#9474"><span data-toggle="tooltip" data-title="ExpAuto">res</span></a><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="() =&gt; State | undefined">pop</span><span class="punctuation">(</span><span class="punctuation">)</span>
+            <a href="helpers.html#9474"><span data-toggle="tooltip" data-title="ExpAuto">res</span></a><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: State[]) =&gt; number">push</span><span class="punctuation">(</span><span class="punctuation">...</span><a href="helpers.html#9594"><span data-toggle="tooltip" data-title="ExpAuto">curr</span></a><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a><span class="punctuation">)</span>
+            <a href="helpers.html#9513"><span data-toggle="tooltip" data-title="ExpAuto">prev</span></a> <span class="punctuation">=</span> <a href="helpers.html#9594"><span data-toggle="tooltip" data-title="ExpAuto">curr</span></a>
+        <span class="punctuation">}</span>
+        <a href="helpers.html#9474"><span data-toggle="tooltip" data-title="ExpAuto">res</span></a><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a> <span class="punctuation">=</span> <a href="helpers.html#9513"><span data-toggle="tooltip" data-title="ExpAuto">prev</span></a><span class="punctuation">.</span><a href="helpers.html#4575"><span data-toggle="tooltip" data-title="State">accept</span></a>
+        <span class="keyword">return</span> <a href="helpers.html#9474"><span data-toggle="tooltip" data-title="ExpAuto">res</span></a>
+    <span class="punctuation">}</span>
+</code></pre>
+<h2 id="reg-exp-conversions">RegExp Conversions</h2>
+<p>You can get the possible transitions forward from the current state as
+a regexp. This is constructed by joining the transition regexps with a
+disjunction <code>|</code>.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span id="10011" class="member" data-toggle="tooltip" data-title="(state: State) =&gt; string">getRegExp</span><span class="punctuation">(</span><span id="10268" data-toggle="tooltip" data-title="State">state</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">)</span><span class="punctuation">:</span> <span class="keyword">string</span> <span class="punctuation">{</span>
+        <span class="keyword">return</span> <a href="helpers.html#10268"><span data-toggle="tooltip" data-title="State">state</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="&lt;U&gt;(callbackfn: (value: Transition, index: number, array: Transition[]) =&gt; U, thisArg?: any) =&gt; U[]">map</span><span class="punctuation">(</span><span id="10318" data-toggle="tooltip" data-title="Transition">t</span> <span class="punctuation">=&gt;</span> <span class="string">`(?:${</span><a href="helpers.html#10318"><span data-toggle="tooltip" data-title="Transition">t</span></a><span class="punctuation">.</span><a href="helpers.html#3676"><span data-toggle="tooltip" data-title="RegExp">regexp</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">source</span><span class="string">})`</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(separator?: string) =&gt; string">join</span><span class="punctuation">(</span><span class="string">&quot;|&quot;</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>Get the start regexp of the automaton.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">get</span> <span id="10365" class="member" data-toggle="tooltip" data-title="string">startRegExp</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">return</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#10011"><span class="member" data-toggle="tooltip" data-title="(state: State) =&gt; string">getRegExp</span></a><span class="punctuation">(</span><span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4557"><span data-toggle="tooltip" data-title="State">start</span></a><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>Return incoming transitions for given state.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">private</span> <span id="10505" class="member" data-toggle="tooltip" data-title="(state: State) =&gt; Transition[]">incoming</span><span class="punctuation">(</span><span id="10600" data-toggle="tooltip" data-title="State">state</span><span class="punctuation">:</span> <a href="helpers.html#1809"><span class="typename" data-toggle="tooltip" data-title="State">State</span></a><span class="punctuation">)</span><span class="punctuation">:</span> <a href="helpers.html#3544"><span class="typename" data-toggle="tooltip" data-title="Transition">Transition</span></a><span class="punctuation">[</span><span class="punctuation">]</span> <span class="punctuation">{</span>
+        <span class="keyword">let</span> <span id="10642" data-toggle="tooltip" data-title="any[]">res</span> <span class="punctuation">=</span> <span class="punctuation">[</span><span class="punctuation">]</span>
+        <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="10669" data-toggle="tooltip" data-title="number">i</span> <span class="punctuation">=</span> <span class="number">0</span><span class="punctuation">;</span> <a href="helpers.html#10669"><span data-toggle="tooltip" data-title="number">i</span></a> <span class="punctuation">&lt;</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">;</span> <span class="punctuation">++</span><a href="helpers.html#10669"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+            <span class="keyword">let</span> <span id="10724" data-toggle="tooltip" data-title="State">source</span> <span class="punctuation">=</span> <span class="keyword">this</span><span class="punctuation">.</span><a href="helpers.html#4527"><span data-toggle="tooltip" data-title="State[]">states</span></a><span class="punctuation">[</span><a href="helpers.html#10669"><span data-toggle="tooltip" data-title="number">i</span></a><span class="punctuation">]</span>
+            <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#10724"><span data-toggle="tooltip" data-title="State">source</span></a> <span class="punctuation">!=</span> <a href="helpers.html#10600"><span data-toggle="tooltip" data-title="State">state</span></a><span class="punctuation">)</span>
+                <span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span id="10808" data-toggle="tooltip" data-title="number">j</span> <span class="punctuation">=</span> <span class="number">0</span><span class="punctuation">;</span> <a href="helpers.html#10808"><span data-toggle="tooltip" data-title="number">j</span></a> <span class="punctuation">&lt;</span> <a href="helpers.html#10724"><span data-toggle="tooltip" data-title="State">source</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="number">length</span><span class="punctuation">;</span> <span class="punctuation">++</span><a href="helpers.html#10808"><span data-toggle="tooltip" data-title="number">j</span></a><span class="punctuation">)</span> <span class="punctuation">{</span>
+                    <span class="keyword">let</span> <span id="10866" data-toggle="tooltip" data-title="Transition">trans</span> <span class="punctuation">=</span> <a href="helpers.html#10724"><span data-toggle="tooltip" data-title="State">source</span></a><span class="punctuation">[</span><a href="helpers.html#10808"><span data-toggle="tooltip" data-title="number">j</span></a><span class="punctuation">]</span>
+                    <span class="keyword">if</span> <span class="punctuation">(</span><a href="helpers.html#10866"><span data-toggle="tooltip" data-title="Transition">trans</span></a><span class="punctuation">.</span><a href="helpers.html#3696"><span data-toggle="tooltip" data-title="State">target</span></a> <span class="punctuation">==</span> <a href="helpers.html#10600"><span data-toggle="tooltip" data-title="State">state</span></a><span class="punctuation">)</span>
+                        <a href="helpers.html#10642"><span data-toggle="tooltip" data-title="any[]">res</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...items: any[]) =&gt; number">push</span><span class="punctuation">(</span><a href="helpers.html#10866"><span data-toggle="tooltip" data-title="Transition">trans</span></a><span class="punctuation">)</span>
+                <span class="punctuation">}</span>
+        <span class="punctuation">}</span>
+        <span class="keyword">return</span> <a href="helpers.html#10642"><span data-toggle="tooltip" data-title="Transition[]">res</span></a>
+    <span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+
+        </div>
+            <div class="sidepane narrow-scrollbars">
+                
+        <div class="pagemenu">
+            <h3>On This Page</h3>
+                <ul class="pagetree">
+                </ul>
+        </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <a class="footer-button" href="parser.html">
+            <p>Previous</p>
+            <p>« Parser</p>
+        </a>
+            <div class="footer-text">
+                <p>Copyright © 2025 Tommi Johtela</p>
+                <p>Generated by 
+                    <a href="https://johtela.github.io/litscript">LiTScript</a>
+                </p>
+            </div>
+            <a class="footer-button" href="commonmark.html">
+            <p>Next</p>
+            <p>Testers »</p>
+        </a>
+        </div>
+    
+        <script src="../dist/normal.js"></script>
+    </body>
+    </html>

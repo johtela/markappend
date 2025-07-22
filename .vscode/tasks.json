@@ -10,6 +10,15 @@
 			"label": "npm: lits-serve",
 			"detail": "lits --serve --outDir testOut",
 			"isBackground": true
+		},
+		{
+			"type": "npm",
+			"script": "lits",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: lits",
+			"detail": "lits --deployMode prod"
 		}
 	]
 }
