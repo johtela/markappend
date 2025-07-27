@@ -35,7 +35,6 @@ let totalDuration = 0
  * tests separated by commas, or range of tests separated by dash.
  */
 export class CommonMarkRunner extends StyledElement {
-    
     static get observedAttributes(): string[] {
         return  ["examples"]
     }
