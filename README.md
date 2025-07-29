@@ -1,3 +1,9 @@
+---
+{
+    "modules": [ "./src/live-editor.ts" ]
+}
+---
+
 # 🖋️ Append Markdown Directly in the DOM
 
 **MarkAppend** is a fast, single-file Markdown parser designed for simplicity 
@@ -21,10 +27,22 @@ The `input` string parameter contains the markdown that is rendered under the
 
 ## 🍰 Implementation
 
-The parser is written in [literate style] and can be examined [here]. The 
-implementation uses [regular expressions] heavily, and is very imperative in
-style. Performance is the most important design criteria of the code. It tries
-to avoid unnecessary string copying and memory allocations in general.
+MarkAppend source is written in a [literate style], which hopefully makes the 
+code easier to decipher. You can explore the documentation generated from the
+source code [here]. The implementation uses [regular expressions] heavily and is 
+very imperative in style. Special attention is paid to minimize string copying 
+and unnecessary memory allocations.
+
+As the Markdown syntax is inherently ill-defined and ambigious, parsing it
+inevitably becomes a convoluted process. Lot of custom code is needed to handle 
+all the special cases. So, don't expect to find a beautiful and easy-to-follow 
+implementation 💩
+
+## 🎙️ Live Editor
+
+Test MarkAppend with the live editor below.
+
+<live-editor></live-editor>
 
 [CommonMark]: https://spec.commonmark.org/
 [literate style]: https://en.wikipedia.org/wiki/Literate_programming

@@ -1634,9 +1634,7 @@ span.
 
 In particular, emphasis and strong emphasis can be nested inside emphasis:
 
-<commonmark-runner examples="406-407"></commonmark-runner>
-
-<commonmark-runner examples="410-411"></commonmark-runner>
+<commonmark-runner examples="406-407,410-411"></commonmark-runner>
 
 Note that in the preceding case, the interpretation
 
@@ -1651,8 +1649,6 @@ For the same reason, we don’t get two consecutive emphasis sections in this
 example:
 
 <commonmark-runner examples="412"></commonmark-runner>
-
-<commonmark-runner examples="414-415"></commonmark-runner>
 
 Indefinite levels of nesting are possible:
 
@@ -1672,11 +1668,7 @@ emphasized span.
 In particular, emphasis and strong emphasis can be nested inside strong 
 emphasis:
 
-<commonmark-runner examples="424-425"></commonmark-runner>
-
-<commonmark-runner examples="427-429"></commonmark-runner>
-
-<commonmark-runner examples="431"></commonmark-runner>
+<commonmark-runner examples="424-425,428-429"></commonmark-runner>
 
 Indefinite levels of nesting are possible:
 
@@ -1688,7 +1680,7 @@ There can be no empty emphasis or strong emphasis:
 
 Rule 11:
 
-<commonmark-runner examples="436-441"></commonmark-runner>
+<commonmark-runner examples="436,438-439,441"></commonmark-runner>
 
 Note that when delimiters do not match evenly, Rule 11 determines that the 
 excess literal `*` characters will appear outside of the emphasis, rather than 
@@ -1700,7 +1692,7 @@ inside it:
 
 Rule 12:
 
-<commonmark-runner examples="448-454"></commonmark-runner>
+<commonmark-runner examples="448,450-451,453-454"></commonmark-runner>
 
 Note that when delimiters do not match evenly, Rule 12 determines that the 
 excess literal `_` characters will appear outside of the emphasis, rather than 

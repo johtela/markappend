@@ -343,8 +343,8 @@ const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const codeSpan = /(?<codedelim>`+)(?<code>\s.+\s|(?:[^`]|(?!\k<codedelim>)`)+)\k<codedelim>/.source
-const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}\*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
-const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\])\k<emdelim>|(?<![\P{P}\\])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\])\k<emdelim>$)/u.source
+const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\*])\k<emdelim>(?!\*)|(?<![\P{P}\\*])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\*])\k<emdelim>$)/u.source
+const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\_])\k<emdelim>(?!_)|(?<![\P{P}\\_])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\_])\k<emdelim>$)/u.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\[\]\s]|(?<=\\)(?<!\\\\)[\[\]])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"]|(?<=\\)")+)"|'(?<linktitle>(?:[^']|(?<=\\)')+)'|\((?<linktitle>(?:[^()]|(?<=\\)[()])+)\))/.source
@@ -806,11 +806,12 @@ function openList(state: ParserState, match: RegExpExecArray, bulletsep: string,
         let ol = elem('ol')
         if (bulletno != "1")
             ol.start = Number.parseInt(bulletno)
-        openBlock(state, ol, BlockType.Inline, false, undefined, cont)
+        openBlock(state, ol, BlockType.Inline, false, undefined, cont,
+            closeList)
     }
     else if (!bulletno && block.element.tagName != "UL")
-        openBlock(state, elem('ul'), BlockType.Inline, false, undefined,
-            cont)
+        openBlock(state, elem('ul'), BlockType.Inline, false, undefined, cont,
+            closeList)
     openBlock(state, elem('li'), BlockType.Inline, false, undefined,
         new RegExp(` {${len}}${allowEmpty}`, "yui"), closeListItem)
     state.nextIndex = match.index + len
@@ -823,14 +824,26 @@ function openList(state: ParserState, match: RegExpExecArray, bulletsep: string,
  * tight lists, i.e. lists that do not have empty lines between its items.
  */
 function closeListItem(state: ParserState, block: DocumentBlock) {
-    let last = state.blocks.length - 1
-    if (block.lines.length == 0 && block == state.blocks[last - 1] && 
-        block.element.childElementCount == 0 && 
-        state.blocks[last].element.tagName == "P") {
+    let last = lastBlock(state)
+    let prev = state.blocks[state.blocks.length - 2]
+    if (block.lines.length == 0 && block == prev && 
+        block.element.childElementCount == 0 && last.element.tagName == "P") {
         let para = state.blocks.pop()!
         append(state, ...para.element.childNodes)
         block.lines = para.lines
     }
+    else if (block == last && !prev.closing &&
+        block.element.childElementCount == 1 && 
+        block.element.firstElementChild!.tagName == "P") {
+        let p = block.element.firstElementChild!
+        block.element.append(...p.childNodes)
+        p.remove()
+    }
+}
+
+function closeList(state: ParserState, block: DocumentBlock) {
+    if (!block.element.querySelector(":scope > li > p"))
+        block.closing = undefined
 }
 /**
  * ### Closing Fenced Code Block
