@@ -817,11 +817,25 @@ function openList(state: ParserState, match: RegExpExecArray, bulletsep: string,
     state.nextIndex = match.index + len
 }
 /**
- * The function below, `closeListItem`, is responsible for handling the closure
- * of a list item block. If the list item is empty and immediately followed by
- * an empty paragraph block, it removes the paragraph and merges its children
- * into the list item. This ensures that paragraph tags are not generated for 
- * tight lists, i.e. lists that do not have empty lines between its items.
+ * `closeListItem` determines whether the list item block to be closed is
+ * tight or loose. Tight items do not contain empty lines, and thus will not
+ * be wrapped inside `p` elements. By default we assume that items are loose,
+ * and always create the `p` block.
+ * 
+ * Closing the list item block can happen before or after closing the `p` block 
+ * depending on whether the list item is the last one. The first `if` statement
+ * handles the case when we are not closing the last block, and the paragraph
+ * block is still open. If we have not accumulated any empty rows into the list
+ * item block, we know that the item is tight and can delete the `p` block 
+ * &mdash; after we have moved its lines under the list item block.
+ * 
+ * The second if statement triggers if the list item is the last one. We know
+ * that it's a last one, if there is no `p` block open anymore. The `closeList`
+ * function below will reset the `closing` property of its block, if all the
+ * items in the list are tight. Also the last item needs to be tight, that is,
+ * it must contain only one child which is a paragraph. We can move `p` elements 
+ * children directly under the `lì` element, if all the conditions above are 
+ * true. Finally, we can delete the `p` element.
  */
 function closeListItem(state: ParserState, block: DocumentBlock) {
     let last = lastBlock(state)
@@ -840,7 +854,16 @@ function closeListItem(state: ParserState, block: DocumentBlock) {
         p.remove()
     }
 }
-
+/**
+ * When a list block is closing, we check whether all its items are tight; that 
+ * is, there are no `p` elements directly underneath the items. If that 
+ * condition holds, we reset the `closing` property of the block to indicate 
+ * that the list is tight. Using the property for this is hacky as hell... But 
+ * the alternative would be to introduce some class hierarchy for blocks, derive
+ * `ListBlock` class from the `DocumentBlock`, and so on. This is is simply
+ * too big of a change for implementing this one use case. We'll refactor this 
+ * later, if need be.
+ */
 function closeList(state: ParserState, block: DocumentBlock) {
     if (!block.element.querySelector(":scope > li > p"))
         block.closing = undefined
