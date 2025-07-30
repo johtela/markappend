@@ -23,5 +23,17 @@
     },
     "src/commonmark.css": {
         "dependencies": []
+    },
+    "src/live-editor": {
+        "url": "src/live-editor.html",
+        "dependencies": [
+            "litscript/lib/src/custom-elem",
+            "src/helpers",
+            "src/parser",
+            "src/live-editor.css"
+        ]
+    },
+    "src/live-editor.css": {
+        "dependencies": []
     }
 }

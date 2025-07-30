@@ -52,14 +52,24 @@ Divided paragraph.`
 /**
  * ## Editor Web Component
  * 
- * We use the base component from [LiTScript] library to create the Markdown
- * editor.
+ * We utilize the base component from [LiTScript] to create the Markdown editor.
+ * We only need to define override the constructor and `connect` method to set 
+ * up the component.
+ * 
+ * [LiTScript]: https://johtela.github.io/litscript/
  */
 export class LiveEditor extends StyledElement {
+    /**
+     * Pass name of associated the style file (without `.css` extension) to the
+     * parent constructor.
+     */
     constructor() {
         super("live-editor")
     }
-
+    /**
+     * Create a textarea and div elements for editor and preview. Update the
+     * contents of the div whenever the textarea changes.
+     */
     protected override connect() {
         this.body.className = "body"
         let editor = elem('textarea')
@@ -77,4 +87,7 @@ export class LiveEditor extends StyledElement {
         appendMarkdown(editor.value, preview)
     }
 }
+/**
+ * Register the custom element.
+ */
 customElements.define("live-editor", LiveEditor)

@@ -307,12 +307,17 @@
         </span></a>
     </li>
     <li>
+        <a href="src/live-editor.html"><span>🎙️</span><span data-toggle="tooltip" data-title="Editor to test the parser interactively">
+            Live Editor
+        </span></a>
+    </li>
+    <li>
         <a href="src/commonmark.html"><span>🧪</span><span data-toggle="tooltip" data-title="CommonMark tester components">
             Testers
         </span></a>
     </li>
     <li>
-        <a href="commonmark-tests.html" class="highlight"><span>M⇩</span><span data-toggle="tooltip" data-title="CommonMark test suite">
+        <a href="commonmark-tests.html" class="highlight"><span>M⬇</span><span data-toggle="tooltip" data-title="CoonMark test suite">
             CommonMark Tests
         </span></a>
     </li>
@@ -1438,8 +1443,7 @@ whitespace:</p>
 span.</p>
 <p><commonmark-runner examples="404-405"></commonmark-runner></p>
 <p>In particular, emphasis and strong emphasis can be nested inside emphasis:</p>
-<p><commonmark-runner examples="406-407"></commonmark-runner></p>
-<p><commonmark-runner examples="410-411"></commonmark-runner></p>
+<p><commonmark-runner examples="406-407,410-411"></commonmark-runner></p>
 <p>Note that in the preceding case, the interpretation</p>
 <pre><code>&lt;p&gt;&lt;em&gt;foo&lt;/em&gt;&lt;em&gt;bar&lt;em&gt;&lt;/em&gt;baz&lt;/em&gt;&lt;/p&gt;
 </code></pre>
@@ -1450,7 +1454,6 @@ unless both lengths are multiples of 3.</p>
 <p>For the same reason, we don’t get two consecutive emphasis sections in this
 example:</p>
 <p><commonmark-runner examples="412"></commonmark-runner></p>
-<p><commonmark-runner examples="414-415"></commonmark-runner></p>
 <p>Indefinite levels of nesting are possible:</p>
 <p><commonmark-runner examples="418-419"></commonmark-runner></p>
 <p>There can be no empty emphasis or strong emphasis:</p>
@@ -1461,22 +1464,20 @@ emphasized span.</p>
 <p><commonmark-runner examples="422-423"></commonmark-runner></p>
 <p>In particular, emphasis and strong emphasis can be nested inside strong
 emphasis:</p>
-<p><commonmark-runner examples="424-425"></commonmark-runner></p>
-<p><commonmark-runner examples="427-429"></commonmark-runner></p>
-<p><commonmark-runner examples="431"></commonmark-runner></p>
+<p><commonmark-runner examples="424-425,428-429"></commonmark-runner></p>
 <p>Indefinite levels of nesting are possible:</p>
 <p><commonmark-runner examples="432-433"></commonmark-runner></p>
 <p>There can be no empty emphasis or strong emphasis:</p>
 <p><commonmark-runner examples="434-435"></commonmark-runner></p>
 <p>Rule 11:</p>
-<p><commonmark-runner examples="436-441"></commonmark-runner></p>
+<p><commonmark-runner examples="436,438-439,441"></commonmark-runner></p>
 <p>Note that when delimiters do not match evenly, Rule 11 determines that the
 excess literal <code>*</code> characters will appear outside of the emphasis, rather than
 inside it:</p>
 <p><commonmark-runner examples="442"></commonmark-runner></p>
 <p><commonmark-runner examples="444-445"></commonmark-runner></p>
 <p>Rule 12:</p>
-<p><commonmark-runner examples="448-454"></commonmark-runner></p>
+<p><commonmark-runner examples="448,450-451,453-454"></commonmark-runner></p>
 <p>Note that when delimiters do not match evenly, Rule 12 determines that the
 excess literal <code>_</code> characters will appear outside of the emphasis, rather than
 inside it:</p>

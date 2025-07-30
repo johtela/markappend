@@ -18,6 +18,12 @@
         "bullet": "🧰"
     },
     {
+        "page": "Live Editor",
+        "file": "src/live-editor.html",
+        "desc": "Editor to test the parser interactively",
+        "bullet": "🎙️"
+    },
+    {
         "page": "Testers",
         "file": "src/commonmark.html",
         "desc": "CommonMark tester components",
@@ -26,7 +32,7 @@
     {
         "page": "CommonMark Tests",
         "file": "commonmark-tests.html",
-        "desc": "CommonMark test suite",
-        "bullet": "M⇩"
+        "desc": "CoonMark test suite",
+        "bullet": "M⬇"
     }
 ]

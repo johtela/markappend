@@ -21,12 +21,12 @@ export function text(data: string): Text {
     return document.createTextNode(data)
 }
 /**
- * This function replaces all whitespace characters in the given string
+ * This function replaces whitespace characters in the given string
  * with visible Unicode symbols for easier debugging of test output.
  * 
- * - Tabs ("\t") are replaced with "⇥"
- * - Newlines ("\n") are replaced with "↩"
- * - Spaces (" ") are replaced with "␣"
+ * - Tabs ("\t") are replaced with `→`
+ * - Newlines ("\n") are replaced with `↩\n`
+ * - Spaces (" ") are replaced with `·`
  * 
  * Other whitespace characters are left unchanged.
  */
@@ -80,9 +80,9 @@ function wsText(ch: string): string {
  * > set when drawing generalized nondeterministic finite state machines.
  * 
  * For brevity, we refer to the GNFA as an "expression automaton" and use it to 
- * match complex regular expressions step-by-step, in phases. This approach 
- * helps us construct block parsers whose continuation regular expressions can 
- * change as more lines are read.
+ * match complex regular expressions step-by-step. This approach helps us 
+ * construct block parsers whose continuation regular expressions can change as 
+ * more lines are read.
  * 
  * States in an expression automaton is a list of outgoing transitions.
  */
@@ -257,7 +257,7 @@ export class ExpAuto {
         return res
     }
     /**
-     * ## RegExp Conversions
+     * ## RegExp Accessors
      * 
      * You can get the possible transitions forward from the current state as
      * a regexp. This is constructed by joining the transition regexps with a 

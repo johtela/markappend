@@ -40,5 +40,5 @@ textarea[name=editor]:focus {
 .preview blockquote {
     border-left: 0.3rem solid var(--col-prim-dark);
     margin-inline: 0;
-    padding-left: 1rem;k
+    padding-left: 1rem;
 }

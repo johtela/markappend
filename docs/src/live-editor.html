@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>
-            MarkAppend - Home
+            MarkAppend - Live Editor
         </title>
-        <link rel="icon" type="image/icon" href="images/favicon.svg" />
-        <link rel="stylesheet" href="dist/normal.css" />
+        <link rel="icon" type="image/icon" href="../images/favicon.svg" />
+        <link rel="stylesheet" href="../dist/normal.css" />
         
     </head>
     <body data-syntax-highlight="monokai"
@@ -20,8 +20,8 @@
     <div class="navmenu ">
         
     <div class="navitem " >
-        <a class="title enabled" href="index.html" >
-            <img src="images/favicon.svg" />
+        <a class="title enabled" href="../index.html" >
+            <img src="../images/favicon.svg" />
             <span>MarkAppend</span>
         </a>
         
@@ -292,32 +292,32 @@
     <ul>
         
     <li>
-        <a href="README.html" class="highlight"><span>🏠</span><span data-toggle="tooltip" data-title="Start here">
+        <a href="../README.html"><span>🏠</span><span data-toggle="tooltip" data-title="Start here">
             Home
         </span></a>
     </li>
     <li>
-        <a href="src/parser.html"><span>👀</span><span data-toggle="tooltip" data-title="Parser implementation">
+        <a href="parser.html"><span>👀</span><span data-toggle="tooltip" data-title="Parser implementation">
             Parser
         </span></a>
     </li>
     <li>
-        <a href="src/helpers.html"><span>🧰</span><span data-toggle="tooltip" data-title="Helper code">
+        <a href="helpers.html"><span>🧰</span><span data-toggle="tooltip" data-title="Helper code">
             Helpers
         </span></a>
     </li>
     <li>
-        <a href="src/live-editor.html"><span>🎙️</span><span data-toggle="tooltip" data-title="Editor to test the parser interactively">
+        <a href="live-editor.html" class="highlight"><span>🎙️</span><span data-toggle="tooltip" data-title="Editor to test the parser interactively">
             Live Editor
         </span></a>
     </li>
     <li>
-        <a href="src/commonmark.html"><span>🧪</span><span data-toggle="tooltip" data-title="CommonMark tester components">
+        <a href="commonmark.html"><span>🧪</span><span data-toggle="tooltip" data-title="CommonMark tester components">
             Testers
         </span></a>
     </li>
     <li>
-        <a href="commonmark-tests.html"><span>M⬇</span><span data-toggle="tooltip" data-title="CoonMark test suite">
+        <a href="../commonmark-tests.html"><span>M⬇</span><span data-toggle="tooltip" data-title="CoonMark test suite">
             CommonMark Tests
         </span></a>
     </li>
@@ -331,36 +331,89 @@
             </div>
             
         <div class="contentarea closepopups">
-            
-<h1 id="append-markdown-directly-in-the-dom">🖋️ Append Markdown Directly in the DOM</h1>
-<p><strong>MarkAppend</strong> is a fast, single-file Markdown parser designed for simplicity
-and performance. Unlike most Markdown parsers that generate HTML strings,
-MarkAppend modifies the DOM directly, making it ideal for dynamic web
-applications that need the best performance.</p>
-<p>MarkAppend supports all the essential <a href="https://spec.commonmark.org/">CommonMark</a> features, skipping only the
-more esoteric rules that most users aren't aware of — mainly to keep the
-implementation simple(r).</p>
-<h2 id="usage">👉 Usage</h2>
-<p><code>appendMarkdown</code> is the only one exported function in the library. Its signature
-looks like this:</p>
-
-<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">appendMarkdown</span>(<span class="params"><span class="attr">input</span>: <span class="built_in">string</span>, <span class="attr">root</span>: <span class="title class_">Element</span></span>)
+            <h1 id="live-editor">Live Editor</h1>
+<p>This module contains the live editor that can be used to test MarkAppend.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">import</span> <span class="punctuation">{</span> <span id="119" data-toggle="tooltip" data-title="typeof StyledElement">StyledElement</span> <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">&#039;litscript/lib/src/custom-elem&#039;</span>
+<span class="keyword">import</span> <span class="punctuation">{</span> <span id="182" data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span> <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">&#039;./helpers&#039;</span>
+<span class="keyword">import</span> <span class="punctuation">{</span> <span id="216" data-toggle="tooltip" data-title="(input: string, root: Element) =&gt; void">appendMarkdown</span> <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">&#039;./parser&#039;</span>
+<span class="keyword">import</span> <span class="string">&#039;./live-editor.css&#039;</span>
 </code></pre>
-<p>The <code>input</code> string parameter contains the markdown that is rendered under the
-<code>root</code> element.</p>
-<h2 id="implementation">🍰 Implementation</h2>
-<p>MarkAppend source is written in a <a href="https://en.wikipedia.org/wiki/Literate_programming">literate style</a>, which hopefully makes the
-code easier to decipher. You can explore the documentation generated from the
-source code <a href="src/parser.html">here</a>. The implementation uses <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> heavily and is
-very imperative in style. Special attention is paid to minimize string copying
-and unnecessary memory allocations.</p>
-<p>As the Markdown syntax is inherently ill-defined and ambigious, parsing it
-inevitably becomes a convoluted process. Lot of custom code is needed to handle
-all the special cases. So, don't expect to find a beautiful and easy-to-follow
-implementation 💩</p>
-<h2 id="live-editor">🎙️ Live Editor</h2>
-<p>Test MarkAppend with the live editor below.</p>
-<p><live-editor></live-editor></p>
+<p>Define an example CommonMark text as initial value.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">const</span> <span id="350" data-toggle="tooltip" data-title="&quot;# Sample Markdown\n\n## Introduction\n\nThis is a sample CommonMark file demonstrating basic Markdown syntax.\n\n## Lists\n\n- Item 1\n- Item 2\n    - Subitem 2.1\n    - Subitem 2.2\n\n## Code\n\n```python\ndef hello_world():\n        print(\&quot;Hello, world!\&quot;)\n```\n\n## Links\n\n[CommonMark Specification](https://c...">example</span> <span class="punctuation">=</span> `# Sample Markdown
+
+## Introduction
+
+This is a sample CommonMark file demonstrating basic Markdown syntax.
+
+## Lists
+
+- Item 1
+- Item 2
+    - Subitem 2.1
+    - Subitem 2.2
+
+## Code
+
+\`\`\`python
+def hello_world():
+        print(&quot;Hello, world!&quot;)
+\`\`\`
+
+## Links
+
+[CommonMark Specification](https://commonmark.org/)
+
+## Images
+
+![Markdown Logo](https://markdown-here.com/img/icon256.png)
+
+## Blockquote
+
+&gt; Markdown is a lightweight markup language.
+
+## Emphasis
+
+*Italic* and **bold** text.
+
+***
+
+Divided paragraph.`
+</code></pre>
+<h2 id="editor-web-component">Editor Web Component</h2>
+<p>We utilize the base component from <a href="https://johtela.github.io/litscript/">LiTScript</a> to create the Markdown editor.
+We only need to define override the constructor and <code>connect</code> method to set
+up the component.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">export</span> <span class="keyword">class</span> <span id="914" class="typename" data-toggle="tooltip" data-title="LiveEditor">LiveEditor</span> <span class="keyword">extends</span> <a href="live-editor.html#119"><span data-toggle="tooltip" data-title="typeof StyledElement">StyledElement</span></a> <span class="punctuation">{</span>
+</code></pre>
+<p>Pass name of associated the style file (without <code>.css</code> extension) to the
+parent constructor.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">constructor</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">super</span><span class="punctuation">(</span><span class="string">&quot;live-editor&quot;</span><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+</code></pre>
+<p>Create a textarea and div elements for editor and preview. Update the
+contents of the div whenever the textarea changes.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code>    <span class="keyword">protected</span> <span class="keyword">override</span> <span id="1435" class="member" data-toggle="tooltip" data-title="() =&gt; void">connect</span><span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="HTMLElement">body</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">className</span> <span class="punctuation">=</span> <span class="string">&quot;body&quot;</span>
+        <span class="keyword">let</span> <span id="1677" data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span> <span class="punctuation">=</span> <a href="live-editor.html#182"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;textarea&#039;</span><span class="punctuation">)</span>
+        <a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">name</span> <span class="punctuation">=</span> <span class="string">&quot;editor&quot;</span>
+        <a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">title</span> <span class="punctuation">=</span> <span class="string">&quot;Enter markdown here&quot;</span>
+        <span class="keyword">let</span> <span id="1794" data-toggle="tooltip" data-title="HTMLDivElement">preview</span> <span class="punctuation">=</span> <a href="live-editor.html#182"><span data-toggle="tooltip" data-title="&lt;K extends keyof HTMLElementTagNameMap&gt;(tag: K, ...children: Node[]) =&gt; HTMLElementTagNameMap[K]">elem</span></a><span class="punctuation">(</span><span class="string">&#039;div&#039;</span><span class="punctuation">)</span>
+        <a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">className</span> <span class="punctuation">=</span> <span class="string">&quot;preview&quot;</span>
+        <span class="keyword">this</span><span class="punctuation">.</span><span data-toggle="tooltip" data-title="HTMLElement">body</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(...nodes: (Node | string)[]) =&gt; void">append</span><span class="punctuation">(</span><a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">,</span> <a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">)</span>
+        <a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="((this: GlobalEventHandlers, ev: Event) =&gt; any) | null">oninput</span> <span class="punctuation">=</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span class="punctuation">{</span>
+            <span class="keyword">while</span> <span class="punctuation">(</span><a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="ChildNode | null">lastChild</span><span class="punctuation">)</span>
+                <a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="&lt;T extends Node&gt;(child: T) =&gt; T">removeChild</span><span class="punctuation">(</span><a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="ChildNode">lastChild</span><span class="punctuation">)</span>
+            <a href="live-editor.html#216"><span data-toggle="tooltip" data-title="(input: string, root: Element) =&gt; void">appendMarkdown</span></a><span class="punctuation">(</span><a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">value</span><span class="punctuation">,</span> <a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">)</span>
+        <span class="punctuation">}</span>
+        <a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">value</span> <span class="punctuation">=</span> <a href="live-editor.html#350"><span data-toggle="tooltip" data-title="&quot;# Sample Markdown\n\n## Introduction\n\nThis is a sample CommonMark file demonstrating basic Markdown syntax.\n\n## Lists\n\n- Item 1\n- Item 2\n    - Subitem 2.1\n    - Subitem 2.2\n\n## Code\n\n```python\ndef hello_world():\n        print(\&quot;Hello, world!\&quot;)\n```\n\n## Links\n\n[CommonMark Specification](https://c...">example</span></a>
+        <a href="live-editor.html#216"><span data-toggle="tooltip" data-title="(input: string, root: Element) =&gt; void">appendMarkdown</span></a><span class="punctuation">(</span><a href="live-editor.html#1677"><span data-toggle="tooltip" data-title="HTMLTextAreaElement">editor</span></a><span class="punctuation">.</span><span data-toggle="tooltip" data-title="string">value</span><span class="punctuation">,</span> <a href="live-editor.html#1794"><span data-toggle="tooltip" data-title="HTMLDivElement">preview</span></a><span class="punctuation">)</span>
+    <span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+<p>Register the custom element.</p>
+<pre class="syntaxhighlight narrow-scrollbars"><code><span data-toggle="tooltip" data-title="CustomElementRegistry">customElements</span><span class="punctuation">.</span><span class="member" data-toggle="tooltip" data-title="(name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) =&gt; void">define</span><span class="punctuation">(</span><span class="string">&quot;live-editor&quot;</span><span class="punctuation">,</span> <a href="live-editor.html#914"><span class="typename" data-toggle="tooltip" data-title="typeof LiveEditor">LiveEditor</span></a><span class="punctuation">)</span>
+</code></pre>
 
         </div>
             <div class="sidepane narrow-scrollbars">
@@ -374,8 +427,9 @@ implementation 💩</p>
         </div>
         
         <div class="footer">
-            <a class="footer-button disabled">
-            Previous
+            <a class="footer-button" href="helpers.html">
+            <p>Previous</p>
+            <p>« Helpers</p>
         </a>
             <div class="footer-text">
                 <p>Copyright © 2025 Tommi Johtela</p>
@@ -383,13 +437,12 @@ implementation 💩</p>
                     <a href="https://johtela.github.io/litscript">LiTScript</a>
                 </p>
             </div>
-            <a class="footer-button" href="src/parser.html">
+            <a class="footer-button" href="commonmark.html">
             <p>Next</p>
-            <p>Parser »</p>
+            <p>Testers »</p>
         </a>
         </div>
     
-        <script src="dist/normal.js"></script>
-<script src="dist/live-editor.js"></script>
+        <script src="../dist/normal.js"></script>
     </body>
     </html>
