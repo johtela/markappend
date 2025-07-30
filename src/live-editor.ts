@@ -10,7 +10,7 @@ import './live-editor.css'
 /**
  * Define an example CommonMark text as initial value.
  */
-const example = `# Sample CommonMark Document
+const example = `# Sample Markdown
 
 ## Introduction
 
@@ -44,7 +44,11 @@ def hello_world():
 
 ## Emphasis
 
-*Italic* and **bold** text.`
+*Italic* and **bold** text.
+
+***
+
+Divided paragraph.`
 /**
  * ## Editor Web Component
  * 
@@ -57,10 +61,12 @@ export class LiveEditor extends StyledElement {
     }
 
     protected override connect() {
+        this.body.className = "body"
         let editor = elem('textarea')
         editor.name = "editor"
         editor.title = "Enter markdown here"
         let preview = elem('div')
+        preview.className = "preview"
         this.body.append(editor, preview)
         editor.oninput = () => {
             while (preview.lastChild)
