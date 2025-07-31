@@ -14,6 +14,8 @@ textarea[name=editor]:focus {
 .preview {
     border: 1px solid var(--col-prim-dark);
     padding: 0.5rem;
+    flex-basis: 100%;
+    overflow-x: auto;
 }
 .preview h1, .preview h2, .preview h3, .preview h4, .preview h5, .preview h6 {
     margin-top: 1rem;
