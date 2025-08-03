@@ -30,8 +30,12 @@
             "litscript/lib/src/custom-elem",
             "src/helpers",
             "src/parser",
+            "asciimath2ml",
             "src/live-editor.css"
         ]
+    },
+    "asciimath2ml": {
+        "dependencies": []
     },
     "src/live-editor.css": {
         "dependencies": []

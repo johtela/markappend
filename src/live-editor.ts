@@ -5,7 +5,8 @@
  */
 import { StyledElement } from 'litscript/lib/src/custom-elem'
 import { elem } from './helpers'
-import { appendMarkdown } from './parser'
+import * as pr from './parser'
+import * as am from 'asciimath2ml'
 import './live-editor.css'
 /**
  * Define an example CommonMark text as initial value.
@@ -48,7 +49,12 @@ def hello_world():
 
 ***
 
-Divided paragraph.`
+## Extensibility
+
+It's possible to extend the parser with custom inline parsers. For example,
+[AsciiMath](https://asciimath.org/) equations like this:
+
+$$sum_{i=1}^n i^3=({n(n+1)}/2)^2$$`
 /**
  * ## Editor Web Component
  * 
@@ -65,6 +71,14 @@ export class LiveEditor extends StyledElement {
      */
     constructor() {
         super("live-editor")
+        pr.addInlineParser({
+            regexp: /(?<![\\$])(?<eqdelim>\$\$?)(?!\$)(?<eq>.+)(?<![\\$])\k<eqdelim>(?!\$)/.source,
+            matched: (state, match) => {
+                let { eqdelim, eq } = match.groups!
+                let html = am.asciiToMathML(eq, eqdelim.length == 1)
+                pr.appendHtml(state, html)
+            }
+        })
     }
     /**
      * Create a textarea and div elements for editor and preview. Update the
@@ -81,10 +95,10 @@ export class LiveEditor extends StyledElement {
         editor.oninput = () => {
             while (preview.lastChild)
                 preview.removeChild(preview.lastChild)
-            appendMarkdown(editor.value, preview)
+           pr.appendMarkdown(editor.value, preview)
         }
         editor.value = example
-        appendMarkdown(editor.value, preview)
+        pr.appendMarkdown(editor.value, preview)
     }
 }
 /**

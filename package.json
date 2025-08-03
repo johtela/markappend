@@ -17,6 +17,7 @@
   "author": "Tommi Johtela",
   "license": "MIT",
   "devDependencies": {
+    "asciimath2ml": "^1.0.7",
     "lits-extras": "^2.0.0",
     "litscript": "^2.2.1"
   }

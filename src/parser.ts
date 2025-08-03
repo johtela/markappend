@@ -223,13 +223,13 @@ function interruptParagraph(state: ParserState) {
  * Appends one or more nodes to the parent element of the current (topmost) 
  * block.
  */
-function append(state: ParserState, ...nodes: Node[]) {
+export function append(state: ParserState, ...nodes: Node[]) {
     lastBlock(state).parent.append(...nodes)
 }
 /**
  * Append verbatitm HTML to the parent of the current block.
  */
-function appendHtml(state: ParserState, html: string) {
+export function appendHtml(state: ParserState, html: string) {
     lastBlock(state).parent.insertAdjacentHTML('beforeend', html)
 }
 /** 
@@ -1295,4 +1295,20 @@ export function appendMarkdown(input: string, root: Element) {
         block.lines.push(line.slice(st.nextIndex))
     }
     closeBlocksToIndex(state, 0)
+}
+/**
+ * ## Extensibility
+ *
+ * You can add a new inline parser by calling the `addInlineParser` function and 
+ * providing a `Parser` object. The parser should include a regular expression 
+ * to match the inline element and a matcher function that processes the matched 
+ * text. This allows you to extend the Markdown parser with custom inline 
+ * elements or behaviors.
+ * 
+ * You must call this function before the first call to `appendMarkdown`. Once
+ * the first Markdown string is parsed, the list of inline parsers is locked
+ * down, and no new parsers can be added.
+ */
+export function addInlineParser(parser: Parser) {
+    inlineParsers.push(parser)
 }

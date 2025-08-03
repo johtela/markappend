@@ -38,6 +38,29 @@ inevitably becomes a convoluted process. Lot of custom code is needed to handle
 all the special cases. So, don't expect to find a beautiful and easy-to-follow 
 implementation 💩
 
+## 🪐 Extensibility
+
+It's possible to [extend the parser](/src/parser.html#extensibility) with new 
+inline elements, by adding a new [Parser](/src/parser.html#matchers-and-parsers). 
+The parser constist of a regular expression and a matcher function that is 
+called when the expresion is found in the input.
+
+Below is an example, how to add support to [AsciiMath](asciimath.org) equations
+using the [AsciiMath2ML](https://www.npmjs.com/package/asciimath2ml) library.
+```ts
+import * as ma from 'markappend'
+import * as am from 'asciimath2ml'
+
+pr.addInlineParser({
+    regexp: /(?<![\\$])(?<eqdelim>\$\$?)(?!\$)(?<eq>.+)(?<![\\$])\k<eqdelim>(?!\$)/.source,
+    matched: (state, match) => {
+        let { eqdelim, eq } = match.groups!
+        let html = am.asciiToMathML(eq, eqdelim.length == 1)
+        pr.appendHtml(state, html)
+    }
+})
+```
+
 ## 🎙️ Live Editor
 
 Test MarkAppend with the live editor below.
