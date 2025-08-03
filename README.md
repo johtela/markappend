@@ -40,13 +40,12 @@ implementation 💩
 
 ## 🪐 Extensibility
 
-It's possible to [extend the parser](/src/parser.html#extensibility) with new 
-inline elements, by adding a new [Parser](/src/parser.html#matchers-and-parsers). 
-The parser constist of a regular expression and a matcher function that is 
+It's possible to [extend the parser] with new inline elements, by adding a new 
+[Parser]. The parser constist of a regular expression and a matcher function that is 
 called when the expresion is found in the input.
 
-Below is an example, how to add support to [AsciiMath](asciimath.org) equations
-using the [AsciiMath2ML](https://www.npmjs.com/package/asciimath2ml) library.
+Below is an example, how to add support for equations using the [AsciiMath2ML] 
+library.
 ```ts
 import * as ma from 'markappend'
 import * as am from 'asciimath2ml'
@@ -63,7 +62,7 @@ pr.addInlineParser({
 
 ## 🎙️ Live Editor
 
-Test MarkAppend with the live editor below.
+You can test MarkAppend with the live editor below.
 
 <live-editor></live-editor>
 
@@ -71,3 +70,6 @@ Test MarkAppend with the live editor below.
 [literate style]: https://en.wikipedia.org/wiki/Literate_programming
 [here]: src/parser.html
 [regular expressions]: https://en.wikipedia.org/wiki/Regular_expression
+[extend the parser]: /src/parser.html#extensibility
+[Parser]: /src/parser.html#matchers-and-parsers
+[AsciiMath2ML]: https://www.npmjs.com/package/asciimath2ml

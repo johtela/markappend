@@ -358,8 +358,27 @@ and unnecessary memory allocations.</p>
 inevitably becomes a convoluted process. Lot of custom code is needed to handle
 all the special cases. So, don't expect to find a beautiful and easy-to-follow
 implementation 💩</p>
+<h2 id="extensibility">🪐 Extensibility</h2>
+<p>It's possible to <a href="/src/parser.html#extensibility">extend the parser</a> with new inline elements, by adding a new
+<a href="/src/parser.html#matchers-and-parsers">Parser</a>. The parser constist of a regular expression and a matcher function that is
+called when the expresion is found in the input.</p>
+<p>Below is an example, how to add support for equations using the <a href="https://www.npmjs.com/package/asciimath2ml">AsciiMath2ML</a>
+library.</p>
+
+<pre class="syntaxhighlight narrow-scrollbars"><code><span class="keyword">import</span> * <span class="keyword">as</span> ma <span class="keyword">from</span> <span class="string">&#x27;markappend&#x27;</span>
+<span class="keyword">import</span> * <span class="keyword">as</span> am <span class="keyword">from</span> <span class="string">&#x27;asciimath2ml&#x27;</span>
+
+pr.<span class="title function_">addInlineParser</span>({
+    <span class="attr">regexp</span>: <span class="regexp">/(?&lt;![\\$])(?&lt;eqdelim&gt;\$\$?)(?!\$)(?&lt;eq&gt;.+)(?&lt;![\\$])\k&lt;eqdelim&gt;(?!\$)/</span>.<span class="property">source</span>,
+    <span class="attr">matched</span>: <span class="function">(<span class="params">state, match</span>) =&gt;</span> {
+        <span class="keyword">let</span> { eqdelim, eq } = match.<span class="property">groups</span>!
+        <span class="keyword">let</span> html = am.<span class="title function_">asciiToMathML</span>(eq, eqdelim.<span class="property">length</span> == <span class="number">1</span>)
+        pr.<span class="title function_">appendHtml</span>(state, html)
+    }
+})
+</code></pre>
 <h2 id="live-editor">🎙️ Live Editor</h2>
-<p>Test MarkAppend with the live editor below.</p>
+<p>You can test MarkAppend with the live editor below.</p>
 <p><live-editor></live-editor></p>
 
         </div>
