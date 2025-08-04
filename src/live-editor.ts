@@ -72,7 +72,7 @@ export class LiveEditor extends StyledElement {
     constructor() {
         super("live-editor")
         pr.addInlineParser({
-            regexp: /(?<![\\$])(?<eqdelim>\$\$?)(?!\$)(?<eq>.+)(?<![\\$])\k<eqdelim>(?!\$)/.source,
+            regexp: /(?<![\\$])(?<eqdelim>\$\$?)(?!\$)(?<eq>.+?)(?<![\\$])\k<eqdelim>(?!\$)/.source,
             matched: (state, match) => {
                 let { eqdelim, eq } = match.groups!
                 let html = am.asciiToMathML(eq, eqdelim.length == 1)
