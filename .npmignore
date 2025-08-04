@@ -1,0 +1,7 @@
+.vscode/
+docs/
+src
+testOut
+litsconfig.json
+tsconfig.tsbuildinfo
+commonmark-tests.md
