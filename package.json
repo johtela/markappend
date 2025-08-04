@@ -2,7 +2,12 @@
   "name": "markappend",
   "version": "1.0.0",
   "description": "Append markdown directly to DOM",
-  "main": "lib/index.js",
+  "main": "lib/parser.js",
+  "homepage": "https://johtela.github.io/markappend/README.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johtela/markappend.git"
+  },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
