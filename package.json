@@ -1,6 +1,6 @@
 {
   "name": "markappend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Append markdown directly to DOM",
   "main": "lib/parser.js",
   "homepage": "https://johtela.github.io/markappend/README.html",
