@@ -1634,7 +1634,7 @@ span.
 
 In particular, emphasis and strong emphasis can be nested inside emphasis:
 
-<commonmark-runner examples="406-407,410-411"></commonmark-runner>
+<commonmark-runner examples="406,410-411"></commonmark-runner>
 
 Note that in the preceding case, the interpretation
 
@@ -1650,10 +1650,6 @@ example:
 
 <commonmark-runner examples="412"></commonmark-runner>
 
-Indefinite levels of nesting are possible:
-
-<commonmark-runner examples="418-419"></commonmark-runner>
-
 There can be no empty emphasis or strong emphasis:
 
 <commonmark-runner examples="420-421"></commonmark-runner>
@@ -1668,11 +1664,11 @@ emphasized span.
 In particular, emphasis and strong emphasis can be nested inside strong 
 emphasis:
 
-<commonmark-runner examples="424-425,428-429"></commonmark-runner>
+<commonmark-runner examples="424,428-429"></commonmark-runner>
 
 Indefinite levels of nesting are possible:
 
-<commonmark-runner examples="432-433"></commonmark-runner>
+<commonmark-runner examples="433"></commonmark-runner>
 
 There can be no empty emphasis or strong emphasis:
 

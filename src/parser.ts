@@ -343,8 +343,8 @@ const indentedCodeOrBlank = / {4}| {0,3}\t|\s*$/yuis
 const blockQuote = / {0,3}> ?/yuis
 const nonBlank = /(?=\s*\S)/yuis
 const codeSpan = /(?<codedelim>`+)(?<code>\s.+\s|(?:[^`]|(?!\k<codedelim>)`)+)\k<codedelim>/.source
-const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}*])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\*])\k<emdelim>(?!\*)|(?<![\P{P}\\*])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\*])\k<emdelim>$)/u.source
-const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+)(?:(?<![\s\p{P}\p{S}\\_])\k<emdelim>(?!_)|(?<![\P{P}\\_])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\_])\k<emdelim>$)/u.source
+const emAsterisk = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:\*\*?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)\*\*?(?![\P{P}*])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}\\*])\k<emdelim>(?!\*)|(?<![\P{P}\\*])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\*])\k<emdelim>$)/u.source
+const emUnderscore = /(?<emdelim>(?:(?<!\\)|(?<=\\\\))(?:__?(?![\s\p{P}\p{S}]|$))|(?:(?<=[\s\p{P}\p{S}]|^)__?(?![\P{P}_])))(?<em>.+?)(?:(?<![\s\p{P}\p{S}\\_])\k<emdelim>(?!_)|(?<![\P{P}\\_])\k<emdelim>(?=[\s\p{P}\p{S}])|(?<![\s\\_])\k<emdelim>$)/u.source
 const linkLabel = /\[(?<linklabel>(?:\s*(?:[^\[\]\s]|(?<=\\)(?<!\\\\)[\[\]])+\s*)+)\]/.source
 const linkDest = /(?:(?<!\\)<(?<linkdest>(?:[^<>\n]|(?<=\\)[<>])*)(?<!\\)>|(?<linkdest>(?!<)(?:[^\x00-\x1F\x7F ()]|(?<=\\)[()])*))/.source
 const linkTitle = /(?:"(?<linktitle>(?:[^"]|(?<=\\)")+)"|'(?<linktitle>(?:[^']|(?<=\\)')+)'|\((?<linktitle>(?:[^()]|(?<=\\)[()])+)\))/.source
