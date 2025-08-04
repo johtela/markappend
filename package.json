@@ -6,7 +6,7 @@
   "homepage": "https://johtela.github.io/markappend/README.html",
   "repository": {
     "type": "git",
-    "url": "https://github.com/johtela/markappend.git"
+    "url": "git+https://github.com/johtela/markappend.git"
   },
   "scripts": {
     "build": "tsc",
